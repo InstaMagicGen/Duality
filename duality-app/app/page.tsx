@@ -15,7 +15,7 @@ type SoulsetMedia = {
   type: "video" | "image";
 };
 
-// Media Sunset (tous dans /public/sunset)
+// === Media Sunset (tous dans /public/sunset) ===
 const SUNSET_VIDEOS: SoulsetMedia[] = [
   { src: "/sunset/Sunset-1V.mp4", type: "video" },
   { src: "/sunset/Sunset-2V.mp4", type: "video" },
@@ -102,7 +102,7 @@ const translations: Record<Lang, any> = {
     avatarTitle: "Avatar de ta Dualité",
     avatarLoading: "Génération de ton avatar en cours...",
     avatarMissing:
-      "Avatar non généré pour cette session. L’analyse reste disponible.",
+      "Avatar généré localement pour cette session. L’analyse reste disponible même sans API.",
 
     // Soulset
     soulTitle: "Soulset Navigator · Sunset Therapy",
@@ -162,7 +162,7 @@ const translations: Record<Lang, any> = {
     avatarTitle: "Your Duality Avatar",
     avatarLoading: "Generating your avatar...",
     avatarMissing:
-      "Avatar was not generated for this session. The analysis is still available.",
+      "Avatar generated locally for this session. The analysis is still available even without the API.",
 
     // Soulset
     soulTitle: "Soulset Navigator · Sunset Therapy",
@@ -195,6 +195,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [hasAnalyzed, setHasAnalyzed] = useState(false);
 
   // Soulset
   const [soulText, setSoulText] = useState("");
@@ -231,6 +232,7 @@ export default function Home() {
     setError(null);
     setResult(null);
     setAvatarUrl(null);
+    setHasAnalyzed(false);
 
     if (!text.trim()) {
       setError(t.errorEmpty as string);
@@ -251,8 +253,9 @@ export default function Home() {
       }
 
       setResult(data as DualityResult);
+      setHasAnalyzed(true);
 
-      // Avatar: on essaye d'appeler l'API /api/avatar mais on gère le 404 proprement
+      // Avatar : on tente l’API, sinon fallback local
       try {
         setAvatarLoading(true);
         const aRes = await fetch("/api/avatar", {
@@ -266,13 +269,13 @@ export default function Home() {
           if (aData?.url) {
             setAvatarUrl(aData.url as string);
           } else {
-            setAvatarUrl(null);
+            setAvatarUrl("/sunset/sunset-1.jpeg");
           }
         } else {
-          setAvatarUrl(null);
+          setAvatarUrl("/sunset/sunset-1.jpeg");
         }
       } catch {
-        setAvatarUrl(null);
+        setAvatarUrl("/sunset/sunset-1.jpeg");
       } finally {
         setAvatarLoading(false);
       }
@@ -283,7 +286,7 @@ export default function Home() {
     }
   }
 
-  // --- Soulset handler (locale, sans API) ---
+  // --- Soulset handler (analyse locale) ---
   function handleSoulsetSession(e: React.FormEvent) {
     e.preventDefault();
     setSoulError(null);
@@ -297,7 +300,6 @@ export default function Home() {
 
     setSoulLoading(true);
 
-    // simulation d’une petite “analyse” locale
     const quotes = SOULSET_QUOTES[lang];
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
@@ -308,7 +310,7 @@ export default function Home() {
       setSoulQuote(randomQuote);
       setSoulMedia(randomMedia);
       setSoulLoading(false);
-    }, 600); // petit délai pour ressentir la “séance”
+    }, 600);
   }
 
   return (
@@ -319,7 +321,7 @@ export default function Home() {
           <div className="h-9 w-9 rounded-full bg-[#d4af37] flex items-center justify-center text-lg font-semibold">
             Δ
           </div>
-          <div>
+        <div>
             <h1 className="text-2xl md:text-3xl font-semibold tracking-wide">
               {t.appTitle}
             </h1>
@@ -334,7 +336,7 @@ export default function Home() {
         </button>
       </header>
 
-      {/* MODE HOME : choix entre Duality & Soulset */}
+      {/* MODE HOME */}
       {mode === "home" && (
         <section className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Carte Duality */}
@@ -379,7 +381,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* BOUTON RETOUR quand on n’est plus sur l’accueil */}
+      {/* BOUTON RETOUR */}
       {mode !== "home" && (
         <div className="w-full max-w-6xl mt-3 mb-4">
           <button
@@ -394,7 +396,7 @@ export default function Home() {
       {/* MODE DUALITY */}
       {mode === "duality" && (
         <section className="w-full max-w-6xl space-y-6">
-          {/* Intro Duality + petite bulle mémoire (simplifiée ici) */}
+          {/* Intro Duality */}
           <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8">
             <h2 className="text-xl md:text-2xl font-semibold mb-2">
               {t.dualityTitle}
@@ -431,67 +433,62 @@ export default function Home() {
               </button>
             </form>
 
-            {/* Résultats Duality */}
-            <div className="space-y-4">
-              {/* Avatar EN PREMIER */}
-              <div className="rounded-2xl border border-[#d4af37] bg-black p-4 flex flex-col md:flex-row gap-4 items-center">
-                <div className="w-full md:w-40 md:h-40 flex items-center justify-center">
-                  {avatarLoading ? (
-                    <div className="w-32 h-32 rounded-full border border-dashed border-[#d4af37] flex items-center justify-center text-[11px] text-neutral-300 text-center px-4">
-                      {t.avatarLoading}
-                    </div>
-                  ) : avatarUrl ? (
-                    // l’avatar peut venir de ton API ou être un simple lien d’image
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={avatarUrl}
-                      alt="Duality avatar"
-                      className="w-32 h-32 rounded-full object-cover shadow-lg shadow-[#d4af37]/40"
-                    />
-                  ) : (
-                    <div className="w-32 h-32 rounded-full border border-neutral-700 flex items-center justify-center text-[11px] text-neutral-400 text-center px-4">
+            {/* Résultats Duality : cachés tant qu’il n’y a pas d’analyse */}
+            {hasAnalyzed && (
+              <div className="space-y-4">
+                {/* Avatar en premier */}
+                <div className="rounded-2xl border border-[#d4af37] bg-black p-4 flex flex-col md:flex-row gap-4 items-center">
+                  <div className="w-full md:w-40 md:h-40 flex items-center justify-center">
+                    {avatarLoading ? (
+                      <div className="w-32 h-32 rounded-full border border-dashed border-[#d4af37] flex items-center justify-center text-[11px] text-neutral-300 text-center px-4">
+                        {t.avatarLoading}
+                      </div>
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={avatarUrl ?? "/sunset/sunset-1.jpeg"}
+                        alt="Duality avatar"
+                        className="w-32 h-32 rounded-full object-cover shadow-lg shadow-[#d4af37]/40"
+                      />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {t.avatarTitle}
+                    </h3>
+                    <p className="text-xs text-neutral-300">
                       {t.avatarMissing}
-                    </div>
-                  )}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
-                    {t.avatarTitle}
-                  </h3>
-                  <p className="text-xs text-neutral-300">
-                    {lang === "fr"
-                      ? "Cet avatar symbolise l’énergie actuelle de ta Dualité. Il est généré à partir de ton texte quand l’API est disponible."
-                      : "This avatar symbolizes the current energy of your Duality. It is generated from your text when the API is available."}
-                  </p>
-                </div>
-              </div>
 
-              {/* Cartes Future + Shadow */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
-                  <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
-                    {t.futureTitle}
-                  </h2>
-                  <p className="text-xs text-neutral-300 mb-2">
-                    {t.futureDesc}
-                  </p>
-                  <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
-                    {result?.future ? result.future : t.futureEmpty}
+                {/* Future + Shadow */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
+                    <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {t.futureTitle}
+                    </h2>
+                    <p className="text-xs text-neutral-300 mb-2">
+                      {t.futureDesc}
+                    </p>
+                    <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
+                      {result?.future ? result.future : t.futureEmpty}
+                    </div>
                   </div>
-                </div>
-                <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
-                  <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
-                    {t.shadowTitle}
-                  </h2>
-                  <p className="text-xs text-neutral-300 mb-2">
-                    {t.shadowDesc}
-                  </p>
-                  <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
-                    {result?.shadow ? result.shadow : t.shadowEmpty}
+                  <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
+                    <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {t.shadowTitle}
+                    </h2>
+                    <p className="text-xs text-neutral-300 mb-2">
+                      {t.shadowDesc}
+                    </p>
+                    <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
+                      {result?.shadow ? result.shadow : t.shadowEmpty}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
       )}
@@ -533,41 +530,43 @@ export default function Home() {
               </button>
             </form>
 
-            {/* Résultat Soulset */}
-            {(soulQuote || soulMedia) && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                <div className="rounded-2xl border border-[#22c1c3]/60 bg-[#031a26] p-4 flex flex-col">
-                  <h3 className="text-sm font-semibold text-[#8df3ff] mb-2">
-                    {t.soulResultTitle}
-                  </h3>
-                  <p className="text-base leading-relaxed text-[#e0fbff] mb-3">
+            {/* Résultat Soulset : plein écran dans la carte */}
+            {soulQuote && soulMedia && (
+              <div className="relative w-full rounded-3xl overflow-hidden border border-[#22c1c3]/70 bg-black min-h-[60vh] md:min-h-[70vh]">
+                {/* Media plein fond */}
+                {soulMedia.type === "video" ? (
+                  <video
+                    src={soulMedia.src}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={soulMedia.src}
+                    alt="Sunset"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )}
+
+                {/* Overlay sombre */}
+                <div className="absolute inset-0 bg-black/45" />
+
+                {/* Texte centré */}
+                <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 md:px-12 text-center">
+                  <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[#8df3ff] mb-3">
+                    Soulset Navigator · Sunset Therapy
+                  </p>
+                  <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-[#f5ffff] leading-relaxed max-w-3xl">
                     {soulQuote}
                   </p>
-                  <p className="text-[11px] text-[#7cb6c7] mt-auto">
+                  <p className="text-[10px] md:text-xs text-[#d0f0ff] mt-4 max-w-xl">
                     {t.soulResultHint}
                   </p>
-                </div>
-
-                <div className="rounded-2xl border border-[#22c1c3]/60 bg-[#031a26] p-4 flex flex-col items-center">
-                  {soulMedia && soulMedia.type === "video" && (
-                    <video
-                      src={soulMedia.src}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      className="w-full max-h-64 rounded-2xl object-cover mb-3"
-                    />
-                  )}
-                  {soulMedia && soulMedia.type === "image" && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={soulMedia.src}
-                      alt="Sunset"
-                      className="w-full max-h-64 rounded-2xl object-cover mb-3"
-                    />
-                  )}
-                  <p className="text-[11px] text-[#7cb6c7] text-center">
+                  <p className="text-[10px] md:text-[11px] text-[#9adfe9] mt-3">
                     {t.soulMediaLegend}
                   </p>
                 </div>
