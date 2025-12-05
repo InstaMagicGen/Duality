@@ -3,248 +3,235 @@
 import React, { useEffect, useState } from "react";
 
 type Lang = "fr" | "en";
-type Mode = "home" | "duality" | "soulset";
 
 type DualityResult = {
   future: string;
   shadow: string;
 };
 
-type SoulsetMedia = {
-  src: string;
-  type: "video" | "image";
-};
-
-// === Media Sunset (tous dans /public/sunset) ===
-const SUNSET_VIDEOS: SoulsetMedia[] = [
-  { src: "/sunset/Sunset-1V.mp4", type: "video" },
-  { src: "/sunset/Sunset-2V.mp4", type: "video" },
-  { src: "/sunset/Sunset-3V.mp4", type: "video" },
-  { src: "/sunset/Sunset-4V.mp4", type: "video" },
+const SUNSET_VIDEOS = [
+  "/sunset/Sunset-1V.mp4",
+  "/sunset/Sunset-2V.mp4",
+  "/sunset/Sunset-3V.mp4",
+  "/sunset/Sunset-4V.mp4",
 ];
-
-const SUNSET_IMAGES: SoulsetMedia[] = [
-  { src: "/sunset/sunset-1.jpeg", type: "image" },
-  { src: "/sunset/sunset-2.jpeg", type: "image" },
-  { src: "/sunset/sunset-3.jpeg", type: "image" },
-  { src: "/sunset/sunset-4.jpeg", type: "image" },
-  { src: "/sunset/sunset-5.jpeg", type: "image" },
-  { src: "/sunset/sunset-6.jpeg", type: "image" },
-  { src: "/sunset/Sunset-7.jpeg", type: "image" },
-];
-
-const SOULSET_QUOTES: Record<Lang, string[]> = {
-  fr: [
-    "Tu n’as pas besoin d’aller vite, seulement d’avancer.",
-    "Ce que tu ressens maintenant n’est pas définitif.",
-    "Tu peux être à la fois fatigué et courageux.",
-    "Ton cœur sait déjà ce qu’il cherche, ton esprit rattrape doucement.",
-    "Tu mérites un espace où tu n’as plus à être fort.",
-    "Respire : tout ce que tu ne contrôles pas ne t’appartient pas.",
-    "Ta valeur ne se mesure pas à ta productivité.",
-    "Même les couchers de soleil recommencent chaque jour.",
-    "Accepte la vague, tu n’es pas obligé de la maîtriser.",
-    "Tu as le droit d’être en transition sans avoir déjà la réponse.",
-  ],
-  en: [
-    "You don’t need to go fast, you just need to move.",
-    "What you feel now is not final.",
-    "You can be both tired and brave.",
-    "Your heart already knows; your mind is slowly catching up.",
-    "You deserve a space where you don’t have to be strong.",
-    "Breathe: what you can’t control doesn’t belong to you.",
-    "Your worth is not measured by productivity.",
-    "Even sunsets start over every day.",
-    "Let the wave pass, you don’t have to control it.",
-    "You’re allowed to be in transition without having the answer yet.",
-  ],
-};
 
 const translations: Record<Lang, any> = {
   fr: {
-    appTitle: "DUALITY • Soulset Navigator",
-    tagline:
-      "Entre ton futur probable, ton ombre intérieure et une thérapie sunset pour revenir à toi.",
-    modeDualityTitle: "DUALITY",
-    modeDualityDesc:
-      "Analyse ta situation actuelle pour voir ton futur probable (Life Echo) et ce que ton ombre essaie de te dire (ShadowTalk).",
-    modeSoulsetTitle: "Soulset Navigator",
-    modeSoulsetDesc:
-      "Une mini séance de sunset therapy : tu décris ce que tu vis, tu reçois une citation et un coucher de soleil pour t’aider à souffler.",
-    goDuality: "Accéder à Duality",
-    goSoulset: "Commencer la Sunset Therapy",
-    backHome: "← Retour à l’écran d’accueil",
-    themeDark: "Sombre",
-    themeLight: "Clair",
+    appTitle: "DUALITY",
+    appTagline:
+      "Entre ton futur probable et ton ombre intérieure, avec une parenthèse de sunset therapy.",
+    // Choix de mode
+    chooseModeTitle: "Choisis ton expérience",
+    dualityLabel: "Duality · Futur & Ombre",
+    dualityDesc:
+      "Analyse ta trajectoire actuelle et ce que ton ombre essaie de te dire.",
+    soulsetLabel: "Soulset Navigator · Sunset Therapy",
+    soulsetDesc:
+      "Un sunset immersif et une phrase miroir pour t’aider à respirer et te recentrer.",
 
     // Duality
-    dualityTitle: "DUALITY",
-    dualityTagline:
-      "L’app qui te montre ton futur probable et ce que ton ombre essaie de te dire.",
-    personalityTitle: "Mémoire de ta personnalité",
-    personalityLabel: "Mémoire active",
-    dayLabel: "Décris ce que tu vis ou ressens maintenant :",
-    dayPlaceholder:
-      "Exemple : Je me sens bloqué, j'hésite à prendre une décision importante...",
-    analyze: "Analyser ma Dualité",
-    analyzeLoading: "Analyse en cours...",
-    errorEmpty: "Écris d'abord quelque chose.",
-    futureTitle: "LIFE ECHO · Ton futur probable",
-    futureDesc:
+    dualityDayLabel: "Décris ce que tu vis ou ressens maintenant :",
+    dualityDayPlaceholder:
+      "Exemple : je me sens perdu, j’hésite à prendre une décision importante...",
+    dualityAnalyze: "Analyser ma Dualité",
+    dualityAnalyzing: "Analyse en cours...",
+    dualityErrorEmpty: "Écris d’abord quelque chose.",
+    dualityAvatarTitle: "Avatar de ta Dualité",
+    dualityAvatarSubtitle:
+      "Cet avatar symbolise l’énergie actuelle de ta Dualité. Il est généré à partir de tes mots via fal.ai.",
+    dualityAvatarPending:
+      "Avatar non généré pour cette session. L’analyse reste disponible.",
+    dualityFutureTitle: "LIFE ECHO · Ton futur probable",
+    dualityFutureDesc:
       "2 à 4 phrases courtes sur la trajectoire que tu es en train de nourrir.",
-    futureEmpty:
-      "Ton futur n'est pas encore généré. Écris quelque chose et lance l'analyse.",
-    shadowTitle: "SHADOWTALK · Ton ombre intérieure",
-    shadowDesc:
+    dualityFutureEmpty:
+      "Ton futur n’est pas encore généré. Lance une analyse pour le voir.",
+    dualityShadowTitle: "SHADOWTALK · Ton ombre intérieure",
+    dualityShadowDesc:
       "2 à 4 phrases courtes sur ce que tu évites, répètes ou crées en coulisse.",
-    shadowEmpty:
-      "Ton ombre ne s'est pas encore exprimée. Partage quelque chose et lance l'analyse.",
-    avatarTitle: "Avatar de ta Dualité",
-    avatarLoading: "Génération de ton avatar en cours...",
-    avatarMissing:
-      "Avatar généré localement pour cette session. L’analyse reste disponible même sans API.",
+    dualityShadowEmpty:
+      "Ton ombre ne s’est pas encore exprimée. Lance une analyse pour l’entendre.",
 
     // Soulset
-    soulTitle: "Soulset Navigator · Sunset Therapy",
-    soulIntro:
-      "Écris librement ce que tu traverses. Tu recevras une citation courte et un coucher de soleil pour t’accompagner.",
-    soulLabel: "Décris ton état ou ton problème du moment :",
-    soulPlaceholder:
-      "Exemple : je me sens vidé, j’ai l’impression de tourner en rond, je doute de mes choix...",
-    soulButton: "Lancer ma séance",
-    soulButtonLoading: "Création de ta séance...",
-    soulErrorEmpty: "Partage au moins une phrase sur ce que tu ressens.",
-    soulResultTitle: "Ta citation du moment",
-    soulResultHint:
-      "Garde cette phrase avec toi aujourd’hui. Tu peux relancer une séance quand tu veux.",
-    soulMediaLegend: "Sunset choisi au hasard pour t’accompagner.",
-    footer:
-      "Prototype v1 · Aucune base de données. Les textes restent côté utilisateur.",
+    soulsetTitle: "Soulset Navigator · Sunset Therapy",
+    soulsetIntro:
+      "Écris librement ce que tu ressens. Une phrase miroir te sera renvoyée, accompagnée d’un sunset immersif.",
+    soulsetLabel: "Décris ton état ou ton problème du moment :",
+    soulsetPlaceholder:
+      "Exemple : je me sens épuisé, j’ai l’impression de tourner en rond...",
+    soulsetAnalyze: "Commencer la Sunset Therapy",
+    soulsetAnalyzing: "Génération de ta sunset therapy...",
+    soulsetErrorEmpty: "Exprime d’abord ce que tu ressens.",
+    soulsetNewSession: "Nouvelle session",
+    footerNote:
+      "Prototype v1 · Duality & Soulset Navigator. Aucune base de données, tout reste côté utilisateur.",
   },
   en: {
-    appTitle: "DUALITY • Soulset Navigator",
-    tagline:
-      "Between your probable future, your inner shadow and sunset therapy to come back to yourself.",
-    modeDualityTitle: "DUALITY",
-    modeDualityDesc:
-      "Analyze your current situation to see your probable future (Life Echo) and what your shadow is trying to say (ShadowTalk).",
-    modeSoulsetTitle: "Soulset Navigator",
-    modeSoulsetDesc:
-      "A mini sunset therapy session: describe what you’re going through, receive a quote and a sunset to help you breathe.",
-    goDuality: "Go to Duality",
-    goSoulset: "Start Sunset Therapy",
-    backHome: "← Back to home",
-    themeDark: "Dark",
-    themeLight: "Light",
+    appTitle: "DUALITY",
+    appTagline:
+      "Between your probable future and your inner shadow, with a sunset therapy pause.",
+    // Mode
+    chooseModeTitle: "Choose your experience",
+    dualityLabel: "Duality · Future & Shadow",
+    dualityDesc:
+      "Analyse the path you are feeding and what your shadow is trying to say.",
+    soulsetLabel: "Soulset Navigator · Sunset Therapy",
+    soulsetDesc:
+      "An immersive sunset and a mirroring sentence to help you breathe and recentre.",
 
     // Duality
-    dualityTitle: "DUALITY",
-    dualityTagline:
-      "The app that shows your probable future and what your shadow is trying to say.",
-    personalityTitle: "Your personality memory",
-    personalityLabel: "Active memory",
-    dayLabel: "Describe what you are living or feeling now:",
-    dayPlaceholder:
-      "Example: I feel stuck, I hesitate to make an important decision...",
-    analyze: "Analyze my Duality",
-    analyzeLoading: "Analyzing...",
-    errorEmpty: "Write something first.",
-    futureTitle: "LIFE ECHO · Your probable future",
-    futureDesc:
+    dualityDayLabel: "Describe what you are living or feeling right now:",
+    dualityDayPlaceholder:
+      "Example: I feel lost, I hesitate to make an important decision...",
+    dualityAnalyze: "Analyze my Duality",
+    dualityAnalyzing: "Analyzing...",
+    dualityErrorEmpty: "Write something first.",
+    dualityAvatarTitle: "Avatar of your Duality",
+    dualityAvatarSubtitle:
+      "This avatar represents the current energy of your Duality. It’s generated from your words via fal.ai.",
+    dualityAvatarPending:
+      "Avatar not generated for this session yet. The analysis is still available.",
+    dualityFutureTitle: "LIFE ECHO · Your probable future",
+    dualityFutureDesc:
       "2–4 short sentences about the trajectory you are feeding.",
-    futureEmpty:
-      "Your future is not generated yet. Write something and start the analysis.",
-    shadowTitle: "SHADOWTALK · Your inner shadow",
-    shadowDesc:
+    dualityFutureEmpty:
+      "Your future is not generated yet. Run an analysis to see it.",
+    dualityShadowTitle: "SHADOWTALK · Your inner shadow",
+    dualityShadowDesc:
       "2–4 short sentences about what you avoid, repeat or create backstage.",
-    shadowEmpty:
-      "Your shadow has not spoken yet. Share something and run the analysis.",
-    avatarTitle: "Your Duality Avatar",
-    avatarLoading: "Generating your avatar...",
-    avatarMissing:
-      "Avatar generated locally for this session. The analysis is still available even without the API.",
+    dualityShadowEmpty:
+      "Your shadow hasn’t spoken yet. Run an analysis to hear it.",
 
     // Soulset
-    soulTitle: "Soulset Navigator · Sunset Therapy",
-    soulIntro:
-      "Freely write what you’re going through. You’ll receive a short quote and a sunset to accompany you.",
-    soulLabel: "Describe your current state or problem:",
-    soulPlaceholder:
-      "Example: I feel drained, stuck in the same loop, doubting my choices...",
-    soulButton: "Start my session",
-    soulButtonLoading: "Creating your session...",
-    soulErrorEmpty: "Share at least one sentence about how you feel.",
-    soulResultTitle: "Your quote for today",
-    soulResultHint:
-      "Keep this sentence with you today. You can start another session anytime.",
-    soulMediaLegend: "Randomly chosen sunset to accompany you.",
-    footer:
-      "Prototype v1 · No database. Everything stays on the user side.",
+    soulsetTitle: "Soulset Navigator · Sunset Therapy",
+    soulsetIntro:
+      "Write freely what you feel. A mirroring sentence will be returned, with an immersive sunset.",
+    soulsetLabel: "Describe your current state or problem:",
+    soulsetPlaceholder:
+      "Example: I feel exhausted, it’s like I’m going in circles...",
+    soulsetAnalyze: "Start Sunset Therapy",
+    soulsetAnalyzing: "Generating your sunset therapy...",
+    soulsetErrorEmpty: "Share what you feel first.",
+    soulsetNewSession: "New session",
+    footerNote:
+      "Prototype v1 · Duality & Soulset Navigator. No database, everything stays on the user side.",
   },
 };
 
+// Génère une courte quote "thérapeutique" côté client à partir du texte
+function buildSoulsetQuote(input: string, lang: Lang): string {
+  const base = input.toLowerCase();
+
+  const packs = {
+    fr: {
+      overwhelm: [
+        "Tu n’es pas en retard sur ta vie. Tu es exactement au point où ton cœur te demande enfin d’écouter ce qui ne va plus.",
+        "Ce que tu ressens n’est pas une faiblesse, c’est ton corps qui te murmure que tu as besoin de douceur, pas de performance.",
+      ],
+      lost: [
+        "Se sentir perdu, c’est souvent la preuve que l’ancien chapitre est terminé mais que le nouveau n’a pas encore de nom.",
+        "Tu as le droit de ne pas savoir. L’important, c’est de rester honnête avec ce que tu ressens, une petite vérité à la fois.",
+      ],
+      tired: [
+        "Tu n’as pas été créé pour survivre en mode urgence permanente. Tu as le droit à la lenteur, au repos, au silence.",
+        "Ta fatigue n’est pas un défaut à corriger, c’est un message à accueillir : « quelque chose a besoin de changer ».",
+      ],
+      generic: [
+        "Tu n’es pas seul avec ce que tu ressens. Même si personne ne le voit, ton monde intérieur mérite de la douceur et du respect.",
+        "Un pas, même minuscule, reste un pas. Aujourd’hui, le plus grand courage que tu peux avoir, c’est d’être vrai avec toi-même.",
+      ],
+    },
+    en: {
+      overwhelm: [
+        "You’re not late in your life. You’re exactly where your heart finally asks you to listen to what no longer works.",
+        "What you feel is not weakness, it’s your body whispering that you need kindness more than performance.",
+      ],
+      lost: [
+        "Feeling lost is often proof that the old chapter is over but the new one hasn’t been named yet.",
+        "You’re allowed not to know. What matters is staying honest with what you feel, one small truth at a time.",
+      ],
+      tired: [
+        "You weren’t made to live in permanent emergency mode. You’re allowed to slow down, rest and breathe.",
+        "Your tiredness is not a bug to fix, it’s a message to receive: “something needs to change”.",
+      ],
+      generic: [
+        "You’re not alone with what you feel. Even if no one sees it, your inner world deserves gentleness and respect.",
+        "One step, even tiny, is still a step. Today, your biggest courage is to be honest with yourself.",
+      ],
+    },
+  };
+
+  const set = packs[lang];
+
+  const pick = (arr: string[]) =>
+    arr[Math.floor(Math.random() * arr.length)];
+
+  if (base.includes("fatigu") || base.includes("tired") || base.includes("épuis"))
+    return pick(set.tired);
+  if (base.includes("perdu") || base.includes("lost") || base.includes("direction"))
+    return pick(set.lost);
+  if (
+    base.includes("stress") ||
+    base.includes("débord") ||
+    base.includes("overwhelmed")
+  )
+    return pick(set.overwhelm);
+
+  return pick(set.generic);
+}
+
 export default function Home() {
   const [lang, setLang] = useState<Lang>("fr");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [mode, setMode] = useState<Mode>("home");
 
-  // Duality
-  const [text, setText] = useState("");
-  const [result, setResult] = useState<DualityResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Mode : "duality" ou "soulset"
+  const [mode, setMode] = useState<"duality" | "soulset">("duality");
+
+  // --- Duality state ---
+  const [dualityText, setDualityText] = useState("");
+  const [dualityResult, setDualityResult] = useState<DualityResult | null>(null);
+  const [dualityLoading, setDualityLoading] = useState(false);
+  const [dualityError, setDualityError] = useState<string | null>(null);
+  const [hasDualityAnalyzed, setHasDualityAnalyzed] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [avatarLoading, setAvatarLoading] = useState(false);
-  const [hasAnalyzed, setHasAnalyzed] = useState(false);
 
-  // Soulset
+  // --- Soulset state ---
   const [soulText, setSoulText] = useState("");
   const [soulQuote, setSoulQuote] = useState<string | null>(null);
-  const [soulMedia, setSoulMedia] = useState<SoulsetMedia | null>(null);
-  const [soulError, setSoulError] = useState<string | null>(null);
+  const [soulVideo, setSoulVideo] = useState<string | null>(null);
   const [soulLoading, setSoulLoading] = useState(false);
+  const [soulError, setSoulError] = useState<string | null>(null);
 
   const t = translations[lang];
 
-  // Lang & theme auto
+  // Langue auto selon système
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     const userLang = navigator.language?.toLowerCase() || "fr";
     setLang(userLang.startsWith("fr") ? "fr" : "en");
-
-    const prefersDark =
-      window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true;
-    const initialTheme: "dark" | "light" = prefersDark ? "dark" : "light";
-    setTheme(initialTheme);
-    document.documentElement.setAttribute("data-theme", initialTheme);
   }, []);
 
-  function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-  }
-
-  // --- Duality handler ---
-  async function handleAnalyze(e: React.FormEvent) {
+  // ----- Duality : handle analyze -----
+  async function handleDualityAnalyze(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setResult(null);
-    setAvatarUrl(null);
-    setHasAnalyzed(false);
+    setDualityError(null);
 
-    if (!text.trim()) {
-      setError(t.errorEmpty as string);
+    if (!dualityText.trim()) {
+      setDualityError(t.dualityErrorEmpty);
       return;
     }
 
     try {
-      setLoading(true);
+      setDualityLoading(true);
+      setHasDualityAnalyzed(false);
+      setDualityResult(null);
+      setAvatarUrl(null);
+
+      // Appel API Duality (Groq ou autre)
       const res = await fetch("/api/duality", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, lang }),
+        body: JSON.stringify({ text: dualityText, lang }),
       });
 
       const data = await res.json();
@@ -252,332 +239,318 @@ export default function Home() {
         throw new Error(data.error || "Server error");
       }
 
-      setResult(data as DualityResult);
-      setHasAnalyzed(true);
+      setDualityResult({
+        future: data.future ?? "",
+        shadow: data.shadow ?? "",
+      });
 
-      // Avatar : on tente l’API, sinon fallback local
+      // Appel séparé à /api/avatar (fal.ai) pour générer l’avatar
       try {
-        setAvatarLoading(true);
-        const aRes = await fetch("/api/avatar", {
+        const avatarRes = await fetch("/api/avatar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text: dualityText }),
         });
-
-        if (aRes.ok) {
-          const aData = await aRes.json();
-          if (aData?.url) {
-            setAvatarUrl(aData.url as string);
-          } else {
-            setAvatarUrl("/sunset/sunset-1.jpeg");
-          }
-        } else {
-          setAvatarUrl("/sunset/sunset-1.jpeg");
+        const avatarData = await avatarRes.json();
+        if (avatarRes.ok && avatarData?.url) {
+          setAvatarUrl(avatarData.url as string);
         }
       } catch {
-        setAvatarUrl("/sunset/sunset-1.jpeg");
-      } finally {
-        setAvatarLoading(false);
+        // on ignore en cas d’erreur d’avatar
       }
+
+      setHasDualityAnalyzed(true);
     } catch (err: any) {
-      setError(err.message || "Erreur inconnue.");
+      setDualityError(err.message || "Erreur inconnue.");
     } finally {
-      setLoading(false);
+      setDualityLoading(false);
     }
   }
 
-  // --- Soulset handler (analyse locale) ---
-  function handleSoulsetSession(e: React.FormEvent) {
+  // ----- Soulset Navigator : handle analyze -----
+  async function handleSoulsetAnalyze(e: React.FormEvent) {
     e.preventDefault();
     setSoulError(null);
-    setSoulQuote(null);
-    setSoulMedia(null);
 
     if (!soulText.trim()) {
-      setSoulError(t.soulErrorEmpty as string);
+      setSoulError(t.soulsetErrorEmpty);
       return;
     }
 
-    setSoulLoading(true);
+    try {
+      setSoulLoading(true);
+      setSoulQuote(null);
+      setSoulVideo(null);
 
-    const quotes = SOULSET_QUOTES[lang];
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      // Analyse simplifiée côté client → génération de quote
+      const quote = buildSoulsetQuote(soulText, lang);
+      const video =
+        SUNSET_VIDEOS[Math.floor(Math.random() * SUNSET_VIDEOS.length)];
 
-    const allMedia = [...SUNSET_VIDEOS, ...SUNSET_IMAGES];
-    const randomMedia = allMedia[Math.floor(Math.random() * allMedia.length)];
-
-    setTimeout(() => {
-      setSoulQuote(randomQuote);
-      setSoulMedia(randomMedia);
+      setSoulQuote(quote);
+      setSoulVideo(video);
+    } finally {
       setSoulLoading(false);
-    }, 600);
+    }
   }
 
-  return (
-    <main className="min-h-screen flex flex-col items-center px-4 py-6 bg-black text-white">
-      {/* HEADER GLOBAL */}
-      <header className="w-full max-w-6xl mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-[#d4af37] flex items-center justify-center text-lg font-semibold">
-            Δ
-          </div>
-        <div>
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-wide">
-              {t.appTitle}
-            </h1>
-            <p className="text-xs md:text-sm text-neutral-400">{t.tagline}</p>
-          </div>
-        </div>
-        <button
-          onClick={toggleTheme}
-          className="self-start md:self-auto px-3 py-1 rounded-full border border-[#d4af37] text-xs bg-black hover:bg-[#111111] transition"
-        >
-          {theme === "dark" ? t.themeDark : t.themeLight}
-        </button>
-      </header>
+  function resetSoulset() {
+    setSoulQuote(null);
+    setSoulVideo(null);
+    setSoulText("");
+    setSoulError(null);
+  }
 
-      {/* MODE HOME */}
-      {mode === "home" && (
-        <section className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Carte Duality */}
+  // --- UI helpers ---
+  const premiumCardClass =
+    "rounded-3xl border border-[#d4af37]/40 bg-gradient-to-br from-black/90 via-black/80 to-black/90 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden";
+
+  return (
+    <main className="min-h-screen bg-black text-white flex flex-col items-center px-4 py-8">
+      {/* HEADER */}
+      <header className="w-full max-w-5xl mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-[0.2em]">
+            {t.appTitle}
+          </h1>
+          <p className="text-xs md:text-sm text-neutral-400 mt-2 max-w-2xl">
+            {t.appTagline}
+          </p>
+        </div>
+
+        {/* Choix de mode */}
+        <div className="flex gap-2 mt-2 md:mt-0">
           <button
             onClick={() => setMode("duality")}
-            className="text-left rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8 hover:bg-[#111111] transition group"
+            className={`px-4 py-2 text-xs rounded-full border transition ${
+              mode === "duality"
+                ? "border-[#d4af37] bg-[#d4af37] text-black"
+                : "border-neutral-700 bg-black hover:border-[#d4af37]/70"
+            }`}
           >
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#d4af37] mb-3">
-              Duality
-            </p>
-            <h2 className="text-xl md:text-2xl font-semibold mb-3 group-hover:text-[#f1e3a0]">
-              {t.modeDualityTitle}
-            </h2>
-            <p className="text-sm text-neutral-300 mb-5">
-              {t.modeDualityDesc}
-            </p>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#d4af37] text-black px-4 py-2 text-xs font-semibold group-hover:bg-[#f0cf6b]">
-              {t.goDuality}
-              <span>↗</span>
-            </span>
+            Duality
           </button>
-
-          {/* Carte Soulset */}
           <button
             onClick={() => setMode("soulset")}
-            className="text-left rounded-3xl border border-[#22c1c3] bg-gradient-to-br from-[#022c43] via-[#053f5c] to-[#115173] p-6 md:p-8 hover:from-[#032134] hover:via-[#063852] hover:to-[#0e3d60] transition group"
+            className={`px-4 py-2 text-xs rounded-full border transition ${
+              mode === "soulset"
+                ? "border-[#f8f0d9] bg-[#f8f0d9] text-black"
+                : "border-neutral-700 bg-black hover:border-[#f8f0d9]/70"
+            }`}
           >
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#8df3ff] mb-3">
-              Soulset Navigator
-            </p>
-            <h2 className="text-xl md:text-2xl font-semibold mb-3 text-[#e0fbff] group-hover:text-white">
-              {t.modeSoulsetTitle}
-            </h2>
-            <p className="text-sm text-[#d0f0ff] mb-5">
-              {t.modeSoulsetDesc}
-            </p>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 text-[#053f5c] px-4 py-2 text-xs font-semibold group-hover:bg-white">
-              {t.goSoulset}
-              <span>☾</span>
-            </span>
-          </button>
-        </section>
-      )}
-
-      {/* BOUTON RETOUR */}
-      {mode !== "home" && (
-        <div className="w-full max-w-6xl mt-3 mb-4">
-          <button
-            onClick={() => setMode("home")}
-            className="text-xs text-neutral-400 hover:text-neutral-100 underline-offset-4 hover:underline"
-          >
-            {t.backHome}
+            Soulset Navigator
           </button>
         </div>
-      )}
+      </header>
 
-      {/* MODE DUALITY */}
+      {/* BANNIÈRE DE CHOIX */}
+      <section className="w-full max-w-5xl mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <button
+          onClick={() => setMode("duality")}
+          className={`relative ${premiumCardClass} p-4 text-left group border-transparent ${
+            mode === "duality"
+              ? "border-[#d4af37]/60"
+              : "border-neutral-800/60"
+          }`}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-[#d4af37]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
+          <p className="text-[11px] uppercase tracking-[0.18em] text-neutral-400 mb-1">
+            Experience 01
+          </p>
+          <h2 className="text-sm font-semibold mb-1 text-[#f8f0d9]">
+            {t.dualityLabel}
+          </h2>
+          <p className="text-xs text-neutral-300">{t.dualityDesc}</p>
+        </button>
+
+        <button
+          onClick={() => setMode("soulset")}
+          className={`relative ${premiumCardClass} p-4 text-left group border-transparent ${
+            mode === "soulset"
+              ? "border-[#f8f0d9]/70"
+              : "border-neutral-800/60"
+          }`}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-[#f8f0d9]/12 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
+          <p className="text-[11px] uppercase tracking-[0.18em] text-neutral-400 mb-1">
+            Experience 02
+          </p>
+          <h2 className="text-sm font-semibold mb-1 text-[#f8f0d9]">
+            {t.soulsetLabel}
+          </h2>
+          <p className="text-xs text-neutral-300">{t.soulsetDesc}</p>
+        </button>
+      </section>
+
+      {/* ----------- MODE DUALITY ----------- */}
       {mode === "duality" && (
-        <section className="w-full max-w-6xl space-y-6">
-          {/* Intro Duality */}
-          <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8">
-            <h2 className="text-xl md:text-2xl font-semibold mb-2">
-              {t.dualityTitle}
-            </h2>
-            <p className="text-sm text-neutral-300 mb-4">
-              {t.dualityTagline}
-            </p>
-          </div>
-
-          {/* Bloc principal Duality */}
-          <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-6 md:p-8 space-y-6">
-            {/* Formulaire */}
-            <form onSubmit={handleAnalyze} className="space-y-3">
-              <label className="block text-sm text-neutral-100 mb-1">
-                {t.dayLabel}
+        <section className="w-full max-w-5xl space-y-6">
+          {/* Carte d'entrée texte */}
+          <div className={premiumCardClass}>
+            <form onSubmit={handleDualityAnalyze} className="p-6 md:p-8">
+              <label className="block text-sm text-neutral-100 mb-2">
+                {t.dualityDayLabel}
               </label>
               <textarea
-                className="w-full h-32 rounded-2xl bg-black border border-neutral-600 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none placeholder:text-neutral-500"
-                placeholder={t.dayPlaceholder}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
+                className="w-full h-32 rounded-2xl bg-black border border-neutral-700 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none placeholder:text-neutral-500"
+                placeholder={t.dualityDayPlaceholder}
+                value={dualityText}
+                onChange={(e) => setDualityText(e.target.value)}
               />
-              {error && (
-                <p className="text-xs text-red-400 mt-1">
-                  {error}
-                </p>
+              {dualityError && (
+                <p className="text-xs text-red-400 mt-2">{dualityError}</p>
               )}
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] disabled:opacity-60 transition"
+                disabled={dualityLoading}
+                className="mt-4 w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] disabled:opacity-60 transition"
               >
-                {loading ? (t.analyzeLoading as string) : (t.analyze as string)}
+                {dualityLoading ? t.dualityAnalyzing : t.dualityAnalyze}
               </button>
             </form>
+          </div>
 
-            {/* Résultats Duality : cachés tant qu’il n’y a pas d’analyse */}
-            {hasAnalyzed && (
-              <div className="space-y-4">
-                {/* Avatar en premier */}
-                <div className="rounded-2xl border border-[#d4af37] bg-black p-4 flex flex-col md:flex-row gap-4 items-center">
-                  <div className="w-full md:w-40 md:h-40 flex items-center justify-center">
-                    {avatarLoading ? (
-                      <div className="w-32 h-32 rounded-full border border-dashed border-[#d4af37] flex items-center justify-center text-[11px] text-neutral-300 text-center px-4">
-                        {t.avatarLoading}
-                      </div>
-                    ) : (
+          {/* Résultats affichés *uniquement* après analyse */}
+          {hasDualityAnalyzed && dualityResult && (
+            <div className="space-y-6">
+              {/* Avatar */}
+              <div className={premiumCardClass}>
+                <div className="p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
+                  <div className="relative h-40 w-40 rounded-full bg-gradient-to-br from-[#d4af37]/30 via-black to-black border border-[#d4af37]/60 overflow-hidden flex items-center justify-center">
+                    {avatarUrl ? (
+                      // Avatar généré par fal.ai
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={avatarUrl ?? "/sunset/sunset-1.jpeg"}
-                        alt="Duality avatar"
-                        className="w-32 h-32 rounded-full object-cover shadow-lg shadow-[#d4af37]/40"
+                        src={avatarUrl}
+                        alt="Avatar Duality"
+                        className="h-full w-full object-cover"
                       />
+                    ) : (
+                      <p className="text-[11px] text-center text-neutral-300 px-4 leading-relaxed">
+                        {t.dualityAvatarPending}
+                      </p>
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
-                      {t.avatarTitle}
+                    <h3 className="text-sm font-semibold text-[#d4af37] mb-2">
+                      {t.dualityAvatarTitle}
                     </h3>
                     <p className="text-xs text-neutral-300">
-                      {t.avatarMissing}
+                      {t.dualityAvatarSubtitle}
                     </p>
                   </div>
                 </div>
+              </div>
 
-                {/* Future + Shadow */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
-                    <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
-                      {t.futureTitle}
-                    </h2>
-                    <p className="text-xs text-neutral-300 mb-2">
-                      {t.futureDesc}
+              {/* Life Echo + ShadowTalk */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className={premiumCardClass}>
+                  <div className="p-5 md:p-6">
+                    <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {t.dualityFutureTitle}
+                    </h3>
+                    <p className="text-xs text-neutral-400 mb-3">
+                      {t.dualityFutureDesc}
                     </p>
-                    <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
-                      {result?.future ? result.future : t.futureEmpty}
+                    <div className="text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
+                      {dualityResult.future || t.dualityFutureEmpty}
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
-                    <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
-                      {t.shadowTitle}
-                    </h2>
-                    <p className="text-xs text-neutral-300 mb-2">
-                      {t.shadowDesc}
+                </div>
+
+                <div className={premiumCardClass}>
+                  <div className="p-5 md:p-6">
+                    <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {t.dualityShadowTitle}
+                    </h3>
+                    <p className="text-xs text-neutral-400 mb-3">
+                      {t.dualityShadowDesc}
                     </p>
-                    <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
-                      {result?.shadow ? result.shadow : t.shadowEmpty}
+                    <div className="text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
+                      {dualityResult.shadow || t.dualityShadowEmpty}
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </section>
       )}
 
-      {/* MODE SOULSET NAVIGATOR */}
+      {/* ----------- MODE SOULSET NAVIGATOR ----------- */}
       {mode === "soulset" && (
-        <section className="w-full max-w-6xl space-y-6">
-          <div className="rounded-3xl border border-[#22c1c3] bg-gradient-to-br from-[#022c43] via-[#053f5c] to-[#115173] p-6 md:p-8 text-[#e0fbff]">
-            <h2 className="text-xl md:text-2xl font-semibold mb-2">
-              {t.soulTitle}
-            </h2>
-            <p className="text-sm mb-2">{t.soulIntro}</p>
-          </div>
+        <section className="w-full max-w-5xl space-y-6">
+          {/* Tant qu’il n’y a pas encore de quote, on affiche la carte d’entrée */}
+          {!soulQuote && (
+            <div className={premiumCardClass}>
+              <div className="p-6 md:p-8">
+                <h2 className="text-sm font-semibold text-[#f8f0d9] mb-2">
+                  {t.soulsetTitle}
+                </h2>
+                <p className="text-xs text-neutral-300 mb-4">
+                  {t.soulsetIntro}
+                </p>
 
-          <div className="rounded-3xl border border-[#22c1c3] bg-[#021724] p-6 md:p-8 space-y-6">
-            {/* Formulaire Soulset */}
-            <form onSubmit={handleSoulsetSession} className="space-y-3">
-              <label className="block text-sm text-[#e0fbff] mb-1">
-                {t.soulLabel}
-              </label>
-              <textarea
-                className="w-full h-32 rounded-2xl bg-[#02101a] border border-[#1c4b57] px-4 py-3 text-sm text-[#e0fbff] focus:outline-none focus:ring-2 focus:ring-[#22c1c3] resize-none placeholder:text-[#527b86]"
-                placeholder={t.soulPlaceholder}
-                value={soulText}
-                onChange={(e) => setSoulText(e.target.value)}
-              />
-              {soulError && (
-                <p className="text-xs text-red-300 mt-1">{soulError}</p>
-              )}
-
-              <button
-                type="submit"
-                disabled={soulLoading}
-                className="w-full rounded-full bg-[#22c1c3] text-[#022c43] py-2.5 text-sm font-semibold hover:bg-[#3dd5dd] disabled:opacity-60 transition"
-              >
-                {soulLoading
-                  ? (t.soulButtonLoading as string)
-                  : (t.soulButton as string)}
-              </button>
-            </form>
-
-            {/* Résultat Soulset : plein écran dans la carte */}
-            {soulQuote && soulMedia && (
-              <div className="relative w-full rounded-3xl overflow-hidden border border-[#22c1c3]/70 bg-black min-h-[60vh] md:min-h-[70vh]">
-                {/* Media plein fond */}
-                {soulMedia.type === "video" ? (
-                  <video
-                    src={soulMedia.src}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
+                <form onSubmit={handleSoulsetAnalyze} className="space-y-3">
+                  <label className="block text-sm text-neutral-100 mb-1">
+                    {t.soulsetLabel}
+                  </label>
+                  <textarea
+                    className="w-full h-32 rounded-2xl bg-black border border-neutral-700 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#f8f0d9] resize-none placeholder:text-neutral-500"
+                    placeholder={t.soulsetPlaceholder}
+                    value={soulText}
+                    onChange={(e) => setSoulText(e.target.value)}
                   />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={soulMedia.src}
-                    alt="Sunset"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                )}
+                  {soulError && (
+                    <p className="text-xs text-red-400 mt-1">{soulError}</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={soulLoading}
+                    className="mt-2 w-full rounded-full bg-[#f8f0d9] text-black py-2.5 text-sm font-semibold hover:bg-white disabled:opacity-60 transition"
+                  >
+                    {soulLoading ? t.soulsetAnalyzing : t.soulsetAnalyze}
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
 
-                {/* Overlay sombre */}
-                <div className="absolute inset-0 bg-black/45" />
-
-                {/* Texte centré */}
-                <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 md:px-12 text-center">
-                  <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[#8df3ff] mb-3">
-                    Soulset Navigator · Sunset Therapy
-                  </p>
-                  <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-[#f5ffff] leading-relaxed max-w-3xl">
+          {/* Après analyse : on ne garde que la vidéo + la quote en overlay */}
+          {soulQuote && soulVideo && (
+            <div className="space-y-4">
+              <div className="relative w-full h-[70vh] rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.9)] border border-[#f8f0d9]/40">
+                <video
+                  src={soulVideo}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/55 to-black/25" />
+                <div className="absolute inset-0 flex items-center justify-center px-6">
+                  <p className="max-w-3xl text-center text-lg md:text-2xl font-semibold text-[#f8f0d9] drop-shadow-[0_0_25px_rgba(0,0,0,0.9)]">
                     {soulQuote}
                   </p>
-                  <p className="text-[10px] md:text-xs text-[#d0f0ff] mt-4 max-w-xl">
-                    {t.soulResultHint}
-                  </p>
-                  <p className="text-[10px] md:text-[11px] text-[#9adfe9] mt-3">
-                    {t.soulMediaLegend}
-                  </p>
                 </div>
               </div>
-            )}
-          </div>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={resetSoulset}
+                  className="px-5 py-2 rounded-full border border-[#f8f0d9]/70 text-xs text-[#f8f0d9] hover:bg-[#f8f0d9] hover:text-black transition"
+                >
+                  {t.soulsetNewSession}
+                </button>
+              </div>
+            </div>
+          )}
         </section>
       )}
 
-      <footer className="mt-8 text-[10px] text-neutral-500 text-center max-w-4xl">
-        {t.footer}
+      <footer className="mt-10 mb-4 text-[10px] text-neutral-500 text-center max-w-4xl">
+        {t.footerNote}
       </footer>
     </main>
   );
