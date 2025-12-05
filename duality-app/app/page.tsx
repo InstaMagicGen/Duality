@@ -9,6 +9,7 @@ type ActiveApp = "home" | "duality" | "navigator";
 type DualityResult = {
   future: string;
   shadow: string;
+  avatarUrl?: string | null; // optionnel si ton API renvoie un avatar
 };
 
 type PersonalityTrait = {
@@ -91,16 +92,20 @@ const translations: Record<Lang, any> = {
         "Ton ombre ne s'est pas encore exprimée. Partage quelque chose et lance l'analyse.",
       emptyError: "Écris d'abord quelque chose.",
       loading: "Analyse en cours...",
+      avatarTitle: "Avatar de cette session",
+      avatarGenerated:
+        "Ton avatar évolue en fonction de tes mots et de ta mémoire de personnalité.",
+      avatarMissing: "Avatar non généré pour cette session.",
     },
     navigator: {
       tagline: "Une mini retraite de coucher de soleil, depuis ton écran.",
       heroTitle: "Sunset Therapy · Soulset Navigator",
       heroText:
-        "Choisis une vidéo de sunset, mets le son, respire. Laisse ton système se calmer pendant quelques minutes.",
+        "Clique sur la session pour laisser l’application choisir un sunset aléatoire, mets le son, respire.",
       ctaSession: "Démarrer une session de sunset",
       howTitle: "Comment utiliser la Sunset Therapy ?",
       howSteps: [
-        "Choisis un sunset qui te parle visuellement.",
+        "Clique sur le bouton pour lancer un sunset aléatoire.",
         "Active le son ou ta propre musique calme.",
         "Respire profondément (inspire 4s, bloque 4s, expire 6s).",
         "Observe simplement sans jugement ce que tu ressens.",
@@ -108,8 +113,6 @@ const translations: Record<Lang, any> = {
       ambientTitle: "Bande son Sunset Ambient",
       ambientText:
         "Tu peux laisser tourner cette ambiance pendant que tu écris, réfléchis ou simplement te poses.",
-      thumbsTitle: "Choisis ton sunset du jour",
-      currentLabel: "Sunset en cours",
     },
   },
   en: {
@@ -169,16 +172,20 @@ const translations: Record<Lang, any> = {
         "Your shadow has not spoken yet. Share something and run the analysis.",
       emptyError: "Write something first.",
       loading: "Analysis in progress...",
+      avatarTitle: "Avatar for this session",
+      avatarGenerated:
+        "Your avatar evolves based on your words and personality memory.",
+      avatarMissing: "Avatar not generated for this session.",
     },
     navigator: {
       tagline: "A mini sunset retreat, from your screen.",
       heroTitle: "Sunset Therapy · Soulset Navigator",
       heroText:
-        "Choose a sunset video, turn on the sound, breathe. Let your system calm down for a few minutes.",
+        "Click the button to let the app choose a random sunset, turn on the sound, breathe.",
       ctaSession: "Start a sunset session",
       howTitle: "How to use Sunset Therapy?",
       howSteps: [
-        "Pick a sunset that visually resonates with you.",
+        "Click the button to launch a random sunset.",
         "Turn on the sound or your own calm music.",
         "Breathe deeply (inhale 4s, hold 4s, exhale 6s).",
         "Simply observe what you feel, without judging.",
@@ -186,11 +193,20 @@ const translations: Record<Lang, any> = {
       ambientTitle: "Sunset Ambient soundtrack",
       ambientText:
         "You can let this ambience run while you write, think, or just rest.",
-      thumbsTitle: "Choose today’s sunset",
-      currentLabel: "Current sunset",
     },
   },
 };
+
+function randomSunsetId(exclude?: number): number {
+  const ids = SUNSET_VIDEOS.map((v) => v.id);
+  if (ids.length === 0) return 1;
+  if (ids.length === 1) return ids[0];
+  let id = ids[Math.floor(Math.random() * ids.length)];
+  while (exclude !== undefined && id === exclude) {
+    id = ids[Math.floor(Math.random() * ids.length)];
+  }
+  return id;
+}
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("fr");
@@ -208,7 +224,9 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   // Navigator state
-  const [selectedSunsetId, setSelectedSunsetId] = useState<number>(1);
+  const [selectedSunsetId, setSelectedSunsetId] = useState<number>(
+    randomSunsetId()
+  );
 
   const t = translations[lang];
   const { common, home, duality, navigator } = t;
@@ -236,6 +254,13 @@ export default function Home() {
       }
     }
   }, []);
+
+  // Quand on arrive sur Soulset Navigator, on choisit direct un sunset aléatoire
+  useEffect(() => {
+    if (activeApp === "navigator") {
+      setSelectedSunsetId((prev) => randomSunsetId(prev));
+    }
+  }, [activeApp]);
 
   function toggleTheme() {
     const next: Theme = theme === "dark" ? "light" : "dark";
@@ -292,6 +317,16 @@ export default function Home() {
       setError(err.message || "Unknown error");
     } finally {
       setLoading(false);
+    }
+  }
+
+  function startSunsetSession() {
+    setSelectedSunsetId((prev) => randomSunsetId(prev));
+    if (typeof document !== "undefined") {
+      const el = document.getElementById("navigator-video");
+      if (el && "scrollIntoView" in el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }
   }
 
@@ -380,18 +415,18 @@ export default function Home() {
             </div>
 
             {/* Navigator card */}
-            <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8 flex flex-col justify-between">
+            <div className="rounded-3xl border border-teal-400 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 p-6 md:p-8 flex flex-col justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-semibold mb-2 text-teal-100">
                   {home.navigatorCardTitle}
                 </h3>
-                <p className="text-sm text-neutral-300 mb-4">
+                <p className="text-sm text-slate-200 mb-4">
                   {home.navigatorCardText}
                 </p>
               </div>
               <button
                 onClick={() => setActiveApp("navigator")}
-                className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] transition"
+                className="w-full rounded-full bg-teal-400 text-slate-950 py-2.5 text-sm font-semibold hover:bg-teal-300 transition"
               >
                 {home.navigatorButton}
               </button>
@@ -518,6 +553,7 @@ export default function Home() {
               </section>
 
               <section className="w-full max-w-5xl rounded-3xl border border-[#d4af37] bg-black/90 p-6 md:p-8">
+                {/* INPUT */}
                 <form onSubmit={handleAnalyze} className="space-y-3 mb-6">
                   <label className="block text-sm text-neutral-100 mb-1">
                     {duality.dayLabel}
@@ -542,6 +578,36 @@ export default function Home() {
                   </button>
                 </form>
 
+                {/* AVATAR EN PREMIER */}
+                {result && (
+                  <div className="mb-5 rounded-2xl border border-[#d4af37] bg-black/95 p-4 flex items-center gap-4">
+                    <div className="h-16 w-16 rounded-2xl overflow-hidden bg-gradient-to-tr from-[#d4af37] via-purple-500 to-black flex items-center justify-center text-[10px] font-semibold text-black">
+                      {result.avatarUrl ? (
+                        <img
+                          src={result.avatarUrl}
+                          alt="Avatar de session"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <span>
+                          {lang === "fr" ? "Avatar" : "Avatar"}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-neutral-300">
+                      <p className="font-semibold mb-1">
+                        {duality.avatarTitle}
+                      </p>
+                      <p>
+                        {result.avatarUrl
+                          ? duality.avatarGenerated
+                          : duality.avatarMissing}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* RÉSULTATS FUTUR / OMBRE */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
                     <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
@@ -577,20 +643,24 @@ export default function Home() {
       {activeApp === "navigator" && (
         <section className="w-full max-w-5xl space-y-6">
           {/* Hero */}
-          <div className="rounded-3xl border border-[#d4af37] bg-gradient-to-b from-black via-black to-[#111111] p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="rounded-3xl border border-teal-400 bg-gradient-to-b from-slate-950 via-sky-950/40 to-slate-950 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="text-xl md:text-2xl font-semibold mb-2">
+              <h2 className="text-xl md:text-2xl font-semibold mb-2 text-teal-100">
                 {navigator.heroTitle}
               </h2>
-              <p className="text-sm text-neutral-300 mb-4">
+              <p className="text-sm text-slate-200 mb-4">
                 {navigator.heroText}
               </p>
-              <button className="rounded-full bg-[#d4af37] text-black py-2.5 px-6 text-sm font-semibold hover:bg-[#f0cf6b] transition">
+              <button
+                onClick={startSunsetSession}
+                className="rounded-full bg-teal-400 text-slate-950 py-2.5 px-6 text-sm font-semibold hover:bg-teal-300 transition"
+              >
                 {navigator.ctaSession}
               </button>
             </div>
-            <div className="rounded-2xl border border-white/10 overflow-hidden bg-black/60">
+            <div className="rounded-2xl border border-teal-300/40 overflow-hidden bg-slate-950/60">
               <video
+                id="navigator-video"
                 src={currentSunset.src}
                 controls
                 className="w-full"
@@ -601,74 +671,36 @@ export default function Home() {
 
           {/* How to + ambient */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-5">
-              <h3 className="text-sm font-semibold text-[#d4af37] mb-2">
+            <div className="rounded-3xl border border-teal-400/70 bg-slate-950/90 p-5">
+              <h3 className="text-sm font-semibold text-teal-200 mb-2">
                 {navigator.howTitle}
               </h3>
-              <ul className="space-y-2 text-xs text-neutral-300">
+              <ul className="space-y-2 text-xs text-slate-200">
                 {navigator.howSteps.map((s: string, i: number) => (
                   <li key={i} className="flex gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#d4af37]" />
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-teal-300" />
                     <span>{s}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-5 flex flex-col gap-3">
+            <div className="rounded-3xl border border-teal-400/70 bg-slate-950/90 p-5 flex flex-col gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
+                <h3 className="text-sm font-semibold text-teal-200 mb-1">
                   {navigator.ambientTitle}
                 </h3>
-                <p className="text-xs text-neutral-300 mb-3">
+                <p className="text-xs text-slate-200 mb-3">
                   {navigator.ambientText}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 overflow-hidden bg-black/60">
+              <div className="rounded-2xl border border-teal-300/40 overflow-hidden bg-slate-950">
                 <video
                   src="/sunset/Sunset-ambient.mp4"
                   controls
                   className="w-full"
                 />
               </div>
-            </div>
-          </div>
-
-          {/* Thumbnails */}
-          <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-[#d4af37]">
-                {navigator.thumbsTitle}
-              </h3>
-              <span className="text-[11px] text-neutral-400">
-                {navigator.currentLabel}:{" "}
-                <span className="text-[#d4af37] font-semibold">
-                  #{currentSunset.id}
-                </span>
-              </span>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {SUNSET_VIDEOS.map((v) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  onClick={() => setSelectedSunsetId(v.id)}
-                  className={`group relative rounded-2xl overflow-hidden border transition ${
-                    selectedSunsetId === v.id
-                      ? "border-[#d4af37]"
-                      : "border-white/10 hover:border-[#d4af37]"
-                  }`}
-                >
-                  <img
-                    src={v.thumb}
-                    alt={`Sunset ${v.id}`}
-                    className="w-full h-28 object-cover group-hover:scale-105 transition-transform"
-                  />
-                  <span className="absolute bottom-1 right-2 bg-black/70 text-[10px] px-2 py-[1px] rounded-full text-[#d4af37]">
-                    #{v.id}
-                  </span>
-                </button>
-              ))}
             </div>
           </div>
         </section>
