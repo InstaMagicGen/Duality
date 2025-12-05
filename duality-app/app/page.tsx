@@ -2,35 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 
-// ==== IMPORTS DES FICHIERS À LA RACINE DU PROJET ====
-// Vidéos sunset
-import sunset1Video from "../Sunset-1V.mp4";
-import sunset2Video from "../Sunset-2V.mp4";
-import sunset3Video from "../Sunset-3V.mp4";
-import sunset4Video from "../Sunset-4V.mp4";
-
-// Images sunset
-import sunset1Img from "../sunset-1.jpeg";
-import sunset2Img from "../sunset-2.jpeg";
-import sunset3Img from "../sunset-3.jpeg";
-import sunset4Img from "../Sunset-4.jpeg";
-import sunset5Img from "../Sunset-5.jpeg";
-import sunset6Img from "../Sunset-6.jpeg";
-import sunset7Img from "../Sunset-7.jpeg";
-
-// Audio ambiance
-import sunsetAmbient from "../Sunset-ambient.mp4";
-
-// ================== TYPES & DONNÉES ==================
+type Lang = "fr" | "en";
+type Theme = "dark" | "light";
+type ActiveApp = "home" | "duality" | "navigator";
 
 type DualityResult = {
   future: string;
   shadow: string;
 };
-
-type Lang = "fr" | "en";
-type Experience = "home" | "duality" | "navigator";
-type DualityMode = "landing" | "session";
 
 type PersonalityTrait = {
   id: string;
@@ -47,191 +26,219 @@ const TRAITS: PersonalityTrait[] = [
   { id: "control", fr: "Dans le contrôle", en: "Controlling" },
 ];
 
-const SUNSET_SLIDES = [
-  { id: 1, video: sunset1Video, image: sunset1Img },
-  { id: 2, video: sunset2Video, image: sunset2Img },
-  { id: 3, video: sunset3Video, image: sunset3Img },
-  { id: 4, video: sunset4Video, image: sunset4Img },
-  { id: 5, image: sunset5Img },
-  { id: 6, image: sunset6Img },
-  { id: 7, image: sunset7Img },
+const SUNSET_VIDEOS = [
+  { id: 1, src: "/sunset/Sunset-1V.mp4", thumb: "/sunset/sunset-1.jpeg" },
+  { id: 2, src: "/sunset/Sunset-2V.mp4", thumb: "/sunset/sunset-2.jpeg" },
+  { id: 3, src: "/sunset/Sunset-3V.mp4", thumb: "/sunset/sunset-3.jpeg" },
+  { id: 4, src: "/sunset/Sunset-4V.mp4", thumb: "/sunset/sunset-4.jpeg" },
 ];
 
 const translations: Record<Lang, any> = {
   fr: {
-    appTitle: "Soulset • Duality Lab",
-    appSubtitle:
-      "Entre ton futur probable, ton ombre intérieure et ton coucher de soleil thérapeutique.",
-    experienceChoiceTitle: "Choisis ton expérience pour ce moment :",
-    expDualityTitle: "DUALITY",
-    expDualityDesc:
-      "Analyse rapide de ta dualité : ton futur probable (Life Echo) + la voix de ton ombre (ShadowTalk).",
-    expNavigatorTitle: "Soulset Navigator",
-    expNavigatorDesc:
-      "Sunset therapy guidée pour calmer le mental, relâcher la pression et revenir dans ton corps.",
-    startDuality: "Entrer dans Duality",
-    startNavigator: "Lancer la Sunset Therapy",
-
-    // Duality
-    dualityTagline:
-      "L’app qui te montre ton futur probable et ce que ton ombre essaie de te dire.",
-    landingTitle: "Comprends ta dualité avant de changer ta trajectoire.",
-    landingSubtitle:
-      "Une session Duality = ton futur probable (Life Echo) + la voix de ton ombre (ShadowTalk), générés à partir de tes mots et de ta personnalité.",
-    stepsTitle: "Comment ça fonctionne ?",
-    steps: [
-      "Tu choisis les traits qui te décrivent en ce moment.",
-      "Tu écris ce que tu vis ou ressens concrètement.",
-      "Duality te renvoie deux réponses courtes : ton futur et ton ombre.",
-    ],
-    ctaPrimary: "Commencer une session Duality",
-    profileTitle: "Mémoire de ta personnalité",
-    profileEmpty:
-      "Choisis jusqu’à 3 traits qui te ressemblent aujourd’hui. Cette mémoire reste sur ton appareil.",
-    personalityLabel: "Mémoire active",
-    backToIntro: "← Retour à l’intro Duality",
-    dayLabel: "Décris ce que tu vis ou ressens maintenant :",
-    dayPlaceholder:
-      "Exemple : Je me sens bloqué, j'hésite à prendre une décision importante...",
-    analyze: "Analyser ma Dualité",
-    futureTitle: "LIFE ECHO · Ton futur probable",
-    futureDesc:
-      "2 à 4 phrases courtes sur la trajectoire que tu es en train de nourrir.",
-    futureEmpty:
-      "Ton futur n'est pas encore généré. Écris quelque chose et lance l'analyse.",
-    shadowTitle: "SHADOWTALK · Ton ombre intérieure",
-    shadowDesc:
-      "2 à 4 phrases courtes sur ce que tu évites, répètes ou crées en coulisse.",
-    shadowEmpty:
-      "Ton ombre ne s'est pas encore exprimée. Partage quelque chose et lance l'analyse.",
-
-    // Sunset navigator
-    navigatorTitle: "Sunset Therapy • Soulset Navigator",
-    navigatorIntro:
-      "Ferme un peu la boucle mentale. Laisse le coucher de soleil faire le travail à ta place.",
-    breathingTitle: "Rituel rapide",
-    breathingSteps: [
-      "Inspire doucement pendant 4 secondes en regardant la lumière du sunset.",
-      "Garde l’air pendant 4 secondes, observe ce que tu ressens.",
-      "Expire lentement pendant 8 secondes, laisse tomber les tensions.",
-    ],
-    ambientOn: "Son d’ambiance actif",
-    ambientOff: "Activer le son d’ambiance",
-    previous: "Précédent",
-    next: "Suivant",
-
-    footer:
-      "Prototype v1 · Duality & Soulset Navigator · Tout est stocké côté utilisateur (aucune base de données).",
-    themeDark: "Mode sombre",
-    themeLight: "Mode clair",
+    common: {
+      dualityTitle: "DUALITY",
+      navigatorTitle: "Soulset Navigator",
+      backHome: "← Retour à l’écran d’accueil",
+      themeDark: "Sombre",
+      themeLight: "Clair",
+      footer:
+        "Prototype v1 · Tout est stocké localement côté utilisateur (aucune base de données).",
+    },
+    home: {
+      title: "Choisis ton expérience",
+      subtitle:
+        "Deux portes, deux énergies : Duality pour décoder ta trajectoire, Soulset Navigator pour apaiser ton système nerveux.",
+      dualityCardTitle: "DUALITY · Trajectoire & Ombre",
+      dualityCardText:
+        "Décris ce que tu vis maintenant. Duality te renvoie ton futur probable (Life Echo) et la voix de ton ombre (ShadowTalk).",
+      dualityButton: "Explorer Duality",
+      navigatorCardTitle: "Soulset Navigator · Sunset Therapy",
+      navigatorCardText:
+        "Une session courte pour respirer, regarder le coucher de soleil et laisser ton système se réguler.",
+      navigatorButton: "Lancer Soulset Navigator",
+    },
+    duality: {
+      tagline:
+        "L’app qui te montre ton futur probable et ce que ton ombre essaie de te dire.",
+      landingTitle: "Comprends ta dualité avant de changer ta trajectoire.",
+      landingSubtitle:
+        "Une session Duality = ton futur probable (Life Echo) + la voix de ton ombre (ShadowTalk), générés à partir de tes mots et de ta personnalité.",
+      stepsTitle: "Comment ça fonctionne ?",
+      steps: [
+        "Tu choisis les traits qui te décrivent en ce moment.",
+        "Tu écris ce que tu vis ou ressens.",
+        "Duality te renvoie deux réponses courtes : ton futur et ton ombre.",
+      ],
+      ctaPrimary: "Commencer une session",
+      profileTitle: "Mémoire de ta personnalité",
+      profileEmpty:
+        "Choisis jusqu’à 3 traits qui te ressemblent aujourd’hui. Cette mémoire reste sur ton appareil.",
+      personalityLabel: "Mémoire active",
+      backToIntro: "← Retour à l’intro Duality",
+      dayLabel: "Décris ce que tu vis ou ressens maintenant :",
+      dayPlaceholder:
+        "Exemple : Je me sens bloqué, j'hésite à prendre une décision importante...",
+      analyze: "Analyser ma Dualité",
+      futureTitle: "LIFE ECHO · Ton futur probable",
+      futureDesc:
+        "2 à 4 phrases courtes sur la trajectoire que tu es en train de nourrir.",
+      futureEmpty:
+        "Ton futur n'est pas encore généré. Écris quelque chose et lance l'analyse.",
+      shadowTitle: "SHADOWTALK · Ton ombre intérieure",
+      shadowDesc:
+        "2 à 4 phrases courtes sur ce que tu évites, répètes ou crées en coulisse.",
+      shadowEmpty:
+        "Ton ombre ne s'est pas encore exprimée. Partage quelque chose et lance l'analyse.",
+      emptyError: "Écris d'abord quelque chose.",
+      loading: "Analyse en cours...",
+    },
+    navigator: {
+      tagline: "Une mini retraite de coucher de soleil, depuis ton écran.",
+      heroTitle: "Sunset Therapy · Soulset Navigator",
+      heroText:
+        "Choisis une vidéo de sunset, mets le son, respire. Laisse ton système se calmer pendant quelques minutes.",
+      ctaSession: "Démarrer une session de sunset",
+      howTitle: "Comment utiliser la Sunset Therapy ?",
+      howSteps: [
+        "Choisis un sunset qui te parle visuellement.",
+        "Active le son ou ta propre musique calme.",
+        "Respire profondément (inspire 4s, bloque 4s, expire 6s).",
+        "Observe simplement sans jugement ce que tu ressens.",
+      ],
+      ambientTitle: "Bande son Sunset Ambient",
+      ambientText:
+        "Tu peux laisser tourner cette ambiance pendant que tu écris, réfléchis ou simplement te poses.",
+      thumbsTitle: "Choisis ton sunset du jour",
+      currentLabel: "Sunset en cours",
+    },
   },
   en: {
-    appTitle: "Soulset • Duality Lab",
-    appSubtitle:
-      "Between your probable future, your inner shadow and your sunset therapy.",
-    experienceChoiceTitle: "Choose your experience for this moment:",
-    expDualityTitle: "DUALITY",
-    expDualityDesc:
-      "Quick analysis of your duality: your probable future (Life Echo) + your shadow’s voice (ShadowTalk).",
-    expNavigatorTitle: "Soulset Navigator",
-    expNavigatorDesc:
-      "Guided sunset therapy to calm the mind, release pressure and come back into your body.",
-    startDuality: "Enter Duality",
-    startNavigator: "Start Sunset Therapy",
-
-    // Duality
-    dualityTagline:
-      "The app that shows your probable future and what your shadow is trying to say.",
-    landingTitle: "Understand your duality before changing your trajectory.",
-    landingSubtitle:
-      "One Duality session = your probable future (Life Echo) + your shadow’s voice (ShadowTalk), generated from your words and personality.",
-    stepsTitle: "How it works",
-    steps: [
-      "You pick a few traits that describe you right now.",
-      "You write what you are living or feeling.",
-      "Duality returns two short answers: your future and your shadow.",
-    ],
-    ctaPrimary: "Start a Duality session",
-    profileTitle: "Your personality memory",
-    profileEmpty:
-      "Choose up to 3 traits that fit you today. This memory stays on your device.",
-    personalityLabel: "Active memory",
-    backToIntro: "← Back to Duality intro",
-    dayLabel: "Describe what you are living or feeling now:",
-    dayPlaceholder:
-      "Example: I feel stuck, I hesitate to make an important decision...",
-    analyze: "Analyze my Duality",
-    futureTitle: "LIFE ECHO · Your probable future",
-    futureDesc: "2–4 short sentences about the trajectory you are feeding.",
-    futureEmpty:
-      "Your future is not generated yet. Write something and start the analysis.",
-    shadowTitle: "SHADOWTALK · Your inner shadow",
-    shadowDesc:
-      "2–4 short sentences about what you avoid, repeat or create backstage.",
-    shadowEmpty:
-      "Your shadow has not spoken yet. Share something and run the analysis.",
-
-    // Sunset navigator
-    navigatorTitle: "Sunset Therapy • Soulset Navigator",
-    navigatorIntro:
-      "Loosen the mental loop. Let the sunset do the work for a few minutes.",
-    breathingTitle: "Quick ritual",
-    breathingSteps: [
-      "Inhale gently for 4 seconds while watching the sunset light.",
-      "Hold for 4 seconds, just notice what you feel.",
-      "Exhale slowly for 8 seconds, let the tension drop.",
-    ],
-    ambientOn: "Ambient sound on",
-    ambientOff: "Turn on ambient sound",
-    previous: "Previous",
-    next: "Next",
-
-    footer:
-      "Prototype v1 · Duality & Soulset Navigator · Everything is stored on the user side (no database).",
-    themeDark: "Dark mode",
-    themeLight: "Light mode",
+    common: {
+      dualityTitle: "DUALITY",
+      navigatorTitle: "Soulset Navigator",
+      backHome: "← Back to home screen",
+      themeDark: "Dark",
+      themeLight: "Light",
+      footer:
+        "Prototype v1 · Everything is stored locally on the user side (no database).",
+    },
+    home: {
+      title: "Choose your experience",
+      subtitle:
+        "Two doors, two energies: Duality to decode your trajectory, Soulset Navigator to calm your nervous system.",
+      dualityCardTitle: "DUALITY · Trajectory & Shadow",
+      dualityCardText:
+        "Describe what you're living now. Duality returns your probable future (Life Echo) and your shadow’s voice (ShadowTalk).",
+      dualityButton: "Explore Duality",
+      navigatorCardTitle: "Soulset Navigator · Sunset Therapy",
+      navigatorCardText:
+        "A short session to breathe, watch the sunset and let your system regulate itself.",
+      navigatorButton: "Start Soulset Navigator",
+    },
+    duality: {
+      tagline:
+        "The app that shows your probable future and what your shadow is trying to say.",
+      landingTitle: "Understand your duality before changing your trajectory.",
+      landingSubtitle:
+        "One Duality session = your probable future (Life Echo) + your shadow’s voice (ShadowTalk), generated from your words and personality.",
+      stepsTitle: "How it works",
+      steps: [
+        "You pick a few traits that describe you right now.",
+        "You write what you are living or feeling.",
+        "Duality returns two short answers: your future and your shadow.",
+      ],
+      ctaPrimary: "Start a session",
+      profileTitle: "Your personality memory",
+      profileEmpty:
+        "Choose up to 3 traits that fit you today. This memory stays on your device.",
+      personalityLabel: "Active memory",
+      backToIntro: "← Back to intro",
+      dayLabel: "Describe what you are living or feeling now:",
+      dayPlaceholder:
+        "Example: I feel stuck, I hesitate to make an important decision...",
+      analyze: "Analyze my Duality",
+      futureTitle: "LIFE ECHO · Your probable future",
+      futureDesc:
+        "2–4 short sentences about the trajectory you are feeding.",
+      futureEmpty:
+        "Your future is not generated yet. Write something and start the analysis.",
+      shadowTitle: "SHADOWTALK · Your inner shadow",
+      shadowDesc:
+        "2–4 short sentences about what you avoid, repeat or create backstage.",
+      shadowEmpty:
+        "Your shadow has not spoken yet. Share something and run the analysis.",
+      emptyError: "Write something first.",
+      loading: "Analysis in progress...",
+    },
+    navigator: {
+      tagline: "A mini sunset retreat, from your screen.",
+      heroTitle: "Sunset Therapy · Soulset Navigator",
+      heroText:
+        "Choose a sunset video, turn on the sound, breathe. Let your system calm down for a few minutes.",
+      ctaSession: "Start a sunset session",
+      howTitle: "How to use Sunset Therapy?",
+      howSteps: [
+        "Pick a sunset that visually resonates with you.",
+        "Turn on the sound or your own calm music.",
+        "Breathe deeply (inhale 4s, hold 4s, exhale 6s).",
+        "Simply observe what you feel, without judging.",
+      ],
+      ambientTitle: "Sunset Ambient soundtrack",
+      ambientText:
+        "You can let this ambience run while you write, think, or just rest.",
+      thumbsTitle: "Choose today’s sunset",
+      currentLabel: "Current sunset",
+    },
   },
 };
 
-// ================== COMPOSANT PRINCIPAL ==================
-
 export default function Home() {
   const [lang, setLang] = useState<Lang>("fr");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [hydrated, setHydrated] = useState(false);
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [activeApp, setActiveApp] = useState<ActiveApp>("home");
 
-  const [experience, setExperience] = useState<Experience>("home");
-  const [dualityMode, setDualityMode] = useState<DualityMode>("landing");
+  // Duality internal state
+  const [dualityMode, setDualityMode] = useState<"landing" | "session">(
+    "landing"
+  );
   const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
   const [text, setText] = useState("");
   const [result, setResult] = useState<DualityResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Soulset navigator
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [ambientOn, setAmbientOn] = useState(false);
+  // Navigator state
+  const [selectedSunsetId, setSelectedSunsetId] = useState<number>(1);
 
   const t = translations[lang];
+  const { common, home, duality, navigator } = t;
 
-  // ===== Hydratation + détection langue / thème =====
+  // Detect language & theme on client
   useEffect(() => {
-    setHydrated(true);
+    if (typeof window === "undefined") return;
 
-    if (typeof window !== "undefined") {
-      const userLang = navigator.language?.toLowerCase() || "fr";
-      setLang(userLang.startsWith("fr") ? "fr" : "en");
+    const userLang = navigator.language?.toLowerCase() || "fr";
+    setLang(userLang.startsWith("fr") ? "fr" : "en");
 
-      const prefersDark =
-        window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true;
-      const initialTheme = prefersDark ? "dark" : "light";
-      setTheme(initialTheme);
-      document.documentElement.setAttribute("data-theme", initialTheme);
+    const prefersDark =
+      window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true;
+    const initialTheme: Theme = prefersDark ? "dark" : "light";
+    setTheme(initialTheme);
+    document.documentElement.setAttribute("data-theme", initialTheme);
+
+    const stored = window.localStorage.getItem("duality_traits");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) setSelectedTraits(parsed);
+      } catch {
+        // ignore
+      }
     }
   }, []);
 
   function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
+    const next: Theme = theme === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
   }
@@ -260,9 +267,7 @@ export default function Home() {
     setResult(null);
 
     if (!text.trim()) {
-      setError(
-        lang === "fr" ? "Écris d'abord quelque chose." : "Write something first."
-      );
+      setError(duality.emptyError);
       return;
     }
 
@@ -280,177 +285,140 @@ export default function Home() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Erreur serveur.");
+        throw new Error(data.error || "Server error");
       }
       setResult(data);
     } catch (err: any) {
-      setError(err.message || "Erreur inconnue.");
+      setError(err.message || "Unknown error");
     } finally {
       setLoading(false);
     }
   }
 
-  function goNextSlide() {
-    setActiveSlide((prev) => (prev + 1) % SUNSET_SLIDES.length);
-  }
-
-  function goPrevSlide() {
-    setActiveSlide((prev) =>
-      prev === 0 ? SUNSET_SLIDES.length - 1 : prev - 1
-    );
-  }
-
-  if (!hydrated) {
-    return <main className="min-h-screen bg-black" />;
-  }
-
-  const currentSlide = SUNSET_SLIDES[activeSlide];
+  const currentSunset =
+    SUNSET_VIDEOS.find((v) => v.id === selectedSunsetId) || SUNSET_VIDEOS[0];
 
   return (
     <main className="min-h-screen flex flex-col items-center px-4 py-6 bg-black text-white">
       {/* HEADER GLOBAL */}
       <header className="w-full max-w-5xl mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-[#d4af37] flex items-center justify-center text-lg font-semibold shadow-lg shadow-yellow-500/30">
-            Δ
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-[#d4af37] flex items-center justify-center text-lg font-semibold">
+              Δ
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-semibold tracking-wide">
+                {activeApp === "navigator"
+                  ? common.navigatorTitle
+                  : common.dualityTitle}
+              </h1>
+              {activeApp === "navigator" ? (
+                <p className="text-xs md:text-sm text-neutral-400">
+                  {navigator.tagline}
+                </p>
+              ) : activeApp === "duality" ? (
+                <p className="text-xs md:text-sm text-neutral-400">
+                  {duality.tagline}
+                </p>
+              ) : (
+                <p className="text-xs md:text-sm text-neutral-400">
+                  {home.subtitle}
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-wide">
-              {t.appTitle}
-            </h1>
-            <p className="text-xs md:text-sm text-neutral-400">
-              {t.appSubtitle}
-            </p>
-          </div>
+
+          {activeApp !== "home" && (
+            <button
+              onClick={() => {
+                setActiveApp("home");
+                setDualityMode("landing");
+              }}
+              className="text-[11px] text-neutral-400 hover:text-neutral-100 underline-offset-4 hover:underline mt-2"
+            >
+              {common.backHome}
+            </button>
+          )}
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            className="px-3 py-1 rounded-full border border-[#d4af37] text-xs bg-black hover:bg-[#111111] transition"
-          >
-            {theme === "dark" ? t.themeDark : t.themeLight}
-          </button>
-        </div>
+        <button
+          onClick={toggleTheme}
+          className="self-start md:self-auto px-3 py-1 rounded-full border border-[#d4af37] text-xs bg-black hover:bg-[#111111] transition"
+        >
+          {theme === "dark" ? common.themeDark : common.themeLight}
+        </button>
       </header>
 
-      {/* ===================== ÉCRAN D'ACCUEIL ===================== */}
-      {experience === "home" && (
+      {/* HOME : CHOIX ENTRE LES 2 APPS */}
+      {activeApp === "home" && (
         <section className="w-full max-w-5xl space-y-6">
-          <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8">
+          <div className="text-center mb-2">
             <h2 className="text-xl md:text-2xl font-semibold mb-2">
-              {t.experienceChoiceTitle}
+              {home.title}
             </h2>
-            <p className="text-sm text-neutral-300 mb-6">{t.dualityTagline}</p>
+            <p className="text-sm text-neutral-300">{home.subtitle}</p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Duality card */}
-              <button
-                onClick={() => {
-                  setExperience("duality");
-                  setDualityMode("landing");
-                }}
-                className="group text-left rounded-3xl border border-[#d4af37] bg-gradient-to-br from-black via-black to-[#1b1308] p-5 hover:border-yellow-300 transition"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-semibold text-[#d4af37]">
-                    {t.expDualityTitle}
-                  </span>
-                  <span className="text-[11px] px-2 py-[2px] rounded-full border border-[#d4af37] text-[#d4af37]">
-                    5–7 min
-                  </span>
-                </div>
-                <p className="text-xs text-neutral-300 mb-4">
-                  {t.expDualityDesc}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Duality card */}
+            <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {home.dualityCardTitle}
+                </h3>
+                <p className="text-sm text-neutral-300 mb-4">
+                  {home.dualityCardText}
                 </p>
-                <span className="inline-flex items-center gap-2 text-xs font-semibold text-black bg-[#d4af37] px-4 py-2 rounded-full group-hover:bg-yellow-300">
-                  {t.startDuality}
-                  <span>↗</span>
-                </span>
+              </div>
+              <button
+                onClick={() => setActiveApp("duality")}
+                className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] transition"
+              >
+                {home.dualityButton}
               </button>
+            </div>
 
-              {/* Soulset Navigator card */}
-              <button
-                onClick={() => setExperience("navigator")}
-                className="group text-left rounded-3xl border border-[#d4af37] bg-gradient-to-br from-black via-[#05030a] to-[#170c25] p-5 hover:border-yellow-300 transition"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-semibold text-[#d4af37]">
-                    {t.expNavigatorTitle}
-                  </span>
-                  <span className="text-[11px] px-2 py-[2px] rounded-full border border-[#d4af37] text-[#d4af37]">
-                    3–10 min
-                  </span>
-                </div>
-                <p className="text-xs text-neutral-300 mb-4">
-                  {t.expNavigatorDesc}
+            {/* Navigator card */}
+            <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {home.navigatorCardTitle}
+                </h3>
+                <p className="text-sm text-neutral-300 mb-4">
+                  {home.navigatorCardText}
                 </p>
-                <span className="inline-flex items-center gap-2 text-xs font-semibold text-black bg-[#d4af37] px-4 py-2 rounded-full group-hover:bg-yellow-300">
-                  {t.startNavigator}
-                  <span>☼</span>
-                </span>
+              </div>
+              <button
+                onClick={() => setActiveApp("navigator")}
+                className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] transition"
+              >
+                {home.navigatorButton}
               </button>
             </div>
           </div>
         </section>
       )}
 
-      {/* ===================== DUALITY ===================== */}
-      {experience === "duality" && (
+      {/* DUALITY APP */}
+      {activeApp === "duality" && (
         <>
-          {/* Bandeau retour & mémoire */}
-          <section className="w-full max-w-5xl mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <button
-              onClick={() => {
-                if (dualityMode === "landing") setExperience("home");
-                else setDualityMode("landing");
-              }}
-              className="text-xs text-neutral-400 hover:text-neutral-100 underline-offset-4 hover:underline"
-            >
-              {dualityMode === "landing" ? "← Home" : t.backToIntro}
-            </button>
-
-            <div className="rounded-full border border-[#d4af37] px-4 py-2 text-[11px] bg-black/80 text-neutral-200 flex flex-wrap gap-2 items-center">
-              <span className="text-[#d4af37] font-semibold">
-                {t.personalityLabel} :
-              </span>
-              {selectedTraits.length ? (
-                TRAITS.filter((tr) => selectedTraits.includes(tr.id)).map(
-                  (tr) => (
-                    <span
-                      key={tr.id}
-                      className="px-2 py-[2px] rounded-full border border-[#d4af37] text-[11px]"
-                    >
-                      {lang === "fr" ? tr.fr : tr.en}
-                    </span>
-                  )
-                )
-              ) : (
-                <span className="text-neutral-400">
-                  {lang === "fr"
-                    ? "aucun trait sélectionné."
-                    : "no trait selected."}
-                </span>
-              )}
-            </div>
-          </section>
-
-          {/* LANDING */}
+          {/* MODE LANDING */}
           {dualityMode === "landing" && (
             <section className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8">
                 <h2 className="text-xl md:text-2xl font-semibold mb-3">
-                  {t.landingTitle}
+                  {duality.landingTitle}
                 </h2>
                 <p className="text-sm text-neutral-300 mb-6">
-                  {t.landingSubtitle}
+                  {duality.landingSubtitle}
                 </p>
 
                 <p className="text-xs font-semibold text-neutral-400 mb-2 uppercase tracking-wide">
-                  {t.stepsTitle}
+                  {duality.stepsTitle}
                 </p>
                 <ul className="space-y-2 text-xs text-neutral-300 mb-6">
-                  {t.steps.map((s: string, i: number) => (
+                  {duality.steps.map((s: string, i: number) => (
                     <li key={i} className="flex gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#d4af37]" />
                       <span>{s}</span>
@@ -462,16 +430,16 @@ export default function Home() {
                   onClick={() => setDualityMode("session")}
                   className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] transition"
                 >
-                  {t.ctaPrimary}
+                  {duality.ctaPrimary}
                 </button>
               </div>
 
               <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8 flex flex-col">
                 <h3 className="text-sm font-semibold text-[#d4af37] mb-2">
-                  {t.profileTitle}
+                  {duality.profileTitle}
                 </h3>
                 <p className="text-xs text-neutral-300 mb-4">
-                  {t.profileEmpty}
+                  {duality.profileEmpty}
                 </p>
 
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -497,10 +465,12 @@ export default function Home() {
 
                 <div className="mt-auto text-[11px] text-neutral-400">
                   <span className="text-[#d4af37] font-semibold">
-                    {t.personalityLabel} :
+                    {duality.personalityLabel} :
                   </span>{" "}
                   {selectedTraits.length
-                    ? TRAITS.filter((tr) => selectedTraits.includes(tr.id))
+                    ? TRAITS.filter((tr) =>
+                        selectedTraits.includes(tr.id)
+                      )
                         .map((tr) => (lang === "fr" ? tr.fr : tr.en))
                         .join(" • ")
                     : lang === "fr"
@@ -511,170 +481,201 @@ export default function Home() {
             </section>
           )}
 
-          {/* SESSION */}
+          {/* MODE SESSION */}
           {dualityMode === "session" && (
-            <section className="w-full max-w-5xl rounded-3xl border border-[#d4af37] bg-black/90 p-6 md:p-8">
-              <form onSubmit={handleAnalyze} className="space-y-3 mb-6">
-                <label className="block text-sm text-neutral-100 mb-1">
-                  {t.dayLabel}
-                </label>
-                <textarea
-                  className="w-full h-32 rounded-2xl bg-black border border-neutral-600 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none placeholder:text-neutral-500"
-                  placeholder={t.dayPlaceholder}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                />
-
-                {error && (
-                  <p className="text-xs text-red-400 mt-1">
-                    {error}
-                  </p>
-                )}
-
+            <>
+              <section className="w-full max-w-5xl mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] disabled:opacity-60 transition"
+                  onClick={() => setDualityMode("landing")}
+                  className="text-xs text-neutral-400 hover:text-neutral-100 underline-offset-4 hover:underline"
                 >
-                  {loading ? "Analyse en cours..." : t.analyze}
+                  {duality.backToIntro}
                 </button>
-              </form>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
-                  <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
-                    {t.futureTitle}
-                  </h2>
-                  <p className="text-xs text-neutral-300 mb-2">
-                    {t.futureDesc}
-                  </p>
-                  <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
-                    {result?.future ? result.future : t.futureEmpty}
+                <div className="rounded-full border border-[#d4af37] px-4 py-2 text-[11px] bg-black/80 text-neutral-200 flex flex-wrap gap-2 items-center">
+                  <span className="text-[#d4af37] font-semibold">
+                    {duality.personalityLabel} :
+                  </span>
+                  {selectedTraits.length ? (
+                    TRAITS.filter((tr) => selectedTraits.includes(tr.id)).map(
+                      (tr) => (
+                        <span
+                          key={tr.id}
+                          className="px-2 py-[2px] rounded-full border border-[#d4af37] text-[11px]"
+                        >
+                          {lang === "fr" ? tr.fr : tr.en}
+                        </span>
+                      )
+                    )
+                  ) : (
+                    <span className="text-neutral-400">
+                      {lang === "fr"
+                        ? "aucun trait sélectionné (à définir sur l’intro)."
+                        : "no trait selected (set on the intro)."}
+                    </span>
+                  )}
+                </div>
+              </section>
+
+              <section className="w-full max-w-5xl rounded-3xl border border-[#d4af37] bg-black/90 p-6 md:p-8">
+                <form onSubmit={handleAnalyze} className="space-y-3 mb-6">
+                  <label className="block text-sm text-neutral-100 mb-1">
+                    {duality.dayLabel}
+                  </label>
+                  <textarea
+                    className="w-full h-32 rounded-2xl bg-black border border-neutral-600 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none placeholder:text-neutral-500"
+                    placeholder={duality.dayPlaceholder}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                  />
+
+                  {error && (
+                    <p className="text-xs text-red-400 mt-1">{error}</p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-full bg-[#d4af37] text-black py-2.5 text-sm font-semibold hover:bg-[#f0cf6b] disabled:opacity-60 transition"
+                  >
+                    {loading ? duality.loading : duality.analyze}
+                  </button>
+                </form>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
+                    <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {duality.futureTitle}
+                    </h2>
+                    <p className="text-xs text-neutral-300 mb-2">
+                      {duality.futureDesc}
+                    </p>
+                    <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
+                      {result?.future ? result.future : duality.futureEmpty}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
+                    <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
+                      {duality.shadowTitle}
+                    </h2>
+                    <p className="text-xs text-neutral-300 mb-2">
+                      {duality.shadowDesc}
+                    </p>
+                    <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
+                      {result?.shadow ? result.shadow : duality.shadowEmpty}
+                    </div>
                   </div>
                 </div>
-
-                <div className="rounded-2xl border border-[#d4af37] bg-black p-4">
-                  <h2 className="text-sm font-semibold text-[#d4af37] mb-1">
-                    {t.shadowTitle}
-                  </h2>
-                  <p className="text-xs text-neutral-300 mb-2">
-                    {t.shadowDesc}
-                  </p>
-                  <div className="mt-2 text-sm leading-relaxed text-neutral-50 whitespace-pre-line">
-                    {result?.shadow ? result.shadow : t.shadowEmpty}
-                  </div>
-                </div>
-              </div>
-            </section>
+              </section>
+            </>
           )}
         </>
       )}
 
-      {/* ===================== SOULSET NAVIGATOR / SUNSET ===================== */}
-      {experience === "navigator" && (
-        <section className="w-full max-w-5xl space-y-5">
-          <button
-            onClick={() => setExperience("home")}
-            className="text-xs text-neutral-400 hover:text-neutral-100 underline-offset-4 hover:underline"
-          >
-            ← Home
-          </button>
-
-          <div className="rounded-3xl border border-[#d4af37] bg-black/80 p-6 md:p-8 space-y-5">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div>
-                <h2 className="text-xl md:text-2xl font-semibold mb-1">
-                  {t.navigatorTitle}
-                </h2>
-                <p className="text-xs md:text-sm text-neutral-300">
-                  {t.navigatorIntro}
-                </p>
-              </div>
-
-              <button
-                onClick={() => setAmbientOn((p) => !p)}
-                className="self-start md:self-auto px-4 py-2 rounded-full border border-[#d4af37] text-xs bg-black hover:bg-[#111111] transition flex items-center gap-2"
-              >
-                <span>{ambientOn ? "🔊" : "🎧"}</span>
-                <span>{ambientOn ? t.ambientOn : t.ambientOff}</span>
+      {/* SOULSET NAVIGATOR / SUNSET THERAPY */}
+      {activeApp === "navigator" && (
+        <section className="w-full max-w-5xl space-y-6">
+          {/* Hero */}
+          <div className="rounded-3xl border border-[#d4af37] bg-gradient-to-b from-black via-black to-[#111111] p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h2 className="text-xl md:text-2xl font-semibold mb-2">
+                {navigator.heroTitle}
+              </h2>
+              <p className="text-sm text-neutral-300 mb-4">
+                {navigator.heroText}
+              </p>
+              <button className="rounded-full bg-[#d4af37] text-black py-2.5 px-6 text-sm font-semibold hover:bg-[#f0cf6b] transition">
+                {navigator.ctaSession}
               </button>
             </div>
-
-            {/* Player sunset */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#d4af37] bg-black/90">
-              <div className="aspect-[16/9] w-full bg-black">
-                {currentSlide.video ? (
-                  <video
-                    key={activeSlide}
-                    src={currentSlide.video}
-                    autoPlay
-                    loop
-                    muted={!ambientOn}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src={currentSlide.image as string}
-                    alt="Sunset"
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-
-              {/* Contrôles */}
-              <div className="flex items-center justify-between px-4 py-3 text-xs bg-black/70 backdrop-blur">
-                <button
-                  onClick={goPrevSlide}
-                  className="px-3 py-1 rounded-full border border-[#d4af37] hover:bg-[#111111]"
-                >
-                  {t.previous}
-                </button>
-
-                <div className="flex items-center gap-2">
-                  {SUNSET_SLIDES.map((slide, idx) => (
-                    <button
-                      key={slide.id}
-                      onClick={() => setActiveSlide(idx)}
-                      className={`h-2 w-2 rounded-full border border-[#d4af37] ${
-                        idx === activeSlide ? "bg-[#d4af37]" : "bg-transparent"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  onClick={goNextSlide}
-                  className="px-3 py-1 rounded-full border border-[#d4af37] hover:bg-[#111111]"
-                >
-                  {t.next}
-                </button>
-              </div>
+            <div className="rounded-2xl border border-white/10 overflow-hidden bg-black/60">
+              <video
+                src={currentSunset.src}
+                controls
+                className="w-full"
+                poster={currentSunset.thumb}
+              />
             </div>
+          </div>
 
-            {/* Rituel respiration */}
-            <div className="rounded-2xl border border-[#d4af37] bg-black/80 p-4">
+          {/* How to + ambient */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-5">
               <h3 className="text-sm font-semibold text-[#d4af37] mb-2">
-                {t.breathingTitle}
+                {navigator.howTitle}
               </h3>
-              <ul className="text-xs text-neutral-300 space-y-2">
-                {t.breathingSteps.map((step: string, idx: number) => (
-                  <li key={idx} className="flex gap-2">
+              <ul className="space-y-2 text-xs text-neutral-300">
+                {navigator.howSteps.map((s: string, i: number) => (
+                  <li key={i} className="flex gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#d4af37]" />
-                    <span>{step}</span>
+                    <span>{s}</span>
                   </li>
                 ))}
               </ul>
             </div>
+
+            <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-5 flex flex-col gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-[#d4af37] mb-1">
+                  {navigator.ambientTitle}
+                </h3>
+                <p className="text-xs text-neutral-300 mb-3">
+                  {navigator.ambientText}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 overflow-hidden bg-black/60">
+                <video
+                  src="/sunset/Sunset-ambient.mp4"
+                  controls
+                  className="w-full"
+                />
+              </div>
+            </div>
           </div>
 
-          {ambientOn && (
-            <audio src={sunsetAmbient} autoPlay loop />
-          )}
+          {/* Thumbnails */}
+          <div className="rounded-3xl border border-[#d4af37] bg-black/90 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-[#d4af37]">
+                {navigator.thumbsTitle}
+              </h3>
+              <span className="text-[11px] text-neutral-400">
+                {navigator.currentLabel}:{" "}
+                <span className="text-[#d4af37] font-semibold">
+                  #{currentSunset.id}
+                </span>
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {SUNSET_VIDEOS.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => setSelectedSunsetId(v.id)}
+                  className={`group relative rounded-2xl overflow-hidden border transition ${
+                    selectedSunsetId === v.id
+                      ? "border-[#d4af37]"
+                      : "border-white/10 hover:border-[#d4af37]"
+                  }`}
+                >
+                  <img
+                    src={v.thumb}
+                    alt={`Sunset ${v.id}`}
+                    className="w-full h-28 object-cover group-hover:scale-105 transition-transform"
+                  />
+                  <span className="absolute bottom-1 right-2 bg-black/70 text-[10px] px-2 py-[1px] rounded-full text-[#d4af37]">
+                    #{v.id}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </section>
       )}
 
       <footer className="mt-8 text-[10px] text-neutral-500 text-center max-w-4xl">
-        {t.footer}
+        {common.footer}
       </footer>
     </main>
   );
