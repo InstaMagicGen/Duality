@@ -1,4 +1,3 @@
-// app/api/duality/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
 
@@ -8,84 +7,114 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const FAL_KEY = process.env.FAL_KEY;
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const text = (body?.text ?? "").toString();
-    const lang = body?.lang === "en" ? "en" : "fr";
-    const traits = Array.isArray(body?.traits) ? body.traits : [];
+    const { text, lang, traits } = await req.json();
 
-    if (!text.trim()) {
+    if (!text || typeof text !== "string") {
       return NextResponse.json(
         { error: "Missing text" },
         { status: 400 }
       );
     }
 
-    const traitsDescription =
-      traits.length > 0
+    const traitsLine =
+      Array.isArray(traits) && traits.length
         ? (lang === "fr"
-            ? `Traits actuels de la personne : ${traits.join(", ")}.`
-            : `Current traits of the person: ${traits.join(", ")}.`)
-        : lang === "fr"
-        ? "Aucun trait spécifique indiqué."
-        : "No specific traits indicated.";
+            ? `Traits actuels : ${traits.join(", ")}`
+            : `Current traits: ${traits.join(", ")}`)
+        : "";
 
-    const systemPrompt =
+    const system =
       lang === "fr"
-        ? `Tu es "Duality", une IA qui renvoie deux réponses courtes et percutantes :
-1) "future" : LIFE ECHO, le futur probable si la personne continue comme maintenant.
-2) "shadow" : SHADOWTALK, ce que son ombre intérieure essaie de lui dire.
+        ? `Tu es la conscience intérieure de la personne.
+Tu ne dis JAMAIS que tu es une IA.
+Tu produis uniquement un JSON strict :
+{"future":"...", "shadow":"..."}
 
-Contraintes :
-- Réponds STRICTEMENT en JSON valide : {"future": "...", "shadow": "..."}.
-- Pas de texte en dehors du JSON.
-- Chaque champ fait 2 à 4 phrases MAX, style conversationnel, direct mais bienveillant.
-- Les réponses ne doivent pas trop se ressembler d’une analyse à l’autre : varie le ton et les angles.
-- Langue : FRANÇAIS uniquement.`
-        : `You are "Duality", an AI that returns two short and punchy answers:
-1) "future": LIFE ECHO, the probable future if the person continues like now.
-2) "shadow": SHADOWTALK, what their inner shadow is trying to say.
+- future : 2 à 4 phrases lucides, bienveillantes, comme si elle se parlait à elle-même du futur probable.
+- shadow : 2 à 4 phrases honnêtes comme si son ombre lui parlait avec compassion.`
+        : `You are the person's inner conscience.
+You NEVER say you are an AI.
+You output strict JSON:
+{"future":"...", "shadow":"..."}
 
-Constraints:
-- Answer STRICTLY as valid JSON: {"future": "...", "shadow": "..."}.
-- No text outside the JSON.
-- Each field is 2–4 sentences MAX, conversational, direct but kind.
-- Answers should not always sound the same: vary tone and angles from one analysis to another.
-- Language: ENGLISH only.`;
-
-    const userContent =
-      (lang === "fr"
-        ? `Contexte traits : ${traitsDescription}\nTexte utilisateur : ${text}`
-        : `Traits context: ${traitsDescription}\nUser text: ${text}`);
+- future: 2–4 lucid and kind sentences as self-talk about the probable future.
+- shadow: 2–4 honest sentences as the shadow speaking with compassion.`;
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.9,
-      response_format: { type: "json_object" },
+      model: "llama-3.1-70b-versatile",
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userContent },
+        { role: "system", content: system },
+        { role: "user", content: `${traitsLine}\n\n${text}` },
       ],
+      temperature: 0.95,
+      max_tokens: 420,
     });
 
     const raw = completion.choices[0]?.message?.content ?? "{}";
-    let parsed: { future?: string; shadow?: string };
+
+    let future = "";
+    let shadow = "";
 
     try {
-      parsed = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      future = String(parsed.future ?? "");
+      shadow = String(parsed.shadow ?? "");
     } catch {
-      parsed = { future: raw, shadow: "" };
+      future = raw;
+      shadow =
+        lang === "fr"
+          ? "Ton ombre tente de te parler, mais le message est brouillé."
+          : "Your shadow is trying to speak, but the message is blurred.";
+    }
+
+    // ===== AVATAR FAL =====
+    let avatarUrl: string | null = null;
+
+    if (FAL_KEY) {
+      try {
+        const falRes = await fetch("https://fal.run/fal-ai/flux-1.1-pro", {
+          method: "POST",
+          headers: {
+            Authorization: `Key ${FAL_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input: {
+              prompt:
+                (lang === "fr"
+                  ? "Portrait 3D stylisé, avatar symbolique, énergie émotionnelle, lumière douce, centrée."
+                  : "Stylized 3D symbolic avatar, emotional energy, soft light, centered."),
+              width: 768,
+              height: 768,
+            },
+          }),
+        });
+
+        const falJson = await falRes.json();
+
+        avatarUrl =
+          falJson.images?.[0]?.url ??
+          falJson.image?.url ??
+          falJson.output?.[0]?.url ??
+          null;
+      } catch (err) {
+        console.error("Fal avatar error:", err);
+      }
     }
 
     return NextResponse.json({
-      future: parsed.future ?? "",
-      shadow: parsed.shadow ?? "",
+      future,
+      shadow,
+      avatarUrl,
     });
   } catch (error) {
     console.error("Duality API error:", error);
     return NextResponse.json(
-      { error: "Erreur interne Duality." },
+      { error: "Internal error" },
       { status: 500 }
     );
   }

@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -19,8 +18,8 @@ export default function HomePage() {
             Choisis ton expérience
           </h1>
           <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto">
-            Duality explore ton futur probable et ton ombre intérieure. Soulset
-            Navigator t’offre une phrase miroir accompagnée d’un sunset immersif.
+            Duality explore ton futur probable et ton ombre intérieure.
+            Soulset Navigator t’offre une phrase miroir accompagnée d’un sunset immersif.
           </p>
         </div>
 
@@ -42,8 +41,8 @@ export default function HomePage() {
               <p className="text-sm text-slate-300 mb-4">
                 Tu écris ce que tu vis. Duality génère deux miroirs :{" "}
                 <span className="text-amber-300">Life Echo</span> (la trajectoire
-                que tu nourris) et{" "}
-                <span className="text-amber-300">Shadowtalk</span> (ton ombre).
+                que tu nourris) et <span className="text-amber-300">Shadowtalk</span>{" "}
+                (ton ombre).
               </p>
               <span className="inline-flex items-center gap-2 text-xs font-medium text-amber-300">
                 Lancer Duality
@@ -66,8 +65,8 @@ export default function HomePage() {
                 Sunset Therapy – Une phrase miroir + un sunset immersif
               </h2>
               <p className="text-sm text-slate-200 mb-4">
-                Tu décris ton état du moment. L’IA t’envoie une phrase courte
-                pour recadrer ton regard, projetée sur un sunset vidéo ou photo.
+                Tu décris ton état du moment. L’IA te renvoie une phrase courte
+                comme une conscience intérieure, projetée sur un coucher de soleil.
               </p>
               <span className="inline-flex items-center gap-2 text-xs font-medium text-sky-200">
                 Commencer la Sunset Therapy

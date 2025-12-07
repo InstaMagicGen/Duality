@@ -1,83 +1,69 @@
-// app/duality/page.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+type Lang = "fr" | "en";
 
 type DualityResult = {
   future: string;
   shadow: string;
+  avatarUrl?: string | null;
 };
 
 export default function DualityPage() {
   const router = useRouter();
 
+  const [lang, setLang] = useState<Lang>("fr");
+
   const [text, setText] = useState("");
   const [result, setResult] = useState<DualityResult | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [avatarLoading, setAvatarLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasAnalyzed, setHasAnalyzed] = useState(false);
+
+  // Langue auto selon système
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const userLang = navigator.language?.toLowerCase() || "fr";
+    setLang(userLang.startsWith("fr") ? "fr" : "en");
+  }, []);
 
   async function handleAnalyze(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setResult(null);
-    setAvatarUrl(null);
 
     if (!text.trim()) {
-      setError("Écris quelque chose avant de lancer l’analyse.");
+      setError(
+        lang === "fr"
+          ? "Écris quelque chose avant de lancer l’analyse."
+          : "Write something before running the analysis."
+      );
       return;
     }
 
     try {
       setLoading(true);
 
-      // 1) Appel à ton endpoint d’analyse (Groq / OpenAI côté serveur)
       const res = await fetch("/api/duality", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, lang: "fr" }),
+        body: JSON.stringify({ text, lang, traits: [] }),
       });
 
       const data = await res.json();
+
       if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de l’analyse.");
+        throw new Error(data.error || "Erreur serveur.");
       }
 
       setResult({
-        future: data.future ?? "",
-        shadow: data.shadow ?? "",
+        future: data.future,
+        shadow: data.shadow,
+        avatarUrl: data.avatarUrl ?? null,
       });
-      setHasAnalyzed(true);
-
-      // 2) Avatar FAL.ai (endpoint séparé)
-      try {
-        setAvatarLoading(true);
-        const avatarRes = await fetch("/api/avatar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text }),
-        });
-        const avatarData = await avatarRes.json();
-        if (avatarRes.ok) {
-          const url =
-            avatarData.url ||
-            avatarData.imageUrl ||
-            avatarData.avatarUrl ||
-            avatarData.output?.image_url;
-          if (url) setAvatarUrl(url);
-        }
-      } catch (err) {
-        console.error("Erreur avatar:", err);
-      } finally {
-        setAvatarLoading(false);
-      }
     } catch (err: any) {
-      console.error(err);
       setError(err.message || "Erreur inconnue.");
-      setHasAnalyzed(false);
     } finally {
       setLoading(false);
     }
@@ -85,7 +71,7 @@ export default function DualityPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white px-4 py-5">
-      {/* Barre supérieure */}
+      {/* Header */}
       <header className="max-w-5xl mx-auto mb-6 flex items-center justify-between gap-4">
         <button
           onClick={() => router.push("/")}
@@ -94,36 +80,42 @@ export default function DualityPage() {
           <span className="inline-block h-4 w-4 rounded-full border border-slate-500 flex items-center justify-center text-[10px]">
             ←
           </span>
-          Retour à l’accueil
+          {lang === "fr" ? "Retour à l’accueil" : "Back to home"}
         </button>
         <div className="text-right">
           <p className="text-[11px] uppercase tracking-[0.3em] text-amber-300">
             Duality
           </p>
           <p className="text-xs text-slate-400">
-            Futur probable &amp; ombre intérieure
+            {lang === "fr"
+              ? "Futur probable & ombre intérieure"
+              : "Probable future & inner shadow"}
           </p>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Carte input + bouton */}
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Carte input */}
         <section className="rounded-3xl border border-amber-500/40 bg-black/70 backdrop-blur-xl px-5 py-5 md:px-7 md:py-6 shadow-[0_0_70px_rgba(212,175,55,0.25)]">
           <h1 className="text-xl md:text-2xl font-semibold mb-2">
-            Écris ce que tu vis maintenant
+            {lang === "fr"
+              ? "Écris ce que tu vis maintenant"
+              : "Write what you're going through right now"}
           </h1>
           <p className="text-sm text-slate-300 mb-4">
-            Quelques lignes suffisent. Duality va générer deux miroirs :{" "}
-            <span className="text-amber-300 font-medium">Life Echo</span> (la
-            trajectoire que tu nourris) et{" "}
-            <span className="text-amber-300 font-medium">Shadowtalk</span> (ce
-            que ton ombre essaie de te dire).
+            {lang === "fr"
+              ? "Quelques lignes suffisent. Duality va générer deux miroirs : Life Echo (la trajectoire probable) et Shadowtalk (ce que ton ombre cherche à te dire)."
+              : "A few lines are enough. Duality will create two mirrors: Life Echo (probable trajectory) and Shadowtalk (what your shadow is trying to say)."}
           </p>
 
           <form onSubmit={handleAnalyze} className="space-y-3">
             <textarea
               className="w-full h-32 md:h-40 rounded-2xl bg-black/80 border border-slate-700 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400/70 placeholder:text-slate-500"
-              placeholder="Exemple : Je me sens perdu, j’ai l’impression de tourner en rond malgré tous mes efforts..."
+              placeholder={
+                lang === "fr"
+                  ? "Exemple : Je me sens perdu, j’ai l’impression de tourner en rond malgré tous mes efforts..."
+                  : "Example: I feel lost, like I’m going in circles despite all my efforts..."
+              }
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
@@ -137,80 +129,81 @@ export default function DualityPage() {
               disabled={loading}
               className="inline-flex items-center justify-center rounded-full bg-amber-400 text-black text-sm font-semibold px-6 py-2.5 shadow-[0_0_25px_rgba(212,175,55,0.7)] hover:bg-amber-300 disabled:opacity-60 disabled:shadow-none transition"
             >
-              {loading ? "Analyse en cours..." : "Analyser ma Dualité"}
+              {loading
+                ? lang === "fr"
+                  ? "Analyse en cours..."
+                  : "Analyzing..."
+                : lang === "fr"
+                ? "Analyser ma Dualité"
+                : "Analyze my Duality"}
             </button>
           </form>
         </section>
 
-        {/* Avatar – affiché SEULEMENT après analyse */}
-        {hasAnalyzed && (
-          <section className="rounded-3xl border border-amber-500/35 bg-black/70 backdrop-blur-xl px-5 py-5 md:px-7 md:py-6 shadow-[0_0_70px_rgba(212,175,55,0.25)]">
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="relative h-40 w-40 flex-shrink-0 rounded-full border border-amber-400/60 bg-gradient-to-br from-black via-slate-900 to-amber-900/50 flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(212,175,55,0.4)]">
-                {avatarUrl ? (
-                  // Avatar généré par FAL.ai
+        {/* Résultats (affichés uniquement après analyse) */}
+        {result && (
+          <section className="space-y-8">
+            {/* Avatar centré */}
+            <div className="bg-black/70 border border-[#d4af37]/40 rounded-3xl p-6 md:p-8 shadow-[0_0_60px_rgba(0,0,0,0.7)] flex flex-col items-center text-center">
+              <div className="w-40 h-40 md:w-48 md:h-48 rounded-full border border-[#d4af37]/70 overflow-hidden mb-4 bg-black/40 flex items-center justify-center">
+                {result.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={avatarUrl}
-                    alt="Avatar de la Dualité"
-                    className="h-full w-full object-cover"
+                    src={result.avatarUrl}
+                    alt="Avatar de ta Dualité"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-center px-4">
-                    <p className="text-[11px] text-amber-200 font-medium mb-1 uppercase tracking-[0.2em]">
-                      Avatar en cours
-                    </p>
-                    <p className="text-xs text-slate-300">
-                      {avatarLoading
-                        ? "Génération de l’avatar..."
-                        : "Avatar non généré pour cette session."}
-                    </p>
-                  </div>
+                  <span className="text-xs text-neutral-400 px-6">
+                    {lang === "fr"
+                      ? "Avatar non généré pour cette session."
+                      : "Avatar not generated for this session."}
+                  </span>
                 )}
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg md:text-xl font-semibold mb-2">
-                  Avatar de ta Dualité
+              <h3 className="text-[#d4af37] font-semibold text-lg mb-2">
+                {lang === "fr"
+                  ? "Avatar de ta Dualité"
+                  : "Avatar of your Duality"}
+              </h3>
+              <p className="text-sm text-neutral-300 max-w-2xl">
+                {lang === "fr"
+                  ? "Cet avatar symbolise l’énergie actuelle de ta Dualité. Il est généré à partir de tes mots lorsque l’API visuelle est disponible."
+                  : "This avatar symbolizes the current energy of your Duality, generated from your words when the visual API is available."}
+              </p>
+            </div>
+
+            {/* Life Echo & Shadowtalk */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-black/75 border border-[#d4af37]/40 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.6)]">
+                <h2 className="text-sm font-semibold text-[#d4af37] mb-2">
+                  LIFE ECHO ·{" "}
+                  {lang === "fr" ? "Ton futur probable" : "Your probable future"}
                 </h2>
-                <p className="text-sm text-slate-200">
-                  Cet avatar symbolise l’énergie actuelle de ta Dualité. Il est
-                  généré par une IA visuelle à partir de ton texte, quand l’API
-                  FAL.ai est disponible.
+                <p className="text-xs text-neutral-400 mb-3">
+                  {lang === "fr"
+                    ? "2 à 4 phrases comme si ta propre conscience te parlait de la trajectoire que tu nourris."
+                    : "2–4 sentences as if your own conscience was speaking about the path you’re feeding."}
+                </p>
+                <p className="text-sm text-neutral-50 whitespace-pre-line leading-relaxed">
+                  {result.future}
                 </p>
               </div>
-            </div>
-          </section>
-        )}
 
-        {/* Résultats – cachés tant qu’il n’y a pas eu d’analyse */}
-        {hasAnalyzed && result && (
-          <section className="grid gap-5 md:grid-cols-2">
-            {/* Life Echo */}
-            <div className="rounded-3xl border border-amber-400/40 bg-black/75 backdrop-blur-xl px-5 py-5 md:px-6 md:py-6 shadow-[0_0_60px_rgba(212,175,55,0.22)]">
-              <h3 className="text-sm font-semibold text-amber-300 mb-1 uppercase tracking-[0.22em]">
-                Life Echo · Ton futur probable
-              </h3>
-              <p className="text-xs text-slate-300 mb-3">
-                2 à 4 phrases courtes sur la trajectoire que tu nourris en ce
-                moment.
-              </p>
-              <p className="text-sm leading-relaxed text-slate-50 whitespace-pre-line">
-                {result.future}
-              </p>
-            </div>
-
-            {/* Shadowtalk */}
-            <div className="rounded-3xl border border-amber-400/40 bg-black/75 backdrop-blur-xl px-5 py-5 md:px-6 md:py-6 shadow-[0_0_60px_rgba(212,175,55,0.22)]">
-              <h3 className="text-sm font-semibold text-amber-300 mb-1 uppercase tracking-[0.22em]">
-                Shadowtalk · Ton ombre intérieure
-              </h3>
-              <p className="text-xs text-slate-300 mb-3">
-                2 à 4 phrases courtes sur ce que tu évites, répètes ou crées en
-                coulisse.
-              </p>
-              <p className="text-sm leading-relaxed text-slate-50 whitespace-pre-line">
-                {result.shadow}
-              </p>
+              <div className="bg-black/75 border border-[#d4af37]/40 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.6)]">
+                <h2 className="text-sm font-semibold text-[#d4af37] mb-2">
+                  SHADOWTALK ·{" "}
+                  {lang === "fr" ? "Ton ombre intérieure" : "Your inner shadow"}
+                </h2>
+                <p className="text-xs text-neutral-400 mb-3">
+                  {lang === "fr"
+                    ? "2 à 4 phrases où ta part d’ombre te parle franchement de ce que tu évites, répètes ou crées en coulisse."
+                    : "2–4 sentences where your shadow speaks honestly about what you avoid, repeat or create backstage."}
+                </p>
+                <p className="text-sm text-neutral-50 whitespace-pre-line leading-relaxed">
+                  {result.shadow}
+                </p>
+              </div>
             </div>
           </section>
         )}
