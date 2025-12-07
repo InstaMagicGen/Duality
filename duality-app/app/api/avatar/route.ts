@@ -1,29 +1,87 @@
-import { NextResponse } from "next/server";
-import { fal } from "@fal-ai/client";
+// app/api/avatar/route.ts
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-fal.config({
-  credentials: process.env.FAL_KEY!, // clé FAL depuis .env.local
-});
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { prompt } = await req.json();
+    const { text, lang = "fr" } = await req.json();
 
-    const result = await fal.subscribe("fal-ai/flux-2-flex", {
-      input: {
-        prompt,
-      },
-      logs: false,
-    });
+    if (!text || typeof text !== "string") {
+      return NextResponse.json(
+        { error: "Missing 'text' in body." },
+        { status: 400 }
+      );
+    }
 
-    const imageUrl = result?.data?.images?.[0]?.url || null;
+    const falKey = process.env.FAL_KEY;
+    if (!falKey) {
+      console.error("FAL_KEY manquant");
+      return NextResponse.json(
+        { error: "Server misconfigured (missing FAL_KEY)." },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json({ avatarUrl: imageUrl });
-  } catch (err: any) {
+    const prompt =
+      lang === "fr"
+        ? `Portrait 3D stylisé qui symbolise l'état intérieur actuel de la personne.
+Pas de visage réaliste précis, plutôt une silhouette ou un avatar symbolique.
+Ambiance douce, légèrement mystique, fond sombre avec un halo de lumière.
+Voici le texte qui décrit son état : """${text}""" .`
+        : `Stylized 3D portrait symbolizing the user's current inner state.
+No realistic specific face, more like an iconic avatar.
+Soft, slightly mystical vibe, dark background with subtle glow.
+User text: """${text}""" .`;
+
+    const falRes = await fetch(
+      "https://fal.run/api/v1.2/fal-ai/flux-1.1-pro",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Key ${falKey}`,
+        },
+        body: JSON.stringify({
+          input: {
+            prompt,
+            width: 768,
+            height: 768,
+            num_inference_steps: 24,
+            guidance_scale: 3.5,
+          },
+        }),
+      }
+    );
+
+    if (!falRes.ok) {
+      const errText = await falRes.text();
+      console.error("Fal error:", errText);
+      return NextResponse.json(
+        { error: "Avatar generation failed (Fal.ai)." },
+        { status: 500 }
+      );
+    }
+
+    const data: any = await falRes.json();
+
+    // La plupart des endpoints Fal renvoient data.images[0].url
+    const avatarUrl =
+      data.images?.[0]?.url || data.image?.url || data.image_url || null;
+
+    if (!avatarUrl) {
+      console.error("Fal response without image url:", data);
+      return NextResponse.json(
+        { error: "No avatar URL in Fal.ai response." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ avatarUrl });
+  } catch (err) {
+    console.error("Avatar API error:", err);
     return NextResponse.json(
-      { error: err.message || "Erreur génération avatar" },
+      { error: "Internal server error in /api/avatar." },
       { status: 500 }
     );
   }
