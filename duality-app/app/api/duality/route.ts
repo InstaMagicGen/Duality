@@ -1,103 +1,133 @@
 // app/api/duality/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "nodejs"; // important pour Node (pas edge) si tu utilises fetch externe
+export const runtime = "nodejs";
 
-const SYSTEM_PROMPT_FR = `
-Tu es la voix intérieure de l'utilisateur.
-Tu ne dis jamais que tu es une IA.
-Tu renvoies deux blocs très courts (2 à 4 phrases chacun) :
+const GROQ_MODEL = "llama-3.1-8b-instant"; // ou le modèle que tu utilises chez Groq
 
-1) LIFE ECHO : le futur probable si la personne continue comme maintenant.
-2) SHADOWTALK : ce que son "ombre" essaie de lui dire (peurs, patterns, choses refoulées).
-
-Style : direct mais bienveillant, comme une conscience lucide.
-Pas de listes, pas de puces, pas de titres, juste du texte.
-`;
+type DualityBody = {
+  text: string;
+  traits?: string[];
+  lang?: "fr" | "en";
+};
 
 export async function POST(req: NextRequest) {
   try {
-    const { text, lang = "fr", traits = [] } = await req.json();
+    const apiKey = process.env.GROQ_API_KEY;
 
-    if (!text || typeof text !== "string") {
+    if (!apiKey) {
+      console.error("[DUALITY] GROQ_API_KEY manquante");
       return NextResponse.json(
-        { error: "Missing 'text' in body." },
-        { status: 400 }
-      );
-    }
-
-    const userLang = lang === "en" ? "en" : "fr";
-
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) {
-      console.error("GROQ_API_KEY manquant");
-      return NextResponse.json(
-        { error: "Server misconfigured (missing GROQ_API_KEY)." },
+        { error: "Serveur mal configuré : GROQ_API_KEY manquante." },
         { status: 500 }
       );
     }
 
-    const promptTraits =
-      traits && Array.isArray(traits) && traits.length
-        ? `Traits de personnalité actuels : ${traits.join(", ")}.`
-        : "";
+    const body = (await req.json()) as DualityBody;
+    const { text, traits = [], lang = "fr" } = body;
 
-    const userPrompt =
-      userLang === "fr"
-        ? `Texte de la personne : """${text}""".
-${promptTraits}
+    if (!text || typeof text !== "string") {
+      return NextResponse.json(
+        { error: "Texte manquant pour l'analyse." },
+        { status: 400 }
+      );
+    }
 
-Réponds d'abord avec le bloc LIFE ECHO (2 à 4 phrases).
-Puis un séparateur clair : ---.
-Puis le bloc SHADOWTALK (2 à 4 phrases).`
-        : `User text: """${text}""".
-${promptTraits}
+    const langLabel = lang === "fr" ? "en français" : "in English";
 
-First block: LIFE ECHO (2–4 sentences).
-Then separator: ---.
-Then second block: SHADOWTALK (2–4 sentences).`;
+    const systemPrompt = `
+Tu es "Duality", la conscience intérieure de l'utilisateur.
+Tu analyses son texte et tu renvoies STRICTEMENT un JSON de la forme :
 
-    const groqRes = await fetch(
+{
+  "future": "2 à 4 phrases sur la trajectoire probable, en mode miroir, ${langLabel}.",
+  "shadow": "2 à 4 phrases sur ce que son ombre lui dit, ${langLabel}."
+}
+
+- Ne mets aucun texte autour du JSON.
+- Pas de markdown, pas de commentaire, pas de texte avant ou après.
+- Tu parles ${langLabel}.
+    `.trim();
+
+    const traitsText = traits.length ? traits.join(", ") : "aucun trait précisé";
+
+    const userPrompt = `
+Texte de l'utilisateur :
+"""${text}"""
+
+Traits de personnalité actifs :
+${traitsText}
+    `.trim();
+
+    const resp = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${groqKey}`,
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "llama-3.1-70b-versatile", // ou ton modèle Groq
+          model: GROQ_MODEL,
           messages: [
-            { role: "system", content: SYSTEM_PROMPT_FR },
+            { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
           ],
-          temperature: 0.8,
-          max_tokens: 400,
+          temperature: 0.7,
         }),
       }
     );
 
-    if (!groqRes.ok) {
-      const errText = await groqRes.text();
-      console.error("Groq error:", errText);
+    if (!resp.ok) {
+      const errorText = await resp.text();
+      console.error(
+        "[DUALITY] Erreur Groq HTTP",
+        resp.status,
+        resp.statusText,
+        errorText
+      );
       return NextResponse.json(
-        { error: "AI provider error (Groq)." },
+        { error: "Erreur Groq (voir logs serveur)." },
         { status: 500 }
       );
     }
 
-    const groqData: any = await groqRes.json();
-    const full = groqData.choices?.[0]?.message?.content || "";
+    const data = await resp.json();
 
-    const [futureRaw, shadowRaw] = full.split("---");
-    const future = (futureRaw || "").trim();
-    const shadow = (shadowRaw || "").trim();
+    const rawContent: string =
+      data?.choices?.[0]?.message?.content?.trim() || "";
 
-    return NextResponse.json({ future, shadow });
+    let parsed: { future?: string; shadow?: string } = {};
+
+    try {
+      parsed = JSON.parse(rawContent);
+    } catch (e) {
+      console.error(
+        "[DUALITY] Impossible de parser le JSON renvoyé par Groq :",
+        rawContent
+      );
+      return NextResponse.json(
+        {
+          error:
+            "Réponse du modèle incorrecte (JSON invalide). Vérifie les logs.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const future = parsed.future || "";
+    const shadow = parsed.shadow || "";
+
+    return NextResponse.json({
+      future,
+      shadow,
+      // avatarUrl sera géré par une autre route (fal.ai)
+      avatarUrl: null,
+    });
   } catch (err) {
-    console.error("Duality API error:", err);
+    console.error("[DUALITY] Erreur serveur globale :", err);
     return NextResponse.json(
-      { error: "Internal server error in /api/duality." },
+      { error: "Erreur interne du serveur (Duality)." },
       { status: 500 }
     );
   }
