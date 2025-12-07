@@ -9,7 +9,6 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white flex items-center justify-center px-4">
       <div className="max-w-4xl w-full">
-        {/* Logo / titre */}
         <div className="mb-10 text-center">
           <p className="text-xs tracking-[0.35em] uppercase text-amber-400 mb-2">
             Soulset Journey • Experiments
@@ -19,11 +18,11 @@ export default function HomePage() {
           </h1>
           <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto">
             Duality explore ton futur probable et ton ombre intérieure.
-            Soulset Navigator t’offre une phrase miroir accompagnée d’un sunset immersif.
+            Soulset Navigator t’offre une phrase miroir accompagnée d’un
+            coucher de soleil immersif.
           </p>
         </div>
 
-        {/* Cartes de choix */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Duality */}
           <button
@@ -36,13 +35,14 @@ export default function HomePage() {
                 Duality
               </p>
               <h2 className="text-xl font-semibold mb-2">
-                Entre ton futur probable et ton ombre intérieure
+                Futur probable & ombre intérieure
               </h2>
               <p className="text-sm text-slate-300 mb-4">
-                Tu écris ce que tu vis. Duality génère deux miroirs :{" "}
-                <span className="text-amber-300">Life Echo</span> (la trajectoire
-                que tu nourris) et <span className="text-amber-300">Shadowtalk</span>{" "}
-                (ton ombre).
+                Tu écris ce que tu vis. Duality renvoie{" "}
+                <span className="text-amber-300">Life Echo</span> (ta
+                trajectoire probable) et{" "}
+                <span className="text-amber-300">Shadowtalk</span> (ce que ton
+                ombre essaie de te dire).
               </p>
               <span className="inline-flex items-center gap-2 text-xs font-medium text-amber-300">
                 Lancer Duality
@@ -62,11 +62,11 @@ export default function HomePage() {
                 Soulset Navigator
               </p>
               <h2 className="text-xl font-semibold mb-2">
-                Sunset Therapy – Une phrase miroir + un sunset immersif
+                Sunset Therapy – phrase miroir + coucher de soleil
               </h2>
               <p className="text-sm text-slate-200 mb-4">
-                Tu décris ton état du moment. L’IA te renvoie une phrase courte
-                comme une conscience intérieure, projetée sur un coucher de soleil.
+                Tu décris ton état du moment. Une phrase miroir courte apparaît
+                sur un coucher de soleil en plein écran.
               </p>
               <span className="inline-flex items-center gap-2 text-xs font-medium text-sky-200">
                 Commencer la Sunset Therapy
