@@ -78,6 +78,7 @@ export default function SoulsetPage() {
   const [result, setResult] = useState<SoulsetResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setLang(detectLang());
@@ -91,6 +92,7 @@ export default function SoulsetPage() {
     e.preventDefault();
     setError(null);
     setResult(null);
+    setShareMessage(null);
 
     if (!text.trim()) {
       setError(
@@ -110,6 +112,63 @@ export default function SoulsetPage() {
       });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleShare() {
+    if (!result) return;
+
+    const isFr = lang === "fr";
+    const url =
+      typeof window !== "undefined" ? window.location.href : undefined;
+
+    const shareText = isFr
+      ? `Ma Sunset Therapy 🌅
+
+Phrase miroir :
+${result.quote}`
+      : `My Sunset Therapy 🌅
+
+Mirror sentence:
+${result.quote}`;
+
+    try {
+      const nav = typeof navigator !== "undefined" ? (navigator as any) : null;
+      if (nav && typeof nav.share === "function") {
+        await nav.share({
+          title: "Soulset Navigator • Sunset Therapy",
+          text: shareText,
+          url,
+        });
+        setShareMessage(isFr ? "Partagé ✅" : "Shared ✅");
+      } else if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(url || "");
+        setShareMessage(
+          isFr
+            ? "Lien de la page copié dans le presse-papier."
+            : "Page link copied to clipboard."
+        );
+      } else {
+        setShareMessage(
+          isFr
+            ? "Partage non supporté sur ce navigateur."
+            : "Sharing not supported on this browser."
+        );
+      }
+
+      if (shareMessage) {
+        setTimeout(() => setShareMessage(null), 2500);
+      }
+    } catch (err) {
+      setShareMessage(
+        lang === "fr"
+          ? "Impossible de partager."
+          : "Unable to share right now."
+      );
     }
   }
 
@@ -142,6 +201,7 @@ export default function SoulsetPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/35 to-black/80" />
 
         <div className="relative z-10 flex flex-col h-full">
+          {/* Top bar */}
           <header className="flex items-center justify-between px-4 pt-4">
             <button
               onClick={() => setResult(null)}
@@ -152,11 +212,24 @@ export default function SoulsetPage() {
               </span>
               {isFr ? "Revenir à la saisie" : "Back to input"}
             </button>
-            <p className="text-[10px] uppercase tracking-[0.28em] text-sky-200 bg-black/35 px-3 py-1 rounded-full border border-sky-400/40 backdrop-blur">
-              Soulset Navigator
-            </p>
+
+            <div className="flex items-center gap-2">
+              {shareMessage && (
+                <span className="text-[10px] text-slate-100 bg-black/40 px-2 py-1 rounded-full border border-slate-400/60">
+                  {shareMessage}
+                </span>
+              )}
+              <button
+                onClick={handleShare}
+                className="text-[11px] text-sky-50 inline-flex items-center gap-1 bg-black/40 px-3 py-1 rounded-full border border-sky-300/70 backdrop-blur hover:bg-sky-500 hover:text-black hover:border-sky-200 transition"
+              >
+                <span>📤</span>
+                <span>{isFr ? "Partager" : "Share"}</span>
+              </button>
+            </div>
           </header>
 
+          {/* Quote au centre */}
           <div className="flex-1 flex items-center justify-center px-4 pb-12">
             <div className="max-w-3xl mx-auto text-center">
               <p className="text-xs text-sky-200/80 mb-3 uppercase tracking-[0.28em]">
@@ -175,6 +248,7 @@ export default function SoulsetPage() {
   // Vue formulaire
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-50 px-4 py-5">
+      {/* Header */}
       <header className="max-w-4xl mx-auto mb-6 flex items-center justify-between gap-4">
         <button
           onClick={() => router.push("/")}

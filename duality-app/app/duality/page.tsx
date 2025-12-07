@@ -171,6 +171,7 @@ export default function DualityPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setLang(detectLang());
@@ -217,6 +218,7 @@ export default function DualityPage() {
     setError(null);
     setResult(null);
     setAvatarUrl(null);
+    setShareMessage(null);
 
     if (!text.trim()) {
       setError(
@@ -237,6 +239,69 @@ export default function DualityPage() {
       setError(err?.message || "Erreur inconnue.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleShare() {
+    if (!result) return;
+
+    const isFr = lang === "fr";
+    const url =
+      typeof window !== "undefined" ? window.location.href : undefined;
+
+    const shareText = isFr
+      ? `Mon scan Duality 🌓
+
+Life Echo (futur probable) :
+${result.future}
+
+Shadowtalk (ombre intérieure) :
+${result.shadow}`
+      : `My Duality scan 🌓
+
+Life Echo (probable future):
+${result.future}
+
+Shadowtalk (inner shadow):
+${result.shadow}`;
+
+    try {
+      const nav = typeof navigator !== "undefined" ? (navigator as any) : null;
+      if (nav && typeof nav.share === "function") {
+        await nav.share({
+          title: "Duality • Soulset Journey",
+          text: shareText,
+          url,
+        });
+        setShareMessage(isFr ? "Partagé ✅" : "Shared ✅");
+      } else if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(url || "");
+        setShareMessage(
+          isFr
+            ? "Lien de la page copié dans le presse-papier."
+            : "Page link copied to clipboard."
+        );
+      } else {
+        setShareMessage(
+          isFr
+            ? "Partage non supporté sur ce navigateur."
+            : "Sharing not supported on this browser."
+        );
+      }
+
+      if (shareMessage) {
+        setTimeout(() => setShareMessage(null), 2500);
+      }
+    } catch (err) {
+      setShareMessage(
+        lang === "fr"
+          ? "Impossible de partager."
+          : "Unable to share right now."
+      );
     }
   }
 
@@ -366,9 +431,9 @@ export default function DualityPage() {
         {/* Avatar + Résultats */}
         {result && (
           <>
-            {/* Avatar */}
+            {/* Avatar + Share */}
             <section className="w-full max-w-5xl mx-auto">
-              <div className="flex flex-col items-center justify-center rounded-[32px] border border-[#d4af37]/60 bg-black/70 px-6 py-10 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
+              <div className="flex flex-col items-center justify-center rounded-[32px] border border-[#d4af37]/60 bg-black/70 px-6 py-8 md:py-10 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
                 <div className="relative h-48 w-48 rounded-full border border-[#d4af37]/80 bg-black/80 overflow-hidden flex items-center justify-center mb-5">
                   {avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -388,11 +453,27 @@ export default function DualityPage() {
                     ? "Avatar symbolique de ta Dualité"
                     : "Symbolic avatar of your Duality"}
                 </h2>
-                <p className="text-xs text-neutral-300 max-w-md text-center">
+                <p className="text-xs text-neutral-300 max-w-md text-center mb-4">
                   {isFr
-                    ? "Cet avatar est généré automatiquement à partir de tes mots et de tes traits. Il ne te représente pas littéralement mais illustre ton énergie intérieure du moment."
-                    : "This avatar is generated automatically from your words and traits. It doesn’t literally represent you, but illustrates your inner energy right now."}
+                    ? "Cet avatar est généré automatiquement à partir de tes mots et de tes traits. Il illustre ton énergie intérieure du moment."
+                    : "This avatar is generated automatically from your words and traits. It illustrates your inner energy right now."}
                 </p>
+
+                <button
+                  onClick={handleShare}
+                  className="mt-1 inline-flex items-center gap-2 rounded-full border border-[#d4af37]/80 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-[#d4af37] hover:text-black transition"
+                >
+                  <span>📤</span>
+                  <span>
+                    {isFr ? "Partager cette session" : "Share this session"}
+                  </span>
+                </button>
+
+                {shareMessage && (
+                  <p className="mt-2 text-[11px] text-neutral-300">
+                    {shareMessage}
+                  </p>
+                )}
               </div>
             </section>
 
