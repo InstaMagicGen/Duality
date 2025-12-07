@@ -162,6 +162,74 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
   }
 }
 
+// Crée une "carte de personnalité" textuelle à partir des traits + type d'analyse
+function buildPersonalityCard(
+  result: DualityResult,
+  traits: string[],
+  lang: Lang
+): string {
+  const hasTired = result.future.toLowerCase().includes("énergie") ||
+    result.future.toLowerCase().includes("energy");
+  const hasLost = result.future.toLowerCase().includes("creuse") ||
+    result.future.toLowerCase().includes("hollow");
+  const hasHope =
+    result.future.toLowerCase().includes("alignée") ||
+    result.future.toLowerCase().includes("aligned");
+
+  const traitLabels =
+    traits.length === 0
+      ? []
+      : TRAITS.filter((t) => traits.includes(t.id)).map((t) =>
+          lang === "fr" ? t.fr : t.en
+        );
+
+  if (lang === "fr") {
+    const base =
+      "Carte de personnalité actuelle :\n\nTu es quelqu’un de plus conscient(e) que tu ne le crois. Tu observes déjà tes schémas au lieu de les subir complètement.";
+    const traitsLine = traitLabels.length
+      ? `\n\nTraits dominants : ${traitLabels.join(" • ")}.`
+      : "";
+
+    let color = "";
+    if (hasTired)
+      color =
+        "\n\nÉnergie : souvent en mode survie, tu portes beaucoup sans toujours t’autoriser à relâcher.";
+    else if (hasLost)
+      color =
+        "\n\nDirection : tu es entre deux versions de toi, celle qui rassure tout le monde et celle qui te ressemble vraiment.";
+    else if (hasHope)
+      color =
+        "\n\nTrajectoire : quelque chose en toi refuse que ta vie reste en mode pilote automatique, même si tu avances doucement.";
+
+    const comeback =
+      "\n\nCette carte évolue chaque fois que tu reviens. Plus tu reviens, plus elle devient précise.";
+
+    return base + traitsLine + color + comeback;
+  } else {
+    const base =
+      "Current personality card:\n\nYou’re more self-aware than you think. You’re already observing your patterns instead of fully enduring them.";
+    const traitsLine = traitLabels.length
+      ? `\n\nDominant traits: ${traitLabels.join(" • ")}.`
+      : "";
+
+    let color = "";
+    if (hasTired)
+      color =
+        "\n\nEnergy: you often run in survival mode, carrying a lot without always allowing yourself to release.";
+    else if (hasLost)
+      color =
+        "\n\nDirection: you’re between two versions of yourself, the one that reassures everyone and the one that truly feels like you.";
+    else if (hasHope)
+      color =
+        "\n\nTrajectory: something in you refuses to let your life stay on autopilot, even if you move slowly.";
+
+    const comeback =
+      "\n\nThis card evolves every time you come back. The more you return, the more precise it gets.";
+
+    return base + traitsLine + color + comeback;
+  }
+}
+
 export default function DualityPage() {
   const router = useRouter();
 
@@ -172,21 +240,40 @@ export default function DualityPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [shareMessage, setShareMessage] = useState<string | null>(null);
+
   const [cardMode, setCardMode] = useState(false); // MODE CARTE TIKTOK
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
+
+  const [sessionCount, setSessionCount] = useState(0);
+  const [personalityCard, setPersonalityCard] = useState<string | null>(null);
 
   useEffect(() => {
     setLang(detectLang());
 
     if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem("duality_traits");
-      if (stored) {
+      const storedTraits = window.localStorage.getItem("duality_traits");
+      if (storedTraits) {
         try {
-          const parsed = JSON.parse(stored);
+          const parsed = JSON.parse(storedTraits);
           if (Array.isArray(parsed)) setSelectedTraits(parsed);
         } catch {
           // ignore
         }
+      }
+
+      const storedCount = window.localStorage.getItem(
+        "duality_sessions_count"
+      );
+      if (storedCount) {
+        const num = parseInt(storedCount, 10);
+        if (!Number.isNaN(num)) setSessionCount(num);
+      }
+
+      const storedCard = window.localStorage.getItem(
+        "duality_personality_card"
+      );
+      if (storedCard) {
+        setPersonalityCard(storedCard);
       }
     }
   }, []);
@@ -238,6 +325,26 @@ export default function DualityPage() {
       const avatar = buildAvatarUrl(text, selectedTraits);
       setResult(duality);
       setAvatarUrl(avatar);
+
+      // Incrémenter le compteur de sessions
+      if (typeof window !== "undefined") {
+        const storedCount =
+          window.localStorage.getItem("duality_sessions_count");
+        const prev = storedCount ? parseInt(storedCount, 10) || 0 : 0;
+        const nextCount = prev + 1;
+        window.localStorage.setItem(
+          "duality_sessions_count",
+          String(nextCount)
+        );
+        setSessionCount(nextCount);
+
+        // Mettre à jour la carte de personnalité à partir de la 2e session
+        if (nextCount >= 2) {
+          const card = buildPersonalityCard(duality, selectedTraits, lang);
+          window.localStorage.setItem("duality_personality_card", card);
+          setPersonalityCard(card);
+        }
+      }
     } catch (err: any) {
       setError(err?.message || "Erreur inconnue.");
     } finally {
@@ -295,6 +402,10 @@ ${result.shadow}`;
             : "Sharing not supported on this browser."
         );
       }
+
+      if (shareMessage) {
+        setTimeout(() => setShareMessage(null), 2500);
+      }
     } catch (err) {
       setShareMessage(
         lang === "fr"
@@ -306,21 +417,38 @@ ${result.shadow}`;
 
   const isFr = lang === "fr";
 
-  // 🔶 MODE CARTE TIKTOK : plein écran, format 9:16, pour capture d’écran
+  // 🔶 MODE CARTE TIKTOK : plein écran, format 9:16, pour capture + partage
   if (result && cardMode) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-6">
         <div className="relative w-full max-w-sm aspect-[9/16] rounded-3xl border border-[#d4af37]/70 bg-gradient-to-b from-black via-slate-900 to-black overflow-hidden shadow-[0_0_60px_rgba(212,175,55,0.35)]">
-          {/* Bouton retour */}
-          <button
-            onClick={() => setCardMode(false)}
-            className="absolute top-3 left-3 text-[10px] text-neutral-200 bg-black/60 px-2.5 py-1 rounded-full border border-neutral-500/70 backdrop-blur z-10"
-          >
-            {isFr ? "Retour" : "Back"}
-          </button>
+          {/* Barre top dans la carte */}
+          <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between">
+            <button
+              onClick={() => setCardMode(false)}
+              className="text-[10px] text-neutral-200 bg-black/60 px-2.5 py-1 rounded-full border border-neutral-500/70 backdrop-blur"
+            >
+              {isFr ? "Retour" : "Back"}
+            </button>
+
+            <div className="flex items-center gap-2">
+              {shareMessage && (
+                <span className="text-[9px] text-amber-100 bg-black/60 px-2 py-0.5 rounded-full border border-amber-300/70">
+                  {shareMessage}
+                </span>
+              )}
+              <button
+                onClick={handleShare}
+                className="text-[11px] text-amber-50 inline-flex items-center gap-1 bg-black/55 px-2.5 py-1 rounded-full border border-[#d4af37]/70 backdrop-blur hover:bg-[#d4af37] hover:text-black transition"
+              >
+                <span>📤</span>
+                <span>{isFr ? "Partager" : "Share"}</span>
+              </button>
+            </div>
+          </div>
 
           <div className="absolute inset-0 flex flex-col items-center justify-between px-4 py-5">
-            <div className="w-full flex justify-center mt-4">
+            <div className="w-full flex justify-center mt-6">
               <div className="h-24 w-24 rounded-full border border-[#d4af37]/80 bg-black/80 overflow-hidden flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.6)]">
                 {avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -338,7 +466,7 @@ ${result.shadow}`;
             </div>
 
             <div className="flex-1 flex items-center justify-center w-full">
-              <div className="w-full text-center space-y-3">
+              <div className="w-full text-center space-y-3 px-1">
                 <p className="text-[10px] uppercase tracking-[0.32em] text-[#f5e7a8]/90">
                   Duality • Life Echo
                 </p>
@@ -360,8 +488,8 @@ ${result.shadow}`;
             <div className="w-full text-center pb-2">
               <p className="text-[9px] text-neutral-400">
                 {isFr
-                  ? "Capture cet écran pour TikTok ou Instagram."
-                  : "Screenshot this for TikTok or Instagram."}
+                  ? "Capture ou partage cette carte sur TikTok / Instagram."
+                  : "Screenshot or share this card on TikTok / Instagram."}
               </p>
               <p className="text-[9px] text-neutral-500 mt-1">
                 duality • soulset journey
@@ -498,7 +626,7 @@ ${result.shadow}`;
         {/* Avatar + Résultats */}
         {result && (
           <>
-            {/* Avatar + boutons partage & carte TikTok */}
+            {/* Avatar + TikTok uniquement */}
             <section className="w-full max-w-5xl mx-auto">
               <div className="flex flex-col items-center justify-center rounded-[32px] border border-[#d4af37]/60 bg-black/70 px-6 py-8 md:py-10 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
                 <div className="relative h-48 w-48 rounded-full border border-[#d4af37]/80 bg-black/80 overflow-hidden flex items-center justify-center mb-5">
@@ -526,37 +654,17 @@ ${result.shadow}`;
                     : "This avatar is generated automatically from your words and traits. It illustrates your inner energy right now."}
                 </p>
 
-                <div className="flex flex-wrap items-center justify-center gap-3">
-                  <button
-                    onClick={handleShare}
-                    className="inline-flex items-center gap-2 rounded-full border border-[#d4af37]/80 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-[#d4af37] hover:text-black transition"
-                  >
-                    <span>📤</span>
-                    <span>
-                      {isFr
-                        ? "Partager cette session"
-                        : "Share this session"}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => setCardMode(true)}
-                    className="inline-flex items-center gap-2 rounded-full border border-[#d4af37]/60 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-black hover:border-[#f5e7a8] transition"
-                  >
-                    <span>🎴</span>
-                    <span>
-                      {isFr
-                        ? "Mode carte TikTok"
-                        : "TikTok card mode"}
-                    </span>
-                  </button>
-                </div>
-
-                {shareMessage && (
-                  <p className="mt-2 text-[11px] text-neutral-300">
-                    {shareMessage}
-                  </p>
-                )}
+                <button
+                  onClick={() => setCardMode(true)}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#d4af37]/60 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-black hover:border-[#f5e7a8] transition"
+                >
+                  <span>🎴</span>
+                  <span>
+                    {isFr
+                      ? "Ouvrir la carte TikTok"
+                      : "Open TikTok card"}
+                  </span>
+                </button>
               </div>
             </section>
 
@@ -592,6 +700,29 @@ ${result.shadow}`;
                 </p>
               </div>
             </section>
+
+            {/* 🧠 Carte de personnalité (après 2 sessions) */}
+            {personalityCard && sessionCount >= 2 && (
+              <section className="max-w-5xl mx-auto">
+                <div className="mt-6 rounded-3xl border border-amber-500/45 bg-gradient-to-br from-black via-slate-950 to-amber-950/20 px-6 py-6 md:px-7 md:py-7 shadow-[0_0_70px_rgba(212,175,55,0.22)]">
+                  <div className="flex items-center justify-between mb-3 gap-3">
+                    <h3 className="text-sm font-semibold text-[#f5e7a8]">
+                      {isFr
+                        ? "Ta carte de personnalité Duality"
+                        : "Your Duality personality card"}
+                    </h3>
+                    <span className="text-[10px] text-neutral-400">
+                      {isFr
+                        ? `Sessions analysées sur cet appareil : ${sessionCount}`
+                        : `Sessions analyzed on this device: ${sessionCount}`}
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-300 whitespace-pre-line leading-relaxed">
+                    {personalityCard}
+                  </p>
+                </div>
+              </section>
+            )}
           </>
         )}
       </div>
