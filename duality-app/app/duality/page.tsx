@@ -27,8 +27,10 @@ const TRAITS: PersonalityTrait[] = [
 
 function detectLang(): Lang {
   if (typeof window === "undefined") return "fr";
-  const userLang = navigator.language?.toLowerCase() || "fr";
-  return userLang.startsWith("fr") ? "fr" : "en";
+  const l = (navigator.language || "fr").toLowerCase();
+  // FR + AR → français, sinon anglais
+  if (l.startsWith("fr") || l.startsWith("ar")) return "fr";
+  return "en";
 }
 
 // Avatar généré gratuitement côté front (DiceBear)
@@ -40,7 +42,7 @@ function buildAvatarUrl(text: string, traits: string[]): string {
   return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}&backgroundColor=020617&radius=50`;
 }
 
-// Analyse locale (sans API) : renvoie future + shadow comme conscience intérieure
+// Analyse locale : on simule la conscience de l'utilisateur
 function analyzeDuality(text: string, lang: Lang): DualityResult {
   const t = text.toLowerCase();
 
@@ -81,23 +83,23 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
     if (isTired || isOverwhelmed) {
       return {
         future:
-          "Si tu continues à tout porter comme maintenant, tu avanceras, mais en te vidant peu à peu de ton énergie. Tu risques de dire oui par réflexe, même quand ton corps et ton cœur te crient stop. À long terme, tu pourrais confondre ‘tenir bon’ avec t’oublier.",
+          "Si tu continues à tout porter comme maintenant, tu avanceras, mais en te vidant peu à peu de ton énergie. Tu risques de dire oui par réflexe, même quand ton corps et ton cœur te crient stop.",
         shadow:
-          "Ta conscience te murmure : « Tu sais que tu es fatigué(e), mais tu te forces encore à jouer le rôle de celui/celle qui encaisse tout. Tu as peur de décevoir si tu poses des limites, pourtant c’est surtout toi que tu laisses tomber quand tu ne dis rien. »",
+          "Ta conscience te murmure : « Tu sais que tu es fatigué(e), mais tu te forces encore à jouer le rôle de celui/celle qui encaisse tout. Tu as peur de décevoir si tu poses des limites, pourtant c’est toi que tu laisses tomber quand tu ne dis rien. »",
       };
     }
     if (isLost) {
       return {
         future:
-          "Si tu continues à avancer sans clarifier ce que tu veux vraiment, tu peux te retrouver dans une vie qui a l’air correcte de l’extérieur mais creuse à l’intérieur. Tu risques de construire une trajectoire qui rassure les autres plus qu’elle ne t’apaise toi.",
+          "Si tu continues à avancer sans clarifier ce que tu veux vraiment, tu peux te retrouver dans une vie qui a l’air correcte de l’extérieur mais creuse à l’intérieur.",
         shadow:
-          "Ta conscience te dit : « Tu sens déjà que quelque chose ne colle plus, mais tu repousses le moment de l’admettre. Tu as peur de tout recommencer ou de décevoir, alors tu restes dans une zone floue qui t’épuise en silence. »",
+          "Ta conscience te dit : « Tu sens déjà que quelque chose ne colle plus, mais tu repousses le moment de l’admettre. Tu as peur de tout recommencer ou de décevoir, alors tu restes dans une zone floue qui t’épuise. »",
       };
     }
     if (isBlocked) {
       return {
         future:
-          "En restant dans cette hésitation permanente, tu verras passer des opportunités avec la sensation d’avoir toujours été “presque prêt(e)”. Tu risques de rester longtemps entre deux vies : celle que tu connais et celle que tu n’oses pas vraiment toucher.",
+          "En restant dans cette hésitation permanente, tu verras passer des opportunités avec la sensation d’avoir toujours été “presque prêt(e)”.",
         shadow:
           "Ta conscience te souffle : « Tu te protèges tellement de l’échec que tu te prives aussi d’une vraie transformation. Tant que tu attends de ne plus avoir peur, tu attends surtout que ta vie change sans toi. »",
       };
@@ -105,24 +107,23 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
     if (isHopeful) {
       return {
         future:
-          "Si tu continues à écouter cette petite voix qui veut mieux pour toi, tu peux doucement créer une trajectoire plus alignée. Tu commenceras à attirer des situations qui respectent davantage ton temps, ton énergie et ta sensibilité.",
+          "Si tu continues à écouter cette petite voix qui veut mieux pour toi, tu peux doucement créer une trajectoire plus alignée avec ce que tu ressens vraiment.",
         shadow:
-          "Ta conscience te confie : « Tu n’as plus envie de jouer le personnage qui s’adapte à tout. Tu as peur d’être ‘trop’ si tu assumes tes vrais besoins, mais tu sais aussi que rester à l’étroit n’est plus possible pour toi. »",
+          "Ta conscience te confie : « Tu n’as plus envie de jouer le personnage qui s’adapte à tout. Tu as peur d’être ‘trop’ si tu assumes tes vrais besoins, mais rester à l’étroit n’est plus possible pour toi. »",
       };
     }
 
-    // neutre
     return {
       future:
-        "Si tu continues exactement comme maintenant, tu peux rester dans une zone tiède : rien n’est catastrophique, mais rien ne nourrit vraiment ton feu intérieur. La vie avance, mais tu peux avoir l’impression d’être en mode automatique.",
+        "Si tu continues exactement comme maintenant, tu peux rester dans une zone tiède : rien n’est catastrophique, mais rien ne nourrit vraiment ton feu intérieur.",
       shadow:
-        "Ta conscience te dit : « Tu minimises ce que tu ressens pour ne pas faire de vagues. Mais chaque fois que tu t’ignores, tu t’éloignes un peu plus de toi. Ce que tu appelles ‘tranquillité’ ressemble parfois à une manière polie de t’abandonner. »",
+        "Ta conscience te dit : « Tu minimises ce que tu ressens pour ne pas faire de vagues. À force, tu t’éloignes de ce que tu veux vraiment vivre. »",
     };
   } else {
     if (isTired || isOverwhelmed) {
       return {
         future:
-          "If you keep carrying everything the way you do now, you’ll move forward but slowly drain your own energy. You may keep saying yes by reflex, even when your body and heart are begging you to stop. In the long run, you might confuse being ‘strong’ with disappearing from yourself.",
+          "If you keep carrying everything the way you do now, you’ll move forward but slowly drain your own energy. You may keep saying yes by reflex, even when your body and heart are begging you to stop.",
         shadow:
           "Your inner voice whispers: “You know you’re tired, but you still push yourself to play the one who can handle everything. You’re afraid to disappoint if you set boundaries, yet each time you stay silent, you disappoint yourself first.”",
       };
@@ -130,7 +131,7 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
     if (isLost) {
       return {
         future:
-          "If you keep moving without clarifying what you truly want, you might end up in a life that looks fine on the outside but feels hollow on the inside. You risk building a path that reassures others more than it brings you peace.",
+          "If you keep moving without clarifying what you truly want, you might end up in a life that looks fine on the outside but feels hollow on the inside.",
         shadow:
           "Your inner voice says: “You already feel that something doesn’t fit anymore, but you delay the moment you fully admit it. You’re afraid of starting over or disappointing people, so you remain in a blurry zone that quietly drains you.”",
       };
@@ -138,7 +139,7 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
     if (isBlocked) {
       return {
         future:
-          "By staying in this constant hesitation, you may watch opportunities pass while feeling like you were always ‘almost ready’. You might remain stuck between two lives: the one you know and the one you’re afraid to really touch.",
+          "By staying in this constant hesitation, you may watch opportunities pass while feeling like you were always ‘almost ready’.",
         shadow:
           "Your inner voice tells you: “You’re protecting yourself so much from failure that you also shut the door on real transformation. As long as you wait to not be afraid anymore, you’re mostly waiting for life to change without you.”",
       };
@@ -146,7 +147,7 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
     if (isHopeful) {
       return {
         future:
-          "If you keep listening to that small voice that wants better for you, you can slowly create a more aligned trajectory. You’ll start attracting situations that respect your time, energy, and sensitivity.",
+          "If you keep listening to that small voice that wants better for you, you can slowly create a more aligned trajectory.",
         shadow:
           "Your inner voice confides: “You don’t want to keep playing the character who always adjusts to everything. You’re afraid of being ‘too much’ if you own your real needs, yet you also know that staying small is no longer an option.”",
       };
@@ -154,9 +155,9 @@ function analyzeDuality(text: string, lang: Lang): DualityResult {
 
     return {
       future:
-        "If you keep going exactly like this, you might stay in a lukewarm space: nothing is truly catastrophic, but nothing deeply feeds you either. Life moves on, but you may feel like you’re on autopilot.",
+        "If you keep going exactly like this, you might stay in a lukewarm space: nothing is truly catastrophic, but nothing deeply feeds you either.",
       shadow:
-        "Your inner voice says: “You downplay what you feel to avoid making waves. But each time you ignore yourself, you move a little further away from who you are. What you call ‘peace’ sometimes looks like a polite way of abandoning yourself.”",
+        "Your inner voice says: “You downplay what you feel to avoid making waves. But each time you ignore yourself, you move a little further away from who you are.”",
     };
   }
 }
@@ -172,6 +173,7 @@ export default function DualityPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shareMessage, setShareMessage] = useState<string | null>(null);
+  const [cardMode, setCardMode] = useState(false); // MODE CARTE TIKTOK
 
   useEffect(() => {
     setLang(detectLang());
@@ -219,6 +221,7 @@ export default function DualityPage() {
     setResult(null);
     setAvatarUrl(null);
     setShareMessage(null);
+    setCardMode(false);
 
     if (!text.trim()) {
       setError(
@@ -292,10 +295,6 @@ ${result.shadow}`;
             : "Sharing not supported on this browser."
         );
       }
-
-      if (shareMessage) {
-        setTimeout(() => setShareMessage(null), 2500);
-      }
     } catch (err) {
       setShareMessage(
         lang === "fr"
@@ -307,6 +306,74 @@ ${result.shadow}`;
 
   const isFr = lang === "fr";
 
+  // 🔶 MODE CARTE TIKTOK : plein écran, format 9:16, pour capture d’écran
+  if (result && cardMode) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-6">
+        <div className="relative w-full max-w-sm aspect-[9/16] rounded-3xl border border-[#d4af37]/70 bg-gradient-to-b from-black via-slate-900 to-black overflow-hidden shadow-[0_0_60px_rgba(212,175,55,0.35)]">
+          {/* Bouton retour */}
+          <button
+            onClick={() => setCardMode(false)}
+            className="absolute top-3 left-3 text-[10px] text-neutral-200 bg-black/60 px-2.5 py-1 rounded-full border border-neutral-500/70 backdrop-blur z-10"
+          >
+            {isFr ? "Retour" : "Back"}
+          </button>
+
+          <div className="absolute inset-0 flex flex-col items-center justify-between px-4 py-5">
+            <div className="w-full flex justify-center mt-4">
+              <div className="h-24 w-24 rounded-full border border-[#d4af37]/80 bg-black/80 overflow-hidden flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.6)]">
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatarUrl}
+                    alt="Avatar Duality"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[10px] text-neutral-400 px-2 text-center">
+                    Avatar
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex-1 flex items-center justify-center w-full">
+              <div className="w-full text-center space-y-3">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-[#f5e7a8]/90">
+                  Duality • Life Echo
+                </p>
+                <p className="text-xs text-neutral-200 whitespace-pre-line leading-relaxed">
+                  {result.future}
+                </p>
+
+                <div className="h-px w-16 bg-[#d4af37]/70 mx-auto my-2" />
+
+                <p className="text-[10px] uppercase tracking-[0.32em] text-[#f5e7a8]/90">
+                  Shadowtalk
+                </p>
+                <p className="text-xs text-neutral-200 whitespace-pre-line leading-relaxed">
+                  {result.shadow}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full text-center pb-2">
+              <p className="text-[9px] text-neutral-400">
+                {isFr
+                  ? "Capture cet écran pour TikTok ou Instagram."
+                  : "Screenshot this for TikTok or Instagram."}
+              </p>
+              <p className="text-[9px] text-neutral-500 mt-1">
+                duality • soulset journey
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // 🔷 VUE NORMALE
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-black text-white px-4 py-6">
       {/* Header */}
@@ -431,7 +498,7 @@ ${result.shadow}`;
         {/* Avatar + Résultats */}
         {result && (
           <>
-            {/* Avatar + Share */}
+            {/* Avatar + boutons partage & carte TikTok */}
             <section className="w-full max-w-5xl mx-auto">
               <div className="flex flex-col items-center justify-center rounded-[32px] border border-[#d4af37]/60 bg-black/70 px-6 py-8 md:py-10 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
                 <div className="relative h-48 w-48 rounded-full border border-[#d4af37]/80 bg-black/80 overflow-hidden flex items-center justify-center mb-5">
@@ -459,15 +526,31 @@ ${result.shadow}`;
                     : "This avatar is generated automatically from your words and traits. It illustrates your inner energy right now."}
                 </p>
 
-                <button
-                  onClick={handleShare}
-                  className="mt-1 inline-flex items-center gap-2 rounded-full border border-[#d4af37]/80 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-[#d4af37] hover:text-black transition"
-                >
-                  <span>📤</span>
-                  <span>
-                    {isFr ? "Partager cette session" : "Share this session"}
-                  </span>
-                </button>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    onClick={handleShare}
+                    className="inline-flex items-center gap-2 rounded-full border border-[#d4af37]/80 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-[#d4af37] hover:text-black transition"
+                  >
+                    <span>📤</span>
+                    <span>
+                      {isFr
+                        ? "Partager cette session"
+                        : "Share this session"}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setCardMode(true)}
+                    className="inline-flex items-center gap-2 rounded-full border border-[#d4af37]/60 bg-black/60 px-4 py-1.5 text-xs font-medium text-[#f5e7a8] hover:bg-black hover:border-[#f5e7a8] transition"
+                  >
+                    <span>🎴</span>
+                    <span>
+                      {isFr
+                        ? "Mode carte TikTok"
+                        : "TikTok card mode"}
+                    </span>
+                  </button>
+                </div>
 
                 {shareMessage && (
                   <p className="mt-2 text-[11px] text-neutral-300">

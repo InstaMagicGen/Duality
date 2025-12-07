@@ -26,8 +26,9 @@ const SUNSET_MEDIA = [
 
 function detectLang(): Lang {
   if (typeof window === "undefined") return "fr";
-  const userLang = navigator.language?.toLowerCase() || "fr";
-  return userLang.startsWith("fr") ? "fr" : "en";
+  const l = (navigator.language || "fr").toLowerCase();
+  if (l.startsWith("fr") || l.startsWith("ar")) return "fr";
+  return "en";
 }
 
 // Génération locale d'une phrase miroir
@@ -158,10 +159,6 @@ ${result.quote}`;
             ? "Partage non supporté sur ce navigateur."
             : "Sharing not supported on this browser."
         );
-      }
-
-      if (shareMessage) {
-        setTimeout(() => setShareMessage(null), 2500);
       }
     } catch (err) {
       setShareMessage(
