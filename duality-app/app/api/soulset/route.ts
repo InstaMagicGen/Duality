@@ -1,100 +1,119 @@
 // app/api/soulset/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import Groq from "groq-sdk";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 
-const SUNSET_VIDEOS = [
-  "/sunset/Sunset-1V.mp4",
-  "/sunset/Sunset-2V.mp4",
-  "/sunset/Sunset-3V.mp4",
-  "/sunset/Sunset-4V.mp4",
-];
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
-const SYSTEM_PROMPT_SOULSET = `
-Tu es une voix de guidance très courte, comme une phrase de thérapeute + poète.
-Tu réponds par UNE SEULE PHRASE (max 2), sous forme de "quote" inspirante mais ancrée.
-Tu t'adresses à la deuxième personne ("tu").
-Pas de smileys, pas de hashtags.
-`;
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    console.warn("[SOULSET] Supabase désactivé : variables manquantes.");
+    return null;
+  }
+
+  return createClient(url, serviceKey);
+}
+
+function safeString(v: unknown) {
+  return typeof v === "string" ? v.slice(0, 5000) : "";
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const { text, mood = 3, lang = "fr" } = await req.json();
+    const body = await req.json().catch(() => ({}));
 
-    if (!text || typeof text !== "string") {
+    const rawText = safeString(body.text);
+    const mood = Number.isFinite(body.mood) ? Number(body.mood) : 3;
+    const lang = body.lang === "en" ? "en" : body.lang === "ar" ? "ar" : "fr";
+    const clientId = safeString(body.clientId || "");
+
+    if (!rawText.trim()) {
       return NextResponse.json(
-        { error: "Missing 'text' in body." },
+        { error: "Missing 'text' in request body." },
         { status: 400 }
       );
     }
 
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) {
-      console.error("GROQ_API_KEY manquant pour Soulset");
-      return NextResponse.json(
-        { error: "Server misconfigured (missing GROQ_API_KEY)." },
-        { status: 500 }
-      );
-    }
+    const moodLabel =
+      lang === "en"
+        ? ["very low", "low", "neutral", "quite good", "very good"][
+            Math.min(Math.max(mood - 1, 0), 4)
+          ]
+        : lang === "ar"
+        ? ["منخفض جدًا", "منخفض", "محايد", "جيد نوعًا ما", "جيد جدًا"][
+            Math.min(Math.max(mood - 1, 0), 4)
+          ]
+        : ["très bas", "bas", "neutre", "plutôt bien", "très bien"][
+            Math.min(Math.max(mood - 1, 0), 4)
+          ];
 
-    const userMoodText =
-      lang === "fr"
-        ? `Niveau ressenti de la personne (1 très bas, 5 très bien) : ${mood}.`
-        : `User feeling level (1 very low, 5 very good): ${mood}.`;
+    const systemPromptFr = `Tu es "Soulset Navigator", un guide calme qui reflète l’état émotionnel de la personne en une phrase courte, comme une citation projetée sur un coucher de soleil.
+Tu ne donnes PAS de conseils longs, juste une phrase ou deux qui captent l’essence de ce qu’elle vit.`;
+
+    const systemPromptEn = `You are "Soulset Navigator", a calm guide that reflects the emotional state of the person in a short quote, as if written over a sunset.
+You do NOT give long advice, only one or two sentences capturing the essence of what they are living.`;
+
+    const systemPromptAr = `أنت "Soulset Navigator"، مرشد هادئ يعكس الحالة العاطفية للشخص في جملة قصيرة تشبه اقتباساً مكتوباً فوق غروب الشمس.
+لا تعطي نصائح طويلة، فقط جملة أو جملتان تلخصان جوهر ما يمرّ به.`;
+
+    const systemPrompt =
+      lang === "en" ? systemPromptEn : lang === "ar" ? systemPromptAr : systemPromptFr;
 
     const userPrompt =
-      lang === "fr"
-        ? `Résumé de la personne : """${text}""".
-${userMoodText}
-Renvoie une seule phrase miroir qui pourrait l'aider à se recentrer.`
-        : `User summary: """${text}""".
-${userMoodText}
-Return one short mirror sentence that might help them recentre.`;
+      lang === "en"
+        ? `User summary of the moment:\n${rawText}\nMood just before the session: ${moodLabel} (1–5).\n\nReturn ONLY one or two short sentences, like an intimate quote addressed to "you".`
+        : lang === "ar"
+        ? `ملخص حالة الشخص الآن:\n${rawText}\nالمزاج قبل الجلسة: ${moodLabel} (1–5).\n\nأعد فقط جملة أو جملتين قصيرتين، كاقتباس شخصي موجّه بصيغة "أنت".`
+        : `Résumé de ce que la personne vit :\n${rawText}\nHumeur juste avant la session : ${moodLabel} (1–5).\n\nRéponds UNIQUEMENT par une ou deux phrases très courtes, comme une citation intime, en la tutoyant.`;
 
-    const groqRes = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${groqKey}`,
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT_SOULSET },
-            { role: "user", content: userPrompt },
-          ],
-          temperature: 0.7,
-          max_tokens: 120,
-        }),
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.2-70b-preview",
+      temperature: 0.9,
+      max_tokens: 200,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+    });
+
+    const quote =
+      completion.choices?.[0]?.message?.content?.toString().trim() || "";
+
+    const payload = {
+      quote: safeString(quote),
+    };
+
+    // ---------- SAUVEGARDE SUPABASE ----------
+    try {
+      const supabase = getSupabase();
+      if (supabase) {
+        const { error } = await supabase.from("soulset_sessions").insert({
+          client_id: clientId || null,
+          lang,
+          mood,
+          input_text: rawText,
+          quote: payload.quote,
+        });
+        if (error) {
+          console.error("[SOULSET] Erreur Supabase", error);
+        }
       }
-    );
-
-    if (!groqRes.ok) {
-      const errText = await groqRes.text();
-      console.error("Groq Soulset error:", errText);
-      return NextResponse.json(
-        { error: "AI provider error (Groq) in Soulset." },
-        { status: 500 }
-      );
+    } catch (err) {
+      console.error("[SOULSET] Exception Supabase", err);
     }
 
-    const data: any = await groqRes.json();
-    const quote =
-      data.choices?.[0]?.message?.content?.trim() ||
-      (lang === "fr"
-        ? "Même au milieu du chaos, tu restes capable de choisir le prochain pas."
-        : "Even in the middle of chaos, you can still choose your next step.");
-
-    const video =
-      SUNSET_VIDEOS[Math.floor(Math.random() * SUNSET_VIDEOS.length)];
-
-    return NextResponse.json({ quote, video });
-  } catch (err) {
-    console.error("Soulset API error:", err);
+    return NextResponse.json(payload, { status: 200 });
+  } catch (err: any) {
+    console.error("[SOULSET] Erreur serveur", err);
     return NextResponse.json(
-      { error: "Internal server error in /api/soulset." },
+      { error: "Internal error (soulset)." },
       { status: 500 }
     );
   }

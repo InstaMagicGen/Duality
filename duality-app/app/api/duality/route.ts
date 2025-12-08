@@ -1,133 +1,166 @@
 // app/api/duality/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import Groq from "groq-sdk";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 
-const GROQ_MODEL = "llama-3.1-8b-instant"; // ou le modèle que tu utilises chez Groq
+// --- Groq client (texte) ---
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
-type DualityBody = {
-  text: string;
-  traits?: string[];
-  lang?: "fr" | "en";
-};
+// --- Supabase (serveur uniquement) ---
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    console.warn("[DUALITY] Supabase désactivé : variables manquantes.");
+    return null;
+  }
+
+  return createClient(url, serviceKey);
+}
+
+// Petit helper de sécurité
+function safeString(v: unknown) {
+  return typeof v === "string" ? v.slice(0, 5000) : "";
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = process.env.GROQ_API_KEY;
+    const body = await req.json().catch(() => ({}));
 
-    if (!apiKey) {
-      console.error("[DUALITY] GROQ_API_KEY manquante");
+    const rawText = safeString(body.text);
+    const lang = body.lang === "en" ? "en" : body.lang === "ar" ? "ar" : "fr";
+    const traits = Array.isArray(body.traits) ? body.traits.slice(0, 5) : [];
+    const clientId = safeString(body.clientId || "");
+
+    if (!rawText.trim()) {
       return NextResponse.json(
-        { error: "Serveur mal configuré : GROQ_API_KEY manquante." },
-        { status: 500 }
-      );
-    }
-
-    const body = (await req.json()) as DualityBody;
-    const { text, traits = [], lang = "fr" } = body;
-
-    if (!text || typeof text !== "string") {
-      return NextResponse.json(
-        { error: "Texte manquant pour l'analyse." },
+        { error: "Missing 'text' in request body." },
         { status: 400 }
       );
     }
 
-    const langLabel = lang === "fr" ? "en français" : "in English";
+    // --------- PROMPTS GROQ ----------
+    const systemPromptFr = `Tu es "Duality", la voix intérieure d'une personne.
+Tu réponds comme sa propre conscience lucide, pas comme une IA.
 
-    const systemPrompt = `
-Tu es "Duality", la conscience intérieure de l'utilisateur.
-Tu analyses son texte et tu renvoies STRICTEMENT un JSON de la forme :
+Tu dois produire deux blocs très courts (2 à 4 phrases chacun) :
+1) LIFE ECHO : futur probable si la personne continue sur la même trajectoire.
+2) SHADOWTALK : ce que son "ombre" ou inconscient essaie de lui dire.
 
-{
-  "future": "2 à 4 phrases sur la trajectoire probable, en mode miroir, ${langLabel}.",
-  "shadow": "2 à 4 phrases sur ce que son ombre lui dit, ${langLabel}."
-}
+Style :
+- ton humain, simple, bienveillant
+- pas de listes, pas de puces, juste un texte fluide
+- tutoie la personne
+- pas de phrases génériques, ancre-toi dans ce qu'elle vit vraiment.`;
 
-- Ne mets aucun texte autour du JSON.
-- Pas de markdown, pas de commentaire, pas de texte avant ou après.
-- Tu parles ${langLabel}.
-    `.trim();
+    const systemPromptEn = `You are "Duality", someone's inner voice.
+You answer as their lucid conscience, not as an AI.
 
-    const traitsText = traits.length ? traits.join(", ") : "aucun trait précisé";
+You must produce two very short blocks (2–4 sentences each):
+1) LIFE ECHO: most probable future if they keep the same trajectory.
+2) SHADOWTALK: what their "shadow" or unconscious is trying to say.
 
-    const userPrompt = `
-Texte de l'utilisateur :
-"""${text}"""
+Style:
+- human, simple, caring tone
+- no bullet points, just flowing text
+- talk to them directly in "you"
+- be specific to what they are experiencing, not generic advice.`;
 
-Traits de personnalité actifs :
-${traitsText}
-    `.trim();
+    const systemPromptAr = `أنت "Duality"، صوت وعي الشخص الداخلي.
+تجيب كأنك ضميره الواضح وليس ذكاءً اصطناعياً.
 
-    const resp = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: GROQ_MODEL,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          temperature: 0.7,
-        }),
-      }
-    );
+عليك إنتاج فقرتين قصيرتين (2 إلى 4 جمل لكل منهما):
+1) LIFE ECHO: المستقبل المرجَّح إذا استمر بنفس المسار.
+2) SHADOWTALK: ما تحاول "ظلاله" أو لاوعيه أن تخبره به.
 
-    if (!resp.ok) {
-      const errorText = await resp.text();
-      console.error(
-        "[DUALITY] Erreur Groq HTTP",
-        resp.status,
-        resp.statusText,
-        errorText
-      );
-      return NextResponse.json(
-        { error: "Erreur Groq (voir logs serveur)." },
-        { status: 500 }
-      );
-    }
+الأسلوب:
+- نبرة إنسانية، بسيطة، لطيفة
+- دون نقاط تعداد، فقط نص متّصل
+- خاطبه مباشرة بصيغة "أنت"
+- كن محدّدًا قدر الإمكان بحسب ما يعيشه الآن.`;
 
-    const data = await resp.json();
+    const systemPrompt =
+      lang === "en" ? systemPromptEn : lang === "ar" ? systemPromptAr : systemPromptFr;
 
-    const rawContent: string =
-      data?.choices?.[0]?.message?.content?.trim() || "";
+    const traitsText =
+      traits.length > 0 ? `Traits / état du moment : ${traits.join(", ")}.` : "";
 
-    let parsed: { future?: string; shadow?: string } = {};
+    const userPrompt =
+      lang === "en"
+        ? `User text:\n${rawText}\n\n${traitsText}\n\nReturn JSON strictly in this format:\n{"future": "...", "shadow": "..."}.`
+        : lang === "ar"
+        ? `نص المستخدم:\n${rawText}\n\n${traitsText}\n\nأعد الإجابة بصيغة JSON فقط بالشكل التالي:\n{"future": "...", "shadow": "..."}.`
+        : `Texte de la personne :\n${rawText}\n\n${traitsText}\n\nRéponds uniquement au format JSON :\n{"future": "...", "shadow": "..."}.`;
+
+    // --------- APPEL GROQ ----------
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.2-70b-preview", // modèle supporté (2025)
+      temperature: 0.8,
+      max_tokens: 600,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+    });
+
+    const rawAnswer =
+      completion.choices?.[0]?.message?.content?.toString().trim() || "";
+
+    let future = "";
+    let shadow = "";
 
     try {
-      parsed = JSON.parse(rawContent);
-    } catch (e) {
-      console.error(
-        "[DUALITY] Impossible de parser le JSON renvoyé par Groq :",
-        rawContent
-      );
-      return NextResponse.json(
-        {
-          error:
-            "Réponse du modèle incorrecte (JSON invalide). Vérifie les logs.",
-        },
-        { status: 500 }
-      );
+      // Essaye de parser du JSON propre
+      const parsed = JSON.parse(rawAnswer);
+      future = safeString(parsed.future);
+      shadow = safeString(parsed.shadow);
+    } catch {
+      // fallback si le modèle ne renvoie pas du JSON pur
+      const parts = rawAnswer.split(/SHADOWTALK[:\-]/i);
+      if (parts.length === 2) {
+        future = safeString(parts[0].replace(/LIFE ECHO[:\-]/i, "").trim());
+        shadow = safeString(parts[1].trim());
+      } else {
+        future = rawAnswer.slice(0, 4000);
+        shadow = "";
+      }
     }
 
-    const future = parsed.future || "";
-    const shadow = parsed.shadow || "";
-
-    return NextResponse.json({
+    const payload = {
       future,
       shadow,
-      // avatarUrl sera géré par une autre route (fal.ai)
-      avatarUrl: null,
-    });
-  } catch (err) {
-    console.error("[DUALITY] Erreur serveur globale :", err);
+    };
+
+    // --------- SAUVEGARDE SUPABASE ----------
+    try {
+      const supabase = getSupabase();
+      if (supabase) {
+        const { error } = await supabase.from("duality_sessions").insert({
+          client_id: clientId || null,
+          lang,
+          traits,
+          input_text: rawText,
+          future,
+          shadow,
+        });
+        if (error) {
+          console.error("[DUALITY] Erreur Supabase", error);
+        }
+      }
+    } catch (err) {
+      console.error("[DUALITY] Exception Supabase", err);
+    }
+
+    return NextResponse.json(payload, { status: 200 });
+  } catch (err: any) {
+    console.error("[DUALITY] Erreur serveur", err);
     return NextResponse.json(
-      { error: "Erreur interne du serveur (Duality)." },
+      { error: "Internal error (duality)." },
       { status: 500 }
     );
   }
