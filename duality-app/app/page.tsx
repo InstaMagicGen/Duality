@@ -23,7 +23,6 @@ type MoodLog = {
 const translations: Record<
   Lang,
   {
-    // home
     mainTitle: string;
     mainSubtitle: string;
     dualityTitle: string;
@@ -40,20 +39,13 @@ const translations: Record<
     moodSubmit: string;
     authLoggedAs: string;
     logout: string;
-    // auth screen
-    authLoginTitle: string;
-    authSignupTitle: string;
-    authEmailLabel: string;
-    authPasswordLabel: string;
-    authPasswordHint: string;
-    authShowPassword: string;
-    authHidePassword: string;
-    authLoginButton: string;
-    authSignupButton: string;
-    authGoogle: string;
-    authSwitchToSignup: string;
-    authSwitchToLogin: string;
-    authErrorGeneric: string;
+    // CTA header
+    headerLogin: string;
+    headerSignup: string;
+    // Mood verrouillé
+    moodLockedTitle: string;
+    moodLockedBody: string;
+    moodLockedButton: string;
   }
 > = {
   fr: {
@@ -78,19 +70,12 @@ const translations: Record<
     moodSubmit: "Enregistrer",
     authLoggedAs: "Connecté en tant que",
     logout: "Déconnexion",
-    authLoginTitle: "Connexion",
-    authSignupTitle: "Créer un compte",
-    authEmailLabel: "E-mail",
-    authPasswordLabel: "Mot de passe",
-    authPasswordHint: "Minimum 6 caractères.",
-    authShowPassword: "Afficher le mot de passe",
-    authHidePassword: "Masquer le mot de passe",
-    authLoginButton: "Se connecter",
-    authSignupButton: "Créer le compte",
-    authGoogle: "Continuer avec Google",
-    authSwitchToSignup: "Pas encore de compte ? Créer un compte",
-    authSwitchToLogin: "Tu as déjà un compte ? Se connecter",
-    authErrorGeneric: "Identifiants invalides ou erreur inattendue.",
+    headerLogin: "Connexion",
+    headerSignup: "Créer un compte",
+    moodLockedTitle: "Active ton suivi de mood",
+    moodLockedBody:
+      "Après chaque session, connecte-toi pour sauvegarder ton humeur et suivre l’évolution de ton état intérieur.",
+    moodLockedButton: "Se connecter pour voir la carte de mood",
   },
   en: {
     mainTitle: "Soulset Journeys",
@@ -114,19 +99,12 @@ const translations: Record<
     moodSubmit: "Save",
     authLoggedAs: "Signed in as",
     logout: "Sign out",
-    authLoginTitle: "Sign in",
-    authSignupTitle: "Create an account",
-    authEmailLabel: "E-mail",
-    authPasswordLabel: "Password",
-    authPasswordHint: "At least 6 characters.",
-    authShowPassword: "Show password",
-    authHidePassword: "Hide password",
-    authLoginButton: "Sign in",
-    authSignupButton: "Create account",
-    authGoogle: "Continue with Google",
-    authSwitchToSignup: "No account yet? Create one",
-    authSwitchToLogin: "Already have an account? Sign in",
-    authErrorGeneric: "Invalid credentials or unexpected error.",
+    headerLogin: "Sign in",
+    headerSignup: "Create account",
+    moodLockedTitle: "Unlock your mood tracking",
+    moodLockedBody:
+      "After each session, sign in to save your mood and follow the evolution of your inner state.",
+    moodLockedButton: "Sign in to view the mood card",
   },
   ar: {
     mainTitle: "رحلة السولسِت",
@@ -150,19 +128,12 @@ const translations: Record<
     moodSubmit: "حفظ",
     authLoggedAs: "متصل كـ",
     logout: "تسجيل الخروج",
-    authLoginTitle: "تسجيل الدخول",
-    authSignupTitle: "إنشاء حساب",
-    authEmailLabel: "البريد الإلكتروني",
-    authPasswordLabel: "كلمة المرور",
-    authPasswordHint: "6 أحرف على الأقل.",
-    authShowPassword: "إظهار كلمة المرور",
-    authHidePassword: "إخفاء كلمة المرور",
-    authLoginButton: "تسجيل الدخول",
-    authSignupButton: "إنشاء الحساب",
-    authGoogle: "المتابعة باستخدام Google",
-    authSwitchToSignup: "ليس لديك حساب؟ أنشئ حساباً",
-    authSwitchToLogin: "لديك حساب بالفعل؟ سجّل الدخول",
-    authErrorGeneric: "بيانات غير صحيحة أو خطأ غير متوقع.",
+    headerLogin: "تسجيل الدخول",
+    headerSignup: "إنشاء حساب",
+    moodLockedTitle: "فعّل بطاقة متابعة المزاج",
+    moodLockedBody:
+      "بعد كل جلسة، سجّل الدخول لحفظ مزاجك ومتابعة تطوّر حالتك الداخلية.",
+    moodLockedButton: "تسجيل الدخول لعرض بطاقة المزاج",
   },
 };
 
@@ -173,18 +144,11 @@ export default function Home() {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
 
-  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
-  const [authEmail, setAuthEmail] = useState("");
-  const [authPassword, setAuthPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [authLoading, setAuthLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-
   const [moodLevel, setMoodLevel] = useState<MoodLevel>(3);
   const [moodNote, setMoodNote] = useState("");
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>([]);
 
-  // détecter langue système
+  // langue
   useEffect(() => {
     if (typeof navigator === "undefined") return;
     const l = navigator.language?.toLowerCase() ?? "fr";
@@ -193,7 +157,7 @@ export default function Home() {
     else setLang("en");
   }, []);
 
-  // récupérer la session
+  // session
   useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
       if (error) {
@@ -202,16 +166,13 @@ export default function Home() {
         return;
       }
       if (data?.user) {
-        setUser({
-          id: data.user.id,
-          email: data.user.email ?? null,
-        });
+        setUser({ id: data.user.id, email: data.user.email ?? null });
       }
       setCheckingSession(false);
     });
   }, []);
 
-  // mood en localStorage
+  // mood localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -232,77 +193,6 @@ export default function Home() {
       console.warn("Erreur écriture mood localStorage", e);
     }
   }, [moodLogs]);
-
-  async function handleEmailAuth() {
-    setAuthError(null);
-    if (!authEmail || !authPassword) {
-      setAuthError(t.authErrorGeneric);
-      return;
-    }
-
-    try {
-      setAuthLoading(true);
-
-      if (authMode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
-          email: authEmail,
-          password: authPassword,
-        });
-        if (error) throw error;
-
-        // si confirmation par mail activée, Supabase peut ne pas renvoyer l'user tout de suite
-        if (data.user) {
-          setUser({ id: data.user.id, email: data.user.email ?? null });
-        }
-      } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: authEmail,
-          password: authPassword,
-        });
-        if (error) throw error;
-        if (data.user) {
-          setUser({ id: data.user.id, email: data.user.email ?? null });
-        }
-      }
-    } catch (err: any) {
-      console.error(err);
-      setAuthError(
-        err?.message && typeof err.message === "string"
-          ? err.message
-          : t.authErrorGeneric
-      );
-    } finally {
-      setAuthLoading(false);
-    }
-  }
-
-  async function handleGoogleAuth() {
-    setAuthError(null);
-    try {
-      setAuthLoading(true);
-      const siteUrl =
-        process.env.NEXT_PUBLIC_SITE_URL ||
-        (typeof window !== "undefined" ? window.location.origin : undefined);
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: siteUrl,
-        },
-      });
-      if (error) throw error;
-      // la redirection va prendre le relais, pas besoin de setUser ici
-    } catch (err: any) {
-      console.error(err);
-      setAuthError(
-        err?.message && typeof err.message === "string"
-          ? err.message
-          : t.authErrorGeneric
-      );
-    } finally {
-      setAuthLoading(false);
-    }
-  }
 
   async function handleLogout() {
     try {
@@ -325,7 +215,6 @@ export default function Home() {
     setMoodNote("");
   }
 
-  // écran de chargement court pendant la vérif de session
   if (checkingSession) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center text-neutral-400">
@@ -334,115 +223,10 @@ export default function Home() {
     );
   }
 
-  // ============================
-  // 1) ÉCRAN AUTH UNIQUEMENT SI PAS CONNECTÉ
-  // ============================
-  if (!user) {
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-slate-900 flex items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-3xl border border-yellow-400/60 bg-neutral-900/95 shadow-[0_0_60px_rgba(234,179,8,0.35)] p-7 md:p-8">
-          <div className="mb-6 text-center space-y-1">
-            <h1 className="text-xl md:text-2xl font-semibold text-yellow-300">
-              {authMode === "login"
-                ? t.authLoginTitle
-                : t.authSignupTitle}
-            </h1>
-            <p className="text-xs text-neutral-400 max-w-sm mx-auto">
-              {t.mainSubtitle}
-            </p>
-          </div>
-
-          {/* email */}
-          <label className="block text-xs font-medium text-neutral-300 mb-1">
-            {t.authEmailLabel}
-          </label>
-          <input
-            type="email"
-            autoComplete="email"
-            value={authEmail}
-            onChange={(e) => setAuthEmail(e.target.value)}
-            className="mb-4 w-full rounded-2xl bg-black/70 border border-neutral-600 focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400 text-sm text-white px-4 py-3 placeholder:text-neutral-500 transition"
-            placeholder="you@example.com"
-          />
-
-          {/* password */}
-          <label className="block text-xs font-medium text-neutral-300 mb-1">
-            {t.authPasswordLabel}
-          </label>
-          <div className="relative mb-2">
-            <input
-              type={showPassword ? "text" : "password"}
-              autoComplete={
-                authMode === "signup" ? "new-password" : "current-password"
-              }
-              value={authPassword}
-              onChange={(e) => setAuthPassword(e.target.value)}
-              className="w-full rounded-2xl bg-black/70 border border-neutral-600 focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400 text-sm text-white px-4 py-3 pr-11 placeholder:text-neutral-500 transition"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((s) => !s)}
-              className="absolute inset-y-0 right-0 px-3 flex items-center text-xs text-neutral-400 hover:text-yellow-300"
-            >
-              {showPassword ? "🙈" : "👁️"}
-            </button>
-          </div>
-          <p className="text-[11px] text-neutral-500 mb-4">
-            {t.authPasswordHint}
-          </p>
-
-          {authError && (
-            <p className="text-[11px] text-red-400 mb-3">{authError}</p>
-          )}
-
-          {/* Bouton principal */}
-          <button
-            type="button"
-            onClick={handleEmailAuth}
-            disabled={authLoading}
-            className="w-full mb-3 rounded-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black font-semibold text-sm py-2.5 shadow-[0_0_25px_rgba(250,204,21,0.6)] hover:brightness-110 disabled:opacity-60 disabled:shadow-none transition-transform transform hover:-translate-y-0.5"
-          >
-            {authMode === "login"
-              ? t.authLoginButton
-              : t.authSignupButton}
-          </button>
-
-          {/* Google */}
-          <button
-            type="button"
-            onClick={handleGoogleAuth}
-            disabled={authLoading}
-            className="w-full rounded-full border border-neutral-600 bg-black/60 text-sm text-neutral-100 py-2.5 hover:border-yellow-300 hover:text-yellow-100 transition flex items-center justify-center gap-2"
-          >
-            <span>⚡</span>
-            <span>{t.authGoogle}</span>
-          </button>
-
-          {/* Switch mode */}
-          <button
-            type="button"
-            onClick={() =>
-              setAuthMode((m) => (m === "login" ? "signup" : "login"))
-            }
-            className="mt-4 w-full text-center text-[11px] text-neutral-400 hover:text-yellow-300 transition"
-          >
-            {authMode === "login"
-              ? t.authSwitchToSignup
-              : t.authSwitchToLogin}
-          </button>
-        </div>
-      </main>
-    );
-  }
-
-  // ============================
-  // 2) VUE PRINCIPALE (user connecté)
-  // ============================
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-slate-900 text-white flex flex-col items-center px-4 py-6">
       {/* HEADER */}
-      <header className="w-full max-w-6xl mb-8 flex items-center justify-between gap-4">
+      <header className="w-full max-w-6xl mb-10 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-wide">
             {t.mainTitle}
@@ -452,26 +236,48 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-1">
-          <span className="text-[11px] text-neutral-400">
-            {t.authLoggedAs}{" "}
-            <span className="font-semibold text-neutral-100">
-              {user.email ?? "user"}
-            </span>
-          </span>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-1.5 rounded-full border border-yellow-400/80 bg-black/70 hover:bg-yellow-400 hover:text-black text-xs font-medium shadow-lg shadow-yellow-500/30 transition"
-          >
-            {t.logout}
-          </button>
+        {/* zone droite : si user -> email + déconnexion, sinon boutons Connexion / Créer */}
+        <div className="flex items-center gap-3">
+          {!user && (
+            <>
+              <Link
+                href="/auth?mode=login"
+                className="px-4 py-1.5 rounded-full border border-neutral-600 bg-black/70 text-xs hover:border-yellow-300 hover:text-yellow-100 transition"
+              >
+                {t.headerLogin}
+              </Link>
+              <Link
+                href="/auth?mode=signup"
+                className="px-4 py-1.5 rounded-full border border-yellow-400/80 bg-yellow-400 text-xs font-semibold text-black shadow-lg shadow-yellow-500/40 hover:bg-yellow-300 transition"
+              >
+                {t.headerSignup}
+              </Link>
+            </>
+          )}
+
+          {user && (
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[11px] text-neutral-400">
+                {t.authLoggedAs}{" "}
+                <span className="font-semibold text-neutral-100">
+                  {user.email ?? "user"}
+                </span>
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-1.5 rounded-full border border-yellow-400/80 bg-black/70 hover:bg-yellow-400 hover:text-black text-xs font-medium shadow-lg shadow-yellow-500/30 transition"
+              >
+                {t.logout}
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* CARTES PRINCIPALES */}
+      {/* CARTES PRINCIPALES AU CENTRE */}
       <section className="w-full max-w-6xl mb-10 flex justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-          {/* Duality card */}
+          {/* Duality */}
           <Link
             href="/duality"
             className="group rounded-3xl border border-yellow-400/60 bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 p-6 md:p-7 shadow-[0_0_50px_rgba(234,179,8,0.35)] hover:-translate-y-1 hover:shadow-[0_0_65px_rgba(250,204,21,0.55)] transition-transform duration-200"
@@ -493,7 +299,7 @@ export default function Home() {
             </div>
           </Link>
 
-          {/* Soulset card */}
+          {/* Soulset Navigator */}
           <Link
             href="/soulset"
             className="group rounded-3xl border border-sky-400/60 bg-gradient-to-br from-sky-500/20 via-slate-900/90 to-black/95 p-6 md:p-7 shadow-[0_0_50px_rgba(56,189,248,0.35)] hover:-translate-y-1 hover:shadow-[0_0_65px_rgba(59,130,246,0.55)] transition-transform duration-200"
@@ -517,89 +323,106 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CARTE DE SUIVI DE MOOD (seulement quand connecté) */}
+      {/* SECTION MOOD : soit la vraie carte, soit un message pour inviter à se connecter */}
       <section className="w-full max-w-4xl mb-6">
-        <div className="rounded-3xl border border-neutral-700/80 bg-black/80 p-6 md:p-7 shadow-[0_0_40px_rgba(15,23,42,0.9)] backdrop-blur-sm">
-          <h3 className="text-base md:text-lg font-semibold text-neutral-50 mb-3">
-            {t.moodTitle}
-          </h3>
-          <p className="text-sm text-neutral-300 mb-4">{t.moodQuestion}</p>
+        {user ? (
+          <div className="rounded-3xl border border-neutral-700/80 bg-black/80 p-6 md:p-7 shadow-[0_0_40px_rgba(15,23,42,0.9)] backdrop-blur-sm">
+            <h3 className="text-base md:text-lg font-semibold text-neutral-50 mb-3">
+              {t.moodTitle}
+            </h3>
+            <p className="text-sm text-neutral-300 mb-4">{t.moodQuestion}</p>
 
-          {/* niveaux */}
-          <div className="mb-4">
-            <label className="block text-xs text-neutral-400 mb-1">
-              {t.moodLabel}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[1, 2, 3, 4, 5].map((lvl) => (
-                <button
-                  key={lvl}
-                  type="button"
-                  onClick={() => setMoodLevel(lvl as MoodLevel)}
-                  className={`w-10 h-10 rounded-full text-sm flex items-center justify-center border transition ${
-                    moodLevel === lvl
-                      ? "border-yellow-300 bg-yellow-400 text-black shadow-lg shadow-yellow-500/40"
-                      : "border-neutral-600 bg-black text-neutral-200 hover:border-yellow-400/80"
-                  }`}
-                >
-                  {lvl}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* note */}
-          <div className="mb-4">
-            <textarea
-              className="w-full h-24 rounded-2xl bg-black border border-neutral-700 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none placeholder:text-neutral-500"
-              placeholder={t.moodPlaceholder}
-              value={moodNote}
-              onChange={(e) => setMoodNote(e.target.value)}
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleSaveMood}
-            disabled={!moodNote.trim()}
-            className="w-full md:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black px-6 py-2 text-sm font-semibold hover:brightness-110 disabled:opacity-60 transition shadow-[0_0_25px_rgba(250,204,21,0.6)]"
-          >
-            {t.moodSubmit}
-          </button>
-
-          {moodLogs.length > 0 && (
-            <div className="mt-6">
-              <p className="text-[11px] text-neutral-400 mb-2">
-                {t.moodHistoryTitle}
-              </p>
-              <ul className="space-y-2 max-h-40 overflow-y-auto pr-1">
-                {moodLogs.map((log) => (
-                  <li
-                    key={log.id}
-                    className="rounded-xl border border-neutral-700/70 bg-black/70 px-3 py-2 text-xs text-neutral-200"
+            <div className="mb-4">
+              <label className="block text-xs text-neutral-400 mb-1">
+                {t.moodLabel}
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {[1, 2, 3, 4, 5].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setMoodLevel(lvl as MoodLevel)}
+                    className={`w-10 h-10 rounded-full text-sm flex items-center justify-center border transition ${
+                      moodLevel === lvl
+                        ? "border-yellow-300 bg-yellow-400 text-black shadow-lg shadow-yellow-500/40"
+                        : "border-neutral-600 bg-black text-neutral-200 hover:border-yellow-400/80"
+                    }`}
                   >
-                    <div className="flex items-center justify-between mb-1 gap-2">
-                      <span className="font-semibold text-yellow-300">
-                        {log.level}/5
-                      </span>
-                      <span className="text-[10px] text-neutral-500">
-                        {new Date(log.createdAt).toLocaleString()}
-                      </span>
-                    </div>
-                    <p className="leading-snug whitespace-pre-line">
-                      {log.note}
-                    </p>
-                  </li>
+                    {lvl}
+                  </button>
                 ))}
-              </ul>
+              </div>
             </div>
-          )}
-        </div>
+
+            <div className="mb-4">
+              <textarea
+                className="w-full h-24 rounded-2xl bg-black border border-neutral-700 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none placeholder:text-neutral-500"
+                placeholder={t.moodPlaceholder}
+                value={moodNote}
+                onChange={(e) => setMoodNote(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSaveMood}
+              disabled={!moodNote.trim()}
+              className="w-full md:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black px-6 py-2 text-sm font-semibold hover:brightness-110 disabled:opacity-60 transition shadow-[0_0_25px_rgba(250,204,21,0.6)]"
+            >
+              {t.moodSubmit}
+            </button>
+
+            {moodLogs.length > 0 && (
+              <div className="mt-6">
+                <p className="text-[11px] text-neutral-400 mb-2">
+                  {t.moodHistoryTitle}
+                </p>
+                <ul className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                  {moodLogs.map((log) => (
+                    <li
+                      key={log.id}
+                      className="rounded-xl border border-neutral-700/70 bg-black/70 px-3 py-2 text-xs text-neutral-200"
+                    >
+                      <div className="flex items-center justify-between mb-1 gap-2">
+                        <span className="font-semibold text-yellow-300">
+                          {log.level}/5
+                        </span>
+                        <span className="text-[10px] text-neutral-500">
+                          {new Date(log.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="leading-snug whitespace-pre-line">
+                        {log.note}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="rounded-3xl border border-neutral-700/80 bg-black/80 p-6 md:p-7 shadow-[0_0_40px_rgba(15,23,42,0.7)] flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base md:text-lg font-semibold text-neutral-50 mb-2">
+                {t.moodLockedTitle}
+              </h3>
+              <p className="text-sm text-neutral-300 max-w-xl">
+                {t.moodLockedBody}
+              </p>
+            </div>
+            <Link
+              href="/auth?mode=login"
+              className="mt-3 md:mt-0 rounded-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black px-6 py-2 text-sm font-semibold hover:brightness-110 transition shadow-[0_0_25px_rgba(250,204,21,0.6)]"
+            >
+              {t.moodLockedButton}
+            </Link>
+          </div>
+        )}
       </section>
 
       <footer className="mt-2 text-[10px] text-neutral-500 text-center max-w-4xl pb-4">
         Prototype v1 · Les données de mood sont stockées localement sur ton
-        appareil (liaison Supabase dans la suite).
+        appareil (connexion à la base Supabase dans la suite).
       </footer>
     </main>
   );
