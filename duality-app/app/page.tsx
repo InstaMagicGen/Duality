@@ -37,10 +37,19 @@ const translations: Record<
     moodPlaceholder: string;
     moodHistoryTitle: string;
     moodSubmit: string;
-    authLogin: string;
-    authLogout: string;
-    authSending: string;
     authLoggedAs: string;
+    authLoginButton: string;
+    authSignupButton: string;
+    authLogout: string;
+    authEmailLabel: string;
+    authPasswordLabel: string;
+    authPasswordPlaceholder: string;
+    authSubmitLogin: string;
+    authSubmitSignup: string;
+    authGoogle: string;
+    authFormTitleLogin: string;
+    authFormTitleSignup: string;
+    authErrorGeneric: string;
   }
 > = {
   fr: {
@@ -59,13 +68,23 @@ const translations: Record<
     moodQuestion: "Comment tu te sens aujourd’hui ?",
     moodLabel: "Note ton humeur (1 = très bas · 5 = très bien)",
     moodPlaceholder:
-      "Écris quelques mots sur ton ressenti du jour. Exemple : \"Beaucoup de pression au travail, je me sens épuisé.\"",
-    moodHistoryTitle: "Tes derniers moods (local, non sauvegardé en ligne pour l’instant)",
+      'Écris quelques mots sur ton ressenti du jour. Exemple : "Beaucoup de pression au travail, je me sens épuisé."',
+    moodHistoryTitle:
+      "Tes derniers moods (local, non sauvegardé en ligne pour l’instant)",
     moodSubmit: "Enregistrer ce mood",
-    authLogin: "Se connecter",
-    authLogout: "Se déconnecter",
-    authSending: "Envoi du lien...",
     authLoggedAs: "Connecté en tant que",
+    authLoginButton: "Connexion",
+    authSignupButton: "Créer un compte",
+    authLogout: "Se déconnecter",
+    authEmailLabel: "E-mail",
+    authPasswordLabel: "Mot de passe",
+    authPasswordPlaceholder: "Au moins 6 caractères",
+    authSubmitLogin: "Se connecter",
+    authSubmitSignup: "Créer mon compte",
+    authGoogle: "Continuer avec Google",
+    authFormTitleLogin: "Connexion par e-mail",
+    authFormTitleSignup: "Créer un compte par e-mail",
+    authErrorGeneric: "Une erreur est survenue pendant l’authentification.",
   },
   en: {
     mainTitle: "Soulset Journeys",
@@ -83,14 +102,22 @@ const translations: Record<
     moodQuestion: "How do you feel today?",
     moodLabel: "Rate your mood (1 = very low · 5 = very good)",
     moodPlaceholder:
-      "Write a few words about your day. Example: “Heavy day, lots of pressure at work, I feel drained.”",
-    moodHistoryTitle:
-      "Your last moods (local only for now, not saved online yet)",
+      'Write a few words about your day. Example: "Heavy day, lots of pressure at work, I feel drained."',
+    moodHistoryTitle: "Your last moods (local only for now, not saved online)",
     moodSubmit: "Save this mood",
-    authLogin: "Sign in",
-    authLogout: "Sign out",
-    authSending: "Sending link...",
     authLoggedAs: "Signed in as",
+    authLoginButton: "Sign in",
+    authSignupButton: "Create account",
+    authLogout: "Sign out",
+    authEmailLabel: "E-mail",
+    authPasswordLabel: "Password",
+    authPasswordPlaceholder: "At least 6 characters",
+    authSubmitLogin: "Sign in",
+    authSubmitSignup: "Create my account",
+    authGoogle: "Continue with Google",
+    authFormTitleLogin: "Sign in with e-mail",
+    authFormTitleSignup: "Create an account with e-mail",
+    authErrorGeneric: "An error occurred during authentication.",
   },
   ar: {
     mainTitle: "رحلة السولسِت",
@@ -108,14 +135,22 @@ const translations: Record<
     moodQuestion: "كيف تشعر اليوم؟",
     moodLabel: "قيّم مزاجك (1 = منخفض جداً · 5 = ممتاز)",
     moodPlaceholder:
-      "اكتب بعض الكلمات عن يومك. مثال: \"يوم متعب وضغط عمل كبير، أشعر بالإرهاق\".",
-    moodHistoryTitle:
-      "آخر مزاجاتك (محلياً فقط حالياً، غير محفوظة على الإنترنت)",
+      'اكتب بعض الكلمات عن يومك. مثال: "يوم متعب وضغط عمل كبير، أشعر بالإرهاق".',
+    moodHistoryTitle: "آخر مزاجاتك (محلياً فقط حالياً، غير محفوظة على الإنترنت)",
     moodSubmit: "حفظ هذا المزاج",
-    authLogin: "تسجيل الدخول",
-    authLogout: "تسجيل الخروج",
-    authSending: "جاري إرسال الرابط...",
     authLoggedAs: "متصل كـ",
+    authLoginButton: "تسجيل الدخول",
+    authSignupButton: "إنشاء حساب",
+    authLogout: "تسجيل الخروج",
+    authEmailLabel: "البريد الإلكتروني",
+    authPasswordLabel: "كلمة المرور",
+    authPasswordPlaceholder: "ستة أحرف على الأقل",
+    authSubmitLogin: "تسجيل الدخول",
+    authSubmitSignup: "إنشاء حساب",
+    authGoogle: "المتابعة باستخدام Google",
+    authFormTitleLogin: "تسجيل الدخول بالبريد الإلكتروني",
+    authFormTitleSignup: "إنشاء حساب بالبريد الإلكتروني",
+    authErrorGeneric: "حدث خطأ أثناء عملية تسجيل الدخول.",
   },
 };
 
@@ -124,6 +159,11 @@ export default function Home() {
   const t = translations[lang];
 
   const [user, setUser] = useState<SessionUser | null>(null);
+
+  // authMode: "none" | "login" | "signup"
+  const [authMode, setAuthMode] = useState<"none" | "login" | "signup">("none");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -154,6 +194,23 @@ export default function Home() {
         });
       }
     });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email ?? null,
+          });
+        } else {
+          setUser(null);
+        }
+      }
+    );
+
+    return () => {
+      subscription.subscription.unsubscribe();
+    };
   }, []);
 
   // Mood en localStorage (en attendant la DB)
@@ -178,51 +235,78 @@ export default function Home() {
     }
   }, [moodLogs]);
 
-  async function handleLogin() {
+  // ---------------- AUTH HANDLERS (email + mot de passe) ----------------
+
+  function openAuth(mode: "login" | "signup") {
+    setAuthError(null);
+    setAuthMode((prev) => (prev === mode ? "none" : mode));
+  }
+
+  async function handleAuthSubmit(e: React.FormEvent) {
+    e.preventDefault();
     setAuthError(null);
 
-    const email = window.prompt(
-      lang === "fr"
-        ? "Entre ton e-mail pour recevoir un lien magique de connexion :"
-        : lang === "ar"
-        ? "أدخل بريدك الإلكتروني لتصلك رابط تسجيل الدخول السحري:"
-        : "Enter your e-mail to receive a magic sign-in link:"
-    );
-
-    if (!email) return;
+    if (!authEmail || !authPassword) {
+      setAuthError(t.authErrorGeneric);
+      return;
+    }
 
     try {
       setAuthLoading(true);
 
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: window.location.origin,
-        },
-      });
+      if (authMode === "login") {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: authEmail,
+          password: authPassword,
+        });
+        if (error) {
+          console.error("signInWithPassword error:", error.message);
+          setAuthError(error.message);
+          return;
+        }
+        if (data?.user) {
+          setUser({
+            id: data.user.id,
+            email: data.user.email ?? null,
+          });
+          setAuthMode("none");
+          setAuthPassword("");
+        }
+      } else if (authMode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email: authEmail,
+          password: authPassword,
+        });
+        if (error) {
+          console.error("signUp error:", error.message);
+          setAuthError(error.message);
+          return;
+        }
 
-      if (error) {
-        console.error("Supabase signInWithOtp error:", error.message);
-        setAuthError(error.message);
-        return;
+        if (data?.user) {
+          // Si l’e-mail est auto-confirmé
+          setUser({
+            id: data.user.id,
+            email: data.user.email ?? null,
+          });
+          setAuthMode("none");
+          setAuthPassword("");
+        } else {
+          // Si confirmation e-mail nécesssaire
+          alert(
+            lang === "fr"
+              ? "Compte créé. Vérifie ton e-mail pour confirmer ton adresse."
+              : lang === "ar"
+              ? "تم إنشاء الحساب. تحقق من بريدك الإلكتروني لتأكيد العنوان."
+              : "Account created. Please check your e-mail to confirm."
+          );
+          setAuthMode("none");
+          setAuthPassword("");
+        }
       }
-
-      alert(
-        lang === "fr"
-          ? "Un lien magique t’a été envoyé. Clique dessus dans ton e-mail, puis reviens sur l’app."
-          : lang === "ar"
-          ? "تم إرسال رابط سحري إلى بريدك الإلكتروني. اضغط عليه ثم عد إلى التطبيق."
-          : "A magic link has been sent to your e-mail. Click it and come back to the app."
-      );
     } catch (err: any) {
       console.error(err);
-      setAuthError(
-        lang === "fr"
-          ? "Erreur inattendue pendant la connexion."
-          : lang === "ar"
-          ? "حدث خطأ غير متوقع أثناء تسجيل الدخول."
-          : "Unexpected error during sign-in."
-      );
+      setAuthError(t.authErrorGeneric);
     } finally {
       setAuthLoading(false);
     }
@@ -232,10 +316,40 @@ export default function Home() {
     try {
       await supabase.auth.signOut();
       setUser(null);
+      setAuthMode("none");
+      setAuthEmail("");
+      setAuthPassword("");
     } catch (err) {
       console.error(err);
     }
   }
+
+  async function handleGoogleAuth() {
+    setAuthError(null);
+    try {
+      setAuthLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo:
+            typeof window !== "undefined"
+              ? window.location.origin
+              : undefined,
+        },
+      });
+      if (error) {
+        console.error("Google OAuth error:", error.message);
+        setAuthError(error.message);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setAuthError(t.authErrorGeneric);
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  // ---------------- MOOD SAVE ----------------
 
   function handleSaveMood() {
     if (!moodNote.trim()) return;
@@ -250,6 +364,8 @@ export default function Home() {
     setMoodLogs((prev) => [newLog, ...prev].slice(0, 10));
     setMoodNote("");
   }
+
+  // ---------------- RENDER ----------------
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-slate-900 text-white flex flex-col items-center px-4 py-8">
@@ -270,7 +386,7 @@ export default function Home() {
         </div>
 
         {/* Zone auth */}
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end gap-2 w-full md:w-auto">
           {user && (
             <span className="text-[11px] text-neutral-400">
               {t.authLoggedAs}{" "}
@@ -280,22 +396,106 @@ export default function Home() {
             </span>
           )}
 
-          <button
-            onClick={user ? handleLogout : handleLogin}
-            disabled={authLoading}
-            className="px-4 py-1.5 rounded-full border border-[#d4af37] text-xs bg-black/70 hover:bg-[#111111] disabled:opacity-60 transition shadow-lg shadow-yellow-500/20"
-          >
-            {authLoading
-              ? t.authSending
-              : user
-              ? t.authLogout
-              : t.authLogin}
-          </button>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-1.5 rounded-full border border-[#d4af37] text-xs bg-black/70 hover:bg-[#111111] transition shadow-lg shadow-yellow-500/20"
+            >
+              {t.authLogout}
+            </button>
+          ) : (
+            <div className="flex flex-wrap gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => openAuth("login")}
+                className={`px-4 py-1.5 rounded-full border text-xs transition shadow-lg ${
+                  authMode === "login"
+                    ? "border-[#d4af37] bg-[#d4af37] text-black shadow-yellow-500/30"
+                    : "border-[#d4af37] bg-black/70 text-white hover:bg-[#111111] shadow-yellow-500/20"
+                }`}
+              >
+                {t.authLoginButton}
+              </button>
+              <button
+                type="button"
+                onClick={() => openAuth("signup")}
+                className={`px-4 py-1.5 rounded-full border text-xs transition shadow-lg ${
+                  authMode === "signup"
+                    ? "border-sky-400 bg-sky-400 text-black shadow-sky-500/40"
+                    : "border-sky-400 bg-black/70 text-white hover:bg-slate-900 shadow-sky-500/20"
+                }`}
+              >
+                {t.authSignupButton}
+              </button>
+            </div>
+          )}
 
-          {authError && (
-            <p className="text-[11px] text-red-400 max-w-xs text-right">
-              {authError}
-            </p>
+          {/* Petit formulaire déroulant */}
+          {!user && authMode !== "none" && (
+            <form
+              onSubmit={handleAuthSubmit}
+              className="mt-2 w-full md:w-80 rounded-2xl border border-neutral-700 bg-black/80 p-4 shadow-[0_0_25px_rgba(15,23,42,0.8)] backdrop-blur-md space-y-3"
+            >
+              <p className="text-xs font-semibold text-neutral-200">
+                {authMode === "login"
+                  ? t.authFormTitleLogin
+                  : t.authFormTitleSignup}
+              </p>
+
+              <div className="space-y-1">
+                <label className="text-[11px] text-neutral-400">
+                  {t.authEmailLabel}
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  className="w-full rounded-xl bg-black border border-neutral-700 px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] text-neutral-400">
+                  {t.authPasswordLabel}
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder={t.authPasswordPlaceholder}
+                  className="w-full rounded-xl bg-black border border-neutral-700 px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+
+              {authError && (
+                <p className="text-[11px] text-red-400">{authError}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={authLoading}
+                className="w-full rounded-full bg-yellow-400 text-black px-4 py-2 text-xs font-semibold hover:bg-yellow-300 disabled:opacity-60 transition"
+              >
+                {authLoading
+                  ? "⋯"
+                  : authMode === "login"
+                  ? t.authSubmitLogin
+                  : t.authSubmitSignup}
+              </button>
+
+              {/* Bouton Google (optionnel, si configuré côté Supabase) */}
+              <button
+                type="button"
+                onClick={handleGoogleAuth}
+                disabled={authLoading}
+                className="w-full rounded-full border border-neutral-600 text-xs px-4 py-2 text-neutral-100 bg-black/70 hover:bg-neutral-900 transition"
+              >
+                {t.authGoogle}
+              </button>
+            </form>
           )}
         </div>
       </header>
@@ -312,9 +512,7 @@ export default function Home() {
               <h2 className="text-lg md:text-xl font-semibold text-yellow-300 mb-2">
                 {t.dualityTitle}
               </h2>
-              <p className="text-sm text-neutral-200 mb-4">
-                {t.dualityDesc}
-              </p>
+              <p className="text-sm text-neutral-200 mb-4">{t.dualityDesc}</p>
               <div className="mt-auto flex items-center justify-between gap-3">
                 <span className="text-xs uppercase tracking-wide text-yellow-400/80">
                   LIFE ECHO · SHADOWTALK
@@ -336,9 +534,7 @@ export default function Home() {
               <h2 className="text-lg md:text-xl font-semibold text-sky-300 mb-2">
                 {t.soulsetTitle}
               </h2>
-              <p className="text-sm text-neutral-200 mb-4">
-                {t.soulsetDesc}
-              </p>
+              <p className="text-sm text-neutral-200 mb-4">{t.soulsetDesc}</p>
               <div className="mt-auto flex items-center justify-between gap-3">
                 <span className="text-xs uppercase tracking-wide text-sky-300/80">
                   SCAN · SUNSET THERAPY
@@ -436,7 +632,7 @@ export default function Home() {
 
       <footer className="mt-4 text-[10px] text-neutral-500 text-center max-w-4xl">
         Prototype v1 · Données d’humeur stockées localement sur ton appareil
-        (lien avec la base Supabase dans l’étape suivante).
+        (connexion Supabase + carte perso déjà prête pour la suite).
       </footer>
     </main>
   );
