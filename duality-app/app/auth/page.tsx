@@ -1,12 +1,12 @@
 "use client";
 
-export const dynamic = "force-dynamic"; 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 
 type Lang = "fr" | "en" | "ar";
-
 type AuthMode = "login" | "signup";
 
 const translations: Record<
@@ -18,8 +18,6 @@ const translations: Record<
     emailLabel: string;
     passwordLabel: string;
     passwordHint: string;
-    showPassword: string;
-    hidePassword: string;
     loginButton: string;
     signupButton: string;
     google: string;
@@ -36,8 +34,6 @@ const translations: Record<
     emailLabel: "E-mail",
     passwordLabel: "Mot de passe",
     passwordHint: "Minimum 6 caractères.",
-    showPassword: "Afficher le mot de passe",
-    hidePassword: "Masquer le mot de passe",
     loginButton: "Se connecter",
     signupButton: "Créer le compte",
     google: "Continuer avec Google",
@@ -53,8 +49,6 @@ const translations: Record<
     emailLabel: "E-mail",
     passwordLabel: "Password",
     passwordHint: "At least 6 characters.",
-    showPassword: "Show password",
-    hidePassword: "Hide password",
     loginButton: "Sign in",
     signupButton: "Create account",
     google: "Continue with Google",
@@ -70,8 +64,6 @@ const translations: Record<
     emailLabel: "البريد الإلكتروني",
     passwordLabel: "كلمة المرور",
     passwordHint: "6 أحرف على الأقل.",
-    showPassword: "إظهار كلمة المرور",
-    hidePassword: "إخفاء كلمة المرور",
     loginButton: "تسجيل الدخول",
     signupButton: "إنشاء الحساب",
     google: "المتابعة باستخدام Google",
@@ -82,11 +74,21 @@ const translations: Record<
 };
 
 export default function AuthPage() {
+  // --- 1) Phase SSR : on renvoie un écran simple, SANS hooks ni Supabase ---
+  if (typeof window === "undefined") {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-slate-900 flex items-center justify-center text-white">
+        <p className="text-sm text-neutral-400">Chargement de la page de connexion…</p>
+      </main>
+    );
+  }
+
+  // --- 2) Phase navigateur : on peut utiliser les hooks normalement ---
+
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const initialMode =
-    (searchParams.get("mode") as AuthMode | null) ?? "login";
+  const initialMode = (searchParams.get("mode") as AuthMode | null) ?? "login";
   const [mode, setMode] = useState<AuthMode>(initialMode);
 
   const [lang, setLang] = useState<Lang>("fr");
@@ -98,21 +100,24 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Détection de langue système
   useEffect(() => {
-    if (typeof navigator === "undefined") return;
-    const l = navigator.language?.toLowerCase() ?? "fr";
+    const l = window.navigator.language?.toLowerCase() ?? "fr";
     if (l.startsWith("fr")) setLang("fr");
     else if (l.startsWith("ar")) setLang("ar");
     else setLang("en");
   }, []);
 
+  // Si déjà connecté → retour à la home
   useEffect(() => {
-    // si l'utilisateur est déjà connecté, on peut le renvoyer à /
-    supabase.auth.getUser().then(({ data, error }) => {
-      if (!error && data?.user) {
-        router.replace("/");
-      }
-    });
+    supabase.auth
+      .getUser()
+      .then(({ data, error }) => {
+        if (!error && data?.user) {
+          router.replace("/");
+        }
+      })
+      .catch((err) => console.warn("getUser error", err));
   }, [router]);
 
   async function handleEmailAuth() {
@@ -130,18 +135,14 @@ export default function AuthPage() {
           password,
         });
         if (error) throw error;
-        if (data.user) {
-          router.replace("/");
-        }
+        if (data.user) router.replace("/");
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        if (data.user) {
-          router.replace("/");
-        }
+        if (data.user) router.replace("/");
       }
     } catch (err: any) {
       console.error(err);
@@ -159,18 +160,15 @@ export default function AuthPage() {
     setErrorMsg(null);
     try {
       setLoading(true);
+
       const siteUrl =
-        process.env.NEXT_PUBLIC_SITE_URL ||
-        (typeof window !== "undefined" ? window.location.origin : undefined);
+        process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: {
-          redirectTo: siteUrl,
-        },
+        options: { redirectTo: siteUrl },
       });
       if (error) throw error;
-      // redirection par Google + Supabase
     } catch (err: any) {
       console.error(err);
       setErrorMsg(
@@ -184,13 +182,14 @@ export default function AuthPage() {
   }
 
   function toggleMode() {
-    const nextMode: AuthMode = mode === "login" ? "signup" : "login";
-    setMode(nextMode);
+    setMode((prev) => (prev === "login" ? "signup" : "login"));
+    setErrorMsg(null);
   }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-slate-950 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md rounded-3xl border border-yellow-400/60 bg-neutral-900/95 shadow-[0_0_60px_rgba(234,179,8,0.35)] p-7 md:p-8">
+        {/* Titre */}
         <div className="mb-6 text-center space-y-1">
           <h1 className="text-xl md:text-2xl font-semibold text-yellow-300">
             {mode === "login" ? t.loginTitle : t.signupTitle}
@@ -200,7 +199,7 @@ export default function AuthPage() {
           </p>
         </div>
 
-        {/* Email */}
+        {/* Champ e-mail */}
         <label className="block text-xs font-medium text-neutral-300 mb-1">
           {t.emailLabel}
         </label>
@@ -213,7 +212,7 @@ export default function AuthPage() {
           placeholder="you@example.com"
         />
 
-        {/* Password */}
+        {/* Champ mot de passe */}
         <label className="block text-xs font-medium text-neutral-300 mb-1">
           {t.passwordLabel}
         </label>
@@ -230,18 +229,18 @@ export default function AuthPage() {
             type="button"
             onClick={() => setShowPassword((s) => !s)}
             className="absolute inset-y-0 right-0 px-3 flex items-center text-xs text-neutral-400 hover:text-yellow-300"
-            aria-label={showPassword ? t.hidePassword : t.showPassword}
           >
             {showPassword ? "🙈" : "👁️"}
           </button>
         </div>
         <p className="text-[11px] text-neutral-500 mb-4">{t.passwordHint}</p>
 
+        {/* Erreur éventuelle */}
         {errorMsg && (
           <p className="text-[11px] text-red-400 mb-3">{errorMsg}</p>
         )}
 
-        {/* Bouton principal */}
+        {/* Bouton email */}
         <button
           type="button"
           onClick={handleEmailAuth}
@@ -251,7 +250,7 @@ export default function AuthPage() {
           {mode === "login" ? t.loginButton : t.signupButton}
         </button>
 
-        {/* Google */}
+        {/* Bouton Google */}
         <button
           type="button"
           onClick={handleGoogleAuth}
@@ -262,7 +261,7 @@ export default function AuthPage() {
           <span>{t.google}</span>
         </button>
 
-        {/* Switch mode */}
+        {/* Switch login / signup */}
         <button
           type="button"
           onClick={toggleMode}
