@@ -167,19 +167,56 @@ export default function Home() {
   }, []);
 
   // session
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data, error }) => {
+  // remplace l'ancien useEffect(() => { supabase.auth.getUser()... }, []);
+useEffect(() => {
+  let mounted = true;
+
+  async function initSession() {
+    try {
+      // 1) essaye de récupérer la session active
+      const {
+        data: { session, user: supUser },
+        error,
+      } = await supabase.auth.getSession();
+      // supabase.auth.getSession renvoie { data: { session, user } }
       if (error) {
-        console.warn("Supabase getUser error:", error.message);
-        setCheckingSession(false);
-        return;
+        console.warn("getSession error", error);
+      } else {
+        if (mounted && session?.user) {
+          setUser({ id: session.user.id, email: session.user.email ?? null });
+        } else if (mounted && supUser) {
+          setUser({ id: supUser.id, email: supUser.email ?? null });
+        }
       }
-      if (data?.user) {
-        setUser({ id: data.user.id, email: data.user.email ?? null });
+    } catch (err) {
+      console.warn("initSession err", err);
+    }
+
+    // 2) écoute les changements d'auth (login / logout)
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, sess) => {
+      if (!mounted) return;
+      if (sess?.user) {
+        setUser({ id: sess.user.id, email: sess.user.email ?? null });
+      } else {
+        setUser(null);
       }
-      setCheckingSession(false);
     });
-  }, []);
+
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }
+
+  // appelle la fonction
+  const p = initSession();
+
+  // cleanup si nécessaire
+  return () => {
+    // no-op ici ; le cleanup est dans initSession return
+  };
+}, []);
+
 
   // mood localStorage
   useEffect(() => {
