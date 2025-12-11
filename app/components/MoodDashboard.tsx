@@ -15,15 +15,24 @@ export type MoodLog = {
 interface MoodDashboardProps {
   initial?: MoodLog[];
   enableSupabaseSync?: boolean;
+}
+
+interface MoodDashboardHandlers {
   onClose?: () => void;
 }
 
-export default function MoodDashboard({ initial = [], enableSupabaseSync = false, onClose }: MoodDashboardProps) {
+export default function MoodDashboard({
+  initial = [],
+  enableSupabaseSync = false,
+  ...handlers
+}: MoodDashboardProps & MoodDashboardHandlers) {
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>(initial);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!enableSupabaseSync) return;
+
+    let isMounted = true;
 
     const fetchMoods = async () => {
       setLoading(true);
@@ -34,8 +43,9 @@ export default function MoodDashboard({ initial = [], enableSupabaseSync = false
           .order("createdAt", { ascending: false })
           .limit(50);
 
-        if (error) console.error("Erreur récupération moods Supabase", error);
-        else if (data) {
+        if (error) {
+          console.error("Erreur récupération moods Supabase", error);
+        } else if (data && isMounted) {
           const mapped = data.map((d: any) => ({
             id: d.id.toString(),
             createdAt: d.createdAt,
@@ -47,7 +57,7 @@ export default function MoodDashboard({ initial = [], enableSupabaseSync = false
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
@@ -72,18 +82,15 @@ export default function MoodDashboard({ initial = [], enableSupabaseSync = false
       )
       .subscribe();
 
-    return () => supabase.removeChannel(subscription);
+    return () => {
+      isMounted = false;
+      supabase.removeChannel(subscription);
+    };
   }, [enableSupabaseSync]);
 
   return (
     <div className="rounded-3xl border border-neutral-700/80 bg-black/90 p-6 md:p-7 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm max-h-[80vh] overflow-y-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-neutral-50">Mood Dashboard</h3>
-        {onClose && (
-          <button onClick={onClose} className="text-sm text-neutral-400 hover:text-yellow-300 transition">Fermer</button>
-        )}
-      </div>
-
+      <h3 className="text-lg font-semibold text-neutral-50 mb-4">Mood Dashboard</h3>
       {loading && <p className="text-sm text-neutral-400 mb-3">Chargement…</p>}
       {moodLogs.length === 0 && !loading && <p className="text-sm text-neutral-400">Aucun mood enregistré.</p>}
 
@@ -98,6 +105,12 @@ export default function MoodDashboard({ initial = [], enableSupabaseSync = false
           </li>
         ))}
       </ul>
+
+      {handlers.onClose && (
+        <button onClick={handlers.onClose} className="mt-4 w-full rounded-lg bg-red-500 text-black px-4 py-2 font-semibold">
+          Fermer
+        </button>
+      )}
     </div>
   );
 }
