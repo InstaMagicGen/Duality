@@ -26,32 +26,7 @@ type MoodLog = {
   note: string;
 };
 
-const translations: Record<
-  Lang,
-  {
-    mainTitle: string;
-    mainSubtitle: string;
-    dualityTitle: string;
-    dualityDesc: string;
-    soulsetTitle: string;
-    soulsetDesc: string;
-    openDuality: string;
-    openSoulset: string;
-    moodTitle: string;
-    moodQuestion: string;
-    moodLabel: string;
-    moodPlaceholder: string;
-    moodHistoryTitle: string;
-    moodSubmit: string;
-    authLoggedAs: string;
-    logout: string;
-    headerLogin: string;
-    headerSignup: string;
-    moodLockedTitle: string;
-    moodLockedBody: string;
-    moodLockedButton: string;
-  }
-> = {
+const translations: Record<Lang, any> = {
   fr: {
     mainTitle: "Soulset Journeys",
     mainSubtitle:
@@ -98,8 +73,7 @@ const translations: Record<
     moodLabel: "Rate your mood (1 = very low · 5 = very good)",
     moodPlaceholder:
       'Write a few words about your day. Example: "Heavy day, lots of pressure at work, I feel drained."',
-    moodHistoryTitle:
-      "Your recent moods (stored locally on this device for now).",
+    moodHistoryTitle: "Your recent moods (stored locally on this device for now).",
     moodSubmit: "Save",
     authLoggedAs: "Signed in as",
     logout: "Sign out",
@@ -127,8 +101,7 @@ const translations: Record<
     moodLabel: "قيّم مزاجك (1 = منخفض جداً · 5 = ممتاز)",
     moodPlaceholder:
       'اكتب بعض الكلمات عن يومك. مثال: "يوم متعب وضغط عمل كبير، أشعر بالإرهاق".',
-    moodHistoryTitle:
-      "آخر حالات المزاج (محفوظة محلياً على هذا الجهاز حالياً).",
+    moodHistoryTitle: "آخر حالات المزاج (محفوظة محلياً على هذا الجهاز حالياً).",
     moodSubmit: "حفظ",
     authLoggedAs: "متصل كـ",
     logout: "تسجيل الخروج",
@@ -168,9 +141,12 @@ export default function Home() {
 
     async function initSession() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: sessionData, error } = await supabase.auth.getSession();
         if (error) console.warn("getSession error", error);
+
+        const session = sessionData?.session ?? null;
         const supUser = session?.user ?? null;
+
         if (mounted && supUser) {
           setUser({ id: supUser.id, email: supUser.email ?? null });
         }
@@ -191,6 +167,7 @@ export default function Home() {
     }
 
     initSession();
+    setCheckingSession(false);
   }, []);
 
   // mood localStorage
@@ -331,17 +308,14 @@ export default function Home() {
             </div>
           ) : (
             <div className="rounded-3xl border border-neutral-700/80 bg-black/80 p-6 md:p-7 shadow-[0_0_40px_rgba(15,23,42,0.9)] backdrop-blur-sm text-center">
-              <h3 className="text-base md:text-lg font-semibold text-neutral-50 mb-3">{t.moodLockedTitle}</h3>
+              <h3 className="text-base md:text-lg font-semibold text-neutral-50 mb-2">{t.moodLockedTitle}</h3>
               <p className="text-sm text-neutral-300 mb-4">{t.moodLockedBody}</p>
-              <Link href="/auth?mode=login" className="inline-block rounded-full bg-yellow-400 text-black px-6 py-2 font-semibold shadow-lg hover:brightness-110 transition">{t.moodLockedButton}</Link>
+              <Link href="/auth?mode=login" className="rounded-full bg-yellow-400 text-black px-5 py-2 font-medium shadow-lg hover:bg-yellow-300 transition">{t.moodLockedButton}</Link>
             </div>
           )}
         </section>
 
-        {/* MoodDashboard modal */}
-        {showMoodDashboard && user && (
-          <MoodDashboard moodLogs={moodLogs} onClose={() => setShowMoodDashboard(false)} />
-        )}
+        {showMoodDashboard && <MoodDashboard onClose={() => setShowMoodDashboard(false)} />}
       </main>
     </>
   );
