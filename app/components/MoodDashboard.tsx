@@ -13,17 +13,12 @@ export type MoodLog = {
 };
 
 interface MoodDashboardProps {
-  moodLogs: MoodLog[];
-  onClose: () => void;
+  initial: MoodLog[];
   enableSupabaseSync?: boolean;
 }
 
-export default function MoodDashboard({
-  moodLogs: initialMoodLogs,
-  onClose,
-  enableSupabaseSync = false,
-}: MoodDashboardProps) {
-  const [moodLogs, setMoodLogs] = useState<MoodLog[]>(initialMoodLogs);
+export default function MoodDashboard({ initial, enableSupabaseSync = false }: MoodDashboardProps) {
+  const [moodLogs, setMoodLogs] = useState<MoodLog[]>(initial);
   const [loading, setLoading] = useState<boolean>(false);
 
   // Charger depuis Supabase si activé
@@ -59,6 +54,7 @@ export default function MoodDashboard({
 
     fetchMoods();
 
+    // Listener temps réel Supabase
     const subscription = supabase
       .channel("public:mood_logs")
       .on(
@@ -84,14 +80,8 @@ export default function MoodDashboard({
   }, [enableSupabaseSync]);
 
   return (
-    <div className="rounded-3xl border border-neutral-700/80 bg-black/90 p-6 md:p-7 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm max-h-[80vh] overflow-y-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-neutral-50">Mood Dashboard</h3>
-        <button onClick={onClose} className="text-neutral-400 hover:text-yellow-400 text-sm font-medium">
-          Fermer
-        </button>
-      </div>
-
+    <div className="rounded-3xl border border-neutral-700/80 bg-black/90 p-6 md:p-7 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm max-h-[80vh] overflow-y-auto w-full max-w-4xl">
+      <h3 className="text-lg font-semibold text-neutral-50 mb-4">Mood Dashboard</h3>
       {loading && <p className="text-sm text-neutral-400 mb-3">Chargement…</p>}
       {moodLogs.length === 0 && !loading && <p className="text-sm text-neutral-400">Aucun mood enregistré.</p>}
 
