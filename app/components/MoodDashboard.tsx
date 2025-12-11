@@ -13,15 +13,15 @@ export type MoodLog = {
 };
 
 interface MoodDashboardProps {
-  initial: MoodLog[];
+  initial?: MoodLog[];
   enableSupabaseSync?: boolean;
+  onClose?: () => void;
 }
 
-export default function MoodDashboard({ initial, enableSupabaseSync = false }: MoodDashboardProps) {
+export default function MoodDashboard({ initial = [], enableSupabaseSync = false, onClose }: MoodDashboardProps) {
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>(initial);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Charger depuis Supabase si activé
   useEffect(() => {
     if (!enableSupabaseSync) return;
 
@@ -34,9 +34,8 @@ export default function MoodDashboard({ initial, enableSupabaseSync = false }: M
           .order("createdAt", { ascending: false })
           .limit(50);
 
-        if (error) {
-          console.error("Erreur récupération moods Supabase", error);
-        } else if (data) {
+        if (error) console.error("Erreur récupération moods Supabase", error);
+        else if (data) {
           const mapped = data.map((d: any) => ({
             id: d.id.toString(),
             createdAt: d.createdAt,
@@ -54,7 +53,6 @@ export default function MoodDashboard({ initial, enableSupabaseSync = false }: M
 
     fetchMoods();
 
-    // Listener temps réel Supabase
     const subscription = supabase
       .channel("public:mood_logs")
       .on(
@@ -74,14 +72,18 @@ export default function MoodDashboard({ initial, enableSupabaseSync = false }: M
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(subscription);
-    };
+    return () => supabase.removeChannel(subscription);
   }, [enableSupabaseSync]);
 
   return (
-    <div className="rounded-3xl border border-neutral-700/80 bg-black/90 p-6 md:p-7 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm max-h-[80vh] overflow-y-auto w-full max-w-4xl">
-      <h3 className="text-lg font-semibold text-neutral-50 mb-4">Mood Dashboard</h3>
+    <div className="rounded-3xl border border-neutral-700/80 bg-black/90 p-6 md:p-7 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm max-h-[80vh] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-neutral-50">Mood Dashboard</h3>
+        {onClose && (
+          <button onClick={onClose} className="text-sm text-neutral-400 hover:text-yellow-300 transition">Fermer</button>
+        )}
+      </div>
+
       {loading && <p className="text-sm text-neutral-400 mb-3">Chargement…</p>}
       {moodLogs.length === 0 && !loading && <p className="text-sm text-neutral-400">Aucun mood enregistré.</p>}
 
