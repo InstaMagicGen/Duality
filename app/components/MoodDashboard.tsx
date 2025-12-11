@@ -1,116 +1,99 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
-export type MoodLevel = 1 | 2 | 3 | 4 | 5;
-
-export type MoodLog = {
+export interface MoodLog {
   id: string;
-  createdAt: string;
-  level: MoodLevel;
-  note: string;
-};
+  mood: string;
+  created_at: string;
+}
 
 interface MoodDashboardProps {
-  initial?: MoodLog[];
-  enableSupabaseSync?: boolean;
+  moodLogs: MoodLog[];
+  enableSupabaseSync: boolean;
 }
 
 interface MoodDashboardHandlers {
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 export default function MoodDashboard({
-  initial = [],
-  enableSupabaseSync = false,
-  ...handlers
+  moodLogs,
+  enableSupabaseSync,
+  onClose,
 }: MoodDashboardProps & MoodDashboardHandlers) {
-  const [moodLogs, setMoodLogs] = useState<MoodLog[]>(initial);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [logs, setLogs] = useState<MoodLog[]>(moodLogs || []);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!enableSupabaseSync) return;
-
-    let isMounted = true;
 
     const fetchMoods = async () => {
       setLoading(true);
       try {
         const { data, error } = await supabase
-          .from("mood_logs")
-          .select("*")
-          .order("createdAt", { ascending: false })
-          .limit(50);
+          .from<MoodLog>('mood_logs')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error("Erreur récupération moods Supabase", error);
-        } else if (data && isMounted) {
-          const mapped = data.map((d: any) => ({
-            id: d.id.toString(),
-            createdAt: d.createdAt,
-            level: d.level,
-            note: d.note,
-          })) as MoodLog[];
-          setMoodLogs(mapped);
-        }
+        if (error) throw error;
+        if (data) setLogs(data);
       } catch (err) {
-        console.error(err);
+        console.error('Erreur récupération moods:', err);
       } finally {
-        if (isMounted) setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchMoods();
 
+    // Optional: realtime subscription
     const subscription = supabase
-      .channel("public:mood_logs")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "mood_logs" },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            const newLog: MoodLog = {
-              id: payload.new.id.toString(),
-              createdAt: payload.new.createdAt,
-              level: payload.new.level,
-              note: payload.new.note,
-            };
-            setMoodLogs((prev) => [newLog, ...prev]);
-          }
-        }
-      )
+      .from('mood_logs')
+      .on('INSERT', (payload) => setLogs((prev) => [payload.new, ...prev]))
       .subscribe();
 
     return () => {
-      isMounted = false;
-      supabase.removeChannel(subscription);
+      supabase.removeSubscription(subscription);
     };
   }, [enableSupabaseSync]);
 
   return (
-    <div className="rounded-3xl border border-neutral-700/80 bg-black/90 p-6 md:p-7 shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm max-h-[80vh] overflow-y-auto">
-      <h3 className="text-lg font-semibold text-neutral-50 mb-4">Mood Dashboard</h3>
-      {loading && <p className="text-sm text-neutral-400 mb-3">Chargement…</p>}
-      {moodLogs.length === 0 && !loading && <p className="text-sm text-neutral-400">Aucun mood enregistré.</p>}
-
-      <ul className="space-y-3">
-        {moodLogs.map((log) => (
-          <li key={log.id} className="rounded-xl border border-neutral-700/70 bg-black/70 px-3 py-2 text-sm text-neutral-200">
-            <div className="flex items-center justify-between mb-1 gap-2">
-              <span className="font-semibold text-yellow-300">{log.level}/5</span>
-              <span className="text-[10px] text-neutral-500">{new Date(log.createdAt).toLocaleString()}</span>
-            </div>
-            <p className="leading-snug whitespace-pre-line">{log.note}</p>
-          </li>
-        ))}
-      </ul>
-
-      {handlers.onClose && (
-        <button onClick={handlers.onClose} className="mt-4 w-full rounded-lg bg-red-500 text-black px-4 py-2 font-semibold">
-          Fermer
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl w-11/12 md:w-2/3 lg:w-1/2 p-6 relative shadow-xl">
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-900"
+          onClick={onClose}
+        >
+          ✕
         </button>
-      )}
+
+        <h2 className="text-2xl font-bold mb-4">Mood Dashboard</h2>
+
+        {loading && <p>Loading...</p>}
+
+        {!loading && logs.length === 0 && (
+          <p>No moods logged yet.</p>
+        )}
+
+        {!loading && logs.length > 0 && (
+          <ul className="space-y-2 max-h-96 overflow-y-auto">
+            {logs.map((log) => (
+              <li
+                key={log.id}
+                className="p-2 border rounded flex justify-between items-center hover:bg-gray-50 transition"
+              >
+                <span>{log.mood}</span>
+                <span className="text-xs text-gray-400">
+                  {new Date(log.created_at).toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
+
