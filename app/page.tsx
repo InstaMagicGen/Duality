@@ -5,10 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { supabase } from "../lib/supabaseClient";
 
-// import dynamique du composant MoodDashboard (ssr: false)
-const MoodDashboard = dynamic(() => import("./components/MoodDashboard"), {
-  ssr: false,
-});
+const MoodDashboard = dynamic(() => import("./components/MoodDashboard"), { ssr: false });
 
 type Lang = "fr" | "en" | "ar";
 
@@ -26,117 +23,74 @@ type MoodLog = {
   note: string;
 };
 
-const translations: Record<
-  Lang,
-  {
-    mainTitle: string;
-    mainSubtitle: string;
-    dualityTitle: string;
-    dualityDesc: string;
-    soulsetTitle: string;
-    soulsetDesc: string;
-    openDuality: string;
-    openSoulset: string;
-    moodTitle: string;
-    moodQuestion: string;
-    moodLabel: string;
-    moodPlaceholder: string;
-    moodHistoryTitle: string;
-    moodSubmit: string;
-    authLoggedAs: string;
-    logout: string;
-    headerLogin: string;
-    headerSignup: string;
-    moodLockedTitle: string;
-    moodLockedBody: string;
-    moodLockedButton: string;
-  }
-> = {
+const translations: Record<Lang, any> = {
   fr: {
     mainTitle: "Soulset Journeys",
-    mainSubtitle:
-      "Deux expériences guidées : Duality pour voir ton futur probable, Soulset Navigator pour scanner ta journée sur un coucher de soleil.",
+    mainSubtitle: "Deux expériences guidées : Duality pour voir ton futur probable, Soulset Navigator pour scanner ta journée sur un coucher de soleil.",
     dualityTitle: "DUALITY · Futur probable",
-    dualityDesc:
-      "Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde).",
+    dualityDesc: "Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde).",
     soulsetTitle: "SOULSET NAVIGATOR · Sunset Therapy",
-    soulsetDesc:
-      "Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant.",
+    soulsetDesc: "Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant.",
     openDuality: "Ouvrir Duality",
     openSoulset: "Commencer la Sunset Therapy",
     moodTitle: "Suivi de mood",
     moodQuestion: "Comment tu te sens aujourd’hui ?",
     moodLabel: "Note ton humeur (1 = très bas · 5 = très bien)",
-    moodPlaceholder:
-      'Écris quelques mots sur ton ressenti du jour. Exemple : "Beaucoup de pression au travail, je me sens épuisé."',
-    moodHistoryTitle:
-      "Tes derniers moods (stockés localement sur cet appareil pour l’instant).",
+    moodPlaceholder: 'Écris quelques mots sur ton ressenti du jour. Exemple : "Beaucoup de pression au travail, je me sens épuisé."',
+    moodHistoryTitle: "Tes derniers moods (stockés localement sur cet appareil pour l’instant).",
     moodSubmit: "Enregistrer",
     authLoggedAs: "Connecté en tant que",
     logout: "Déconnexion",
     headerLogin: "Connexion",
     headerSignup: "Créer un compte",
     moodLockedTitle: "Active ton suivi de mood",
-    moodLockedBody:
-      "Après chaque session, connecte-toi pour sauvegarder ton humeur et suivre l’évolution de ton état intérieur.",
+    moodLockedBody: "Après chaque session, connecte-toi pour sauvegarder ton humeur et suivre l’évolution de ton état intérieur.",
     moodLockedButton: "Se connecter pour voir la carte de mood",
   },
   en: {
     mainTitle: "Soulset Journeys",
-    mainSubtitle:
-      "Two guided journeys: Duality to explore your probable future, Soulset Navigator to scan your day on a sunset.",
+    mainSubtitle: "Two guided journeys: Duality to explore your probable future, Soulset Navigator to scan your day on a sunset.",
     dualityTitle: "DUALITY · Probable future",
-    dualityDesc:
-      "You type what you’re going through, Duality returns a LIFE ECHO (probable future) and a SHADOWTALK (your inner voice).",
+    dualityDesc: "You type what you’re going through, Duality returns a LIFE ECHO (probable future) and a SHADOWTALK (your inner voice).",
     soulsetTitle: "SOULSET NAVIGATOR · Sunset Therapy",
-    soulsetDesc:
-      "Describe how you feel right now, then receive a short mirror sentence projected on a calming sunset.",
+    soulsetDesc: "Describe how you feel right now, then receive a short mirror sentence projected on a calming sunset.",
     openDuality: "Open Duality",
     openSoulset: "Start Sunset Therapy",
     moodTitle: "Mood tracking",
     moodQuestion: "How do you feel today?",
     moodLabel: "Rate your mood (1 = very low · 5 = very good)",
-    moodPlaceholder:
-      'Write a few words about your day. Example: "Heavy day, lots of pressure at work, I feel drained."',
-    moodHistoryTitle:
-      "Your recent moods (stored locally on this device for now).",
+    moodPlaceholder: 'Write a few words about your day. Example: "Heavy day, lots of pressure at work, I feel drained."',
+    moodHistoryTitle: "Your recent moods (stored locally on this device for now).",
     moodSubmit: "Save",
     authLoggedAs: "Signed in as",
     logout: "Sign out",
     headerLogin: "Sign in",
     headerSignup: "Create account",
     moodLockedTitle: "Unlock your mood tracking",
-    moodLockedBody:
-      "After each session, sign in to save your mood and follow the evolution of your inner state.",
+    moodLockedBody: "After each session, sign in to save your mood and follow the evolution of your inner state.",
     moodLockedButton: "Sign in to view the mood card",
   },
   ar: {
     mainTitle: "رحلة السولسِت",
-    mainSubtitle:
-      "تجربتان موجهتان: Duality لرؤية مستقبلك المحتمل، وSoulset Navigator لمسح يومك على غروب هادئ.",
+    mainSubtitle: "تجربتان موجهتان: Duality لرؤية مستقبلك المحتمل، وSoulset Navigator لمسح يومك على غروب هادئ.",
     dualityTitle: "DUALITY · المستقبل المحتمل",
-    dualityDesc:
-      "اكتب ما تعيشه الآن لتحصل على LIFE ECHO (مستقبل محتمل) و SHADOWTALK (صوتك الداخلي).",
+    dualityDesc: "اكتب ما تعيشه الآن لتحصل على LIFE ECHO (مستقبل محتمل) و SHADOWTALK (صوتك الداخلي).",
     soulsetTitle: "SOULSET NAVIGATOR · علاج الغروب",
-    soulsetDesc:
-      "صف حالتك الآن، ودع عبارة عاكسة قصيرة تظهر على غروب شمس مهدئ.",
+    soulsetDesc: "صف حالتك الآن، ودع عبارة عاكسة قصيرة تظهر على غروب شمس مهدئ.",
     openDuality: "فتح Duality",
     openSoulset: "ابدأ جلسة الغروب",
     moodTitle: "بطاقة متابعة المزاج",
     moodQuestion: "كيف تشعر اليوم؟",
     moodLabel: "قيّم مزاجك (1 = منخفض جداً · 5 = ممتاز)",
-    moodPlaceholder:
-      'اكتب بعض الكلمات عن يومك. مثال: "يوم متعب وضغط عمل كبير، أشعر بالإرهاق".',
-    moodHistoryTitle:
-      "آخر حالات المزاج (محفوظة محلياً على هذا الجهاز حالياً).",
+    moodPlaceholder: 'اكتب بعض الكلمات عن يومك. مثال: "يوم متعب وضغط عمل كبير، أشعر بالإرهاق".',
+    moodHistoryTitle: "آخر حالات المزاج (محفوظة محلياً على هذا الجهاز حالياً).",
     moodSubmit: "حفظ",
     authLoggedAs: "متصل كـ",
     logout: "تسجيل الخروج",
     headerLogin: "تسجيل الدخول",
     headerSignup: "إنشاء حساب",
     moodLockedTitle: "فعّل بطاقة متابعة المزاج",
-    moodLockedBody:
-      "بعد كل جلسة، سجّل الدخول لحفظ مزاجك ومتابعة تطوّر حالتك الداخلية.",
+    moodLockedBody: "بعد كل جلسة، سجّل الدخول لحفظ مزاجك ومتابعة تطوّر حالتك الداخلية.",
     moodLockedButton: "تسجيل الدخول لعرض بطاقة المزاج",
   },
 };
@@ -153,6 +107,7 @@ export default function Home() {
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>([]);
   const [showMoodDashboard, setShowMoodDashboard] = useState(false);
 
+  // Détecter langue du navigateur
   useEffect(() => {
     if (typeof navigator === "undefined") return;
     const l = navigator.language?.toLowerCase() ?? "fr";
@@ -161,16 +116,17 @@ export default function Home() {
     else setLang("en");
   }, []);
 
+  // Supabase session
   useEffect(() => {
     let mounted = true;
 
     async function initSession() {
       try {
-        const { data, error } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
         if (error) console.warn("getSession error", error);
-        else if (mounted && data.session?.user) {
-          setUser({ id: data.session.user.id, email: data.session.user.email ?? null });
-        }
+
+        const supUser = session?.user ?? null;
+        if (mounted && supUser) setUser({ id: supUser.id, email: supUser.email ?? null });
       } catch (err) {
         console.warn("initSession err", err);
       }
@@ -190,6 +146,7 @@ export default function Home() {
     initSession();
   }, []);
 
+  // mood localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("soulset_moods");
@@ -306,6 +263,23 @@ export default function Home() {
             </div>
 
             <button type="button" onClick={handleSaveMood} disabled={!moodNote.trim()} className="w-full md:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black px-6 py-2 text-sm font-semibold hover:brightness-110 disabled:opacity-60 transition shadow-[0_0_25px_rgba(250,204,21,0.6)]">{t.moodSubmit}</button>
+
+            {moodLogs.length > 0 && (
+              <div className="mt-6">
+                <p className="text-[11px] text-neutral-400 mb-2">{t.moodHistoryTitle}</p>
+                <ul className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                  {moodLogs.map((log) => (
+                    <li key={log.id} className="rounded-xl border border-neutral-700/70 bg-black/70 px-3 py-2 text-xs text-neutral-200">
+                      <div className="flex items-center justify-between mb-1 gap-2">
+                        <span className="font-semibold text-yellow-300">{log.level}/5</span>
+                        <span className="text-[10px] text-neutral-500">{new Date(log.createdAt).toLocaleString()}</span>
+                      </div>
+                      <p className="leading-snug whitespace-pre-line">{log.note}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         ) : (
           <div className="rounded-3xl border border-neutral-700/80 bg-black/80 p-6 md:p-7 shadow-[0_0_40px_rgba(15,23,42,0.9)] backdrop-blur-sm text-center">
@@ -317,7 +291,7 @@ export default function Home() {
       </section>
 
       {/* MoodDashboard modal */}
-      {showMoodDashboard && <MoodDashboard initial={moodLogs} enableSupabaseSync onClose={() => setShowMoodDashboard(false)} />}
+      {showMoodDashboard && <MoodDashboard moodLogs={moodLogs} enableSupabaseSync={!!user} />}
     </main>
   );
 }
