@@ -126,15 +126,20 @@ export default function Home() {
     let unsubscribe: any = null;
 
     async function initSession() {
-      try {
-        const { data } = await supabase.auth.getSession();
-        const session = data?.session ?? null;
-        if (mounted && session?.user) {
-          setUser({ id: session.user.id, email: session.user.email ?? null });
-        }
-      } catch (err) {
-        console.warn("getSession err", err);
-      }
+      // 1) essaie de récupérer la session active
+try {
+  // getSession renvoie { data: { session } } (et session.user est parfois à l'intérieur)
+  const { data } = await supabase.auth.getSession();
+  const session = data?.session ?? null;
+
+  // si on a un user dans la session, on met à jour l'état
+  if (session?.user) {
+    setUser({ id: session.user.id, email: session.user.email ?? null });
+  }
+} catch (err) {
+  console.warn("getSession err", err);
+}
+
 
       // listener
       const { data: listener } = supabase.auth.onAuthStateChange((_event, sess) => {
