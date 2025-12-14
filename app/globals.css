@@ -1,6 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Couleurs globales */
 :root {
@@ -26,6 +26,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
+  position: relative;
 }
 
 .logo {
@@ -51,6 +52,7 @@ body {
   background: linear-gradient(135deg, #FFD84D, #FFB700);
   color: #000;
 }
+
 .login-btn {
   background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
   color: #001F3F;
@@ -73,6 +75,7 @@ body {
   background: linear-gradient(135deg, #FFF5C3, #FFD84D);
   border: 2px solid #FFB700;
 }
+
 .soulset-card {
   background: linear-gradient(135deg, #C3E0FF, #6EC6FF);
   border: 2px solid #4A9EFF;
@@ -88,10 +91,12 @@ body {
   border: none;
   transition: all 0.3s ease;
 }
+
 .duality-btn {
   background: #FFB700;
   color: #000;
 }
+
 .soulset-btn {
   background: #4A9EFF;
   color: #001F3F;
