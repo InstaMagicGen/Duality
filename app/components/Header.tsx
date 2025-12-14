@@ -1,6 +1,4 @@
-'use client'
-
-import { useRouter } from "next/navigation";
+'use client';
 
 type HeaderProps = {
   theme: 'light' | 'dark';
@@ -10,30 +8,23 @@ type HeaderProps = {
 };
 
 export default function Header({ theme, toggleTheme, appName, slogan }: HeaderProps) {
-  const router = useRouter();
-
   return (
-    <header className="header w-full">
-      {/* Left: Dark/Light Theme */}
-      <div>
-        <button onClick={toggleTheme} className="header-btn theme-btn">
-          {theme === 'dark' ? '🌙' : '☀️'}
-        </button>
+    <header className="header">
+      {/* Bouton dark/light à gauche */}
+      <button onClick={toggleTheme} className="header-btn theme-btn">
+        {theme === 'dark' ? '🌙' : '☀️'}
+      </button>
+
+      {/* Titre centré */}
+      <div className="header-left flex flex-col items-center justify-center mx-auto">
+        <h1 className="header-title">{appName}</h1>
+        <p className="header-slogan">{slogan}</p>
       </div>
 
-      {/* Center: Logo + Title */}
-      <div className="header-left">
-        <img src="/logo.png" alt="Logo Soulset" className="logo" />
-        <div className="flex flex-col">
-          <span className="header-title">{appName}</span>
-          <span className="header-slogan">{slogan}</span>
-        </div>
-      </div>
-
-      {/* Right: Login / Signup */}
-      <div className="flex items-center gap-3">
-        <button onClick={() => router.push("/login")} className="header-btn login-btn">Se connecter</button>
-        <button onClick={() => router.push("/signup")} className="header-btn signup-btn">Créer un compte</button>
+      {/* Boutons Se connecter / Créer un compte à droite */}
+      <div className="flex gap-3">
+        <button className="header-btn login-btn">Se connecter</button>
+        <button className="header-btn signup-btn">Créer un compte</button>
       </div>
     </header>
   );
