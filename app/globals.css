@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* Couleurs globales */
 :root {
@@ -37,7 +37,7 @@ body {
   height: 50px;
 }
 
-/* Buttons */
+/* Header Buttons */
 .header-btn {
   font-weight: 600;
   padding: 8px 16px;
@@ -52,10 +52,14 @@ body {
   background: linear-gradient(135deg, #FFD84D, #FFB700);
   color: #000;
 }
-
 .login-btn {
   background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
   color: #001F3F;
+}
+.theme-btn {
+  background: transparent;
+  color: var(--foreground);
+  font-size: 1.25rem;
 }
 
 /* Cards */
@@ -68,14 +72,13 @@ body {
   flex-direction: column;
   align-items: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  color: #000; /* Toujours noir, même en dark mode */
+  color: #000; /* Toujours noir */
 }
 
 .duality-card {
   background: linear-gradient(135deg, #FFF5C3, #FFD84D);
   border: 2px solid #FFB700;
 }
-
 .soulset-card {
   background: linear-gradient(135deg, #C3E0FF, #6EC6FF);
   border: 2px solid #4A9EFF;
@@ -91,13 +94,18 @@ body {
   border: none;
   transition: all 0.3s ease;
 }
-
 .duality-btn {
   background: #FFB700;
   color: #000;
 }
-
 .soulset-btn {
   background: #4A9EFF;
   color: #001F3F;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .app-card {
+    width: 100%;
+  }
 }
