@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from 'react'
 
 type Lang = 'en' | 'fr' | 'ar'
@@ -33,10 +34,10 @@ const translations: Record<Lang, any> = {
 
 export default function Page() {
   const [lang, setLang] = useState<Lang>('en')
+  const router = useRouter()
 
   useEffect(() => {
     const systemLang = navigator.language.toLowerCase()
-
     if (systemLang.startsWith('fr')) setLang('fr')
     else if (systemLang.startsWith('ar')) setLang('ar')
     else setLang('en')
@@ -66,32 +67,57 @@ export default function Page() {
 
       {/* Buttons */}
       <section className="flex flex-col sm:flex-row gap-6 mt-6">
+        {/* SOULSET Button */}
         <button
-          className="
-            px-10 py-5 rounded-2xl
-            bg-gradient-to-r from-indigo-600 to-purple-600
-            text-lg font-semibold
-            shadow-xl
-            hover:scale-110 hover:shadow-indigo-500/40
-            transition-all duration-300
-          "
+          onClick={() => router.push("/soulset")}
+          className="soulset-btn"
         >
-          {t.soulset}
+          {t.soulset} ↗
         </button>
 
+        {/* DUALITY Button */}
         <button
-          className="
-            px-10 py-5 rounded-2xl
-            bg-gradient-to-r from-emerald-600 to-teal-500
-            text-lg font-semibold
-            shadow-xl
-            hover:scale-110 hover:shadow-emerald-500/40
-            transition-all duration-300
-          "
+          onClick={() => router.push("/duality")}
+          className="duality-btn"
         >
-          {t.duality}
+          {t.duality} ↗
         </button>
       </section>
+
+      {/* CSS intégré */}
+      <style jsx>{`
+        /* Bouton DUALITY (jaune, glow, futur) */
+        .duality-btn {
+          background: linear-gradient(135deg, #FFD84D, #FFB700);
+          color: #000;
+          font-weight: 600;
+          padding: 12px 22px;
+          border-radius: 999px;
+          box-shadow: 0 0 20px rgba(255, 200, 0, 0.6);
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .duality-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 0 30px rgba(255, 220, 100, 0.9);
+        }
+
+        /* Bouton SOULSET (bleu, doux, sunset) */
+        .soulset-btn {
+          background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
+          color: #001F3F;
+          font-weight: 600;
+          padding: 12px 22px;
+          border-radius: 999px;
+          box-shadow: 0 0 20px rgba(100, 180, 255, 0.6);
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .soulset-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 0 30px rgba(140, 210, 255, 0.9);
+        }
+      `}</style>
     </main>
   )
 }
