@@ -1,50 +1,38 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+
+type Language = "fr" | "en" | "ar";
 
 export async function POST(req: Request) {
   try {
-    // 🔐 Sécurité : on vérifie la clé ICI
-    const apiKey = process.env.OPENAI_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "OPENAI_API_KEY missing" },
-        { status: 500 }
-      );
-    }
-
-    // ✅ Instanciation ICI (et seulement ici)
-    const openai = new OpenAI({ apiKey });
-
     const body = await req.json();
-    const { text, language } = body;
 
-    const systemPrompt = {
+    const text: string = body.text;
+    const language: Language = body.language ?? "fr";
+
+    const systemPrompt: Record<Language, string> = {
       fr: "Tu es Duality, une conscience miroir introspective.",
       en: "You are Duality, an introspective mirror consciousness.",
       ar: "أنت Duality، وعي مرآوي تأملي عميق."
-    }[language || "en"];
+    };
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: text }
-      ]
-    });
+    const prompt = `
+${systemPrompt[language]}
 
+Analyse introspective profonde du texte suivant :
+"${text}"
+`;
+
+    // ⚠️ Exemple de réponse mock (à remplacer par OpenAI si besoin)
     return NextResponse.json({
-      result: completion.choices[0].message.content
+      success: true,
+      language,
+      analysis: prompt
     });
 
   } catch (error) {
-    console.error("Duality API error:", error);
     return NextResponse.json(
-      { error: "Internal error" },
-      { status: 500 }
+      { success: false, error: "Invalid request" },
+      { status: 400 }
     );
   }
 }
