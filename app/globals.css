@@ -73,13 +73,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  color: #f5f5f5; /* texte en mode sombre */
 }
 
-/* Hover effect */
+/* Hover effect cards */
 .app-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0 40px rgba(255,255,255,0.2);
+  color: #FFD84D; /* texte change de couleur au hover */
 }
 
 /* Backgrounds for apps */
@@ -100,7 +102,8 @@ body {
   border-radius: 999px;
   cursor: pointer;
   border: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, color 0.3s ease;
+  color: #000;
 }
 
 .duality-btn {
@@ -111,6 +114,7 @@ body {
 .duality-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 25px rgba(255, 220, 100, 0.9);
+  color: #fff; /* texte change au hover */
 }
 
 .soulset-btn {
@@ -121,16 +125,19 @@ body {
 .soulset-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 25px rgba(140, 210, 255, 0.9);
+  color: #fff; /* texte change au hover */
 }
 
 /* Light mode card colors */
 :root[data-theme="light"] .duality-card {
   background: #FFF8E1;
   border: 2px solid #FFD84D;
+  color: #111; /* texte visible en mode clair */
 }
 :root[data-theme="light"] .soulset-card {
   background: #E1F0FF;
   border: 2px solid #6EC6FF;
+  color: #111;
 }
 :root[data-theme="light"] .app-card p {
   color: #111;
