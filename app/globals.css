@@ -2,14 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Couleurs globales */
 :root {
   --background: #ffffff;
   --foreground: #111111;
+  --gold: #FFD84D;
 }
 
 :root[data-theme="dark"] {
   --background: #000000;
-  --foreground: #f5f5f5;
+  --foreground: #ffffff;
+  --gold: #FFD84D;
 }
 
 body {
@@ -19,15 +22,88 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-.header-btn { font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; border: none; font-size: 0.875rem; transition: all 0.3s ease; }
-.signup-btn { background: linear-gradient(135deg, #FFD84D, #FFB700); color: #000; }
-.login-btn { background: linear-gradient(135deg, #6EC6FF, #4A9EFF); color: #001F3F; }
-.theme-btn { background: transparent; font-size: 1.25rem; color: var(--foreground); }
+/* Header */
+.header {
+  @apply flex justify-between items-center px-6 py-4 relative;
+  position: relative;
+}
 
-.app-card { padding: 24px; border-radius: 20px; text-align: center; max-width: 300px; display: flex; flex-direction: column; justify-between; align-items: center; transition: transform 0.3s ease, box-shadow 0.3s ease; border: 2px solid #FFD700; }
-.duality-card { background: linear-gradient(135deg, #FFF5C3, #FFD84D); }
-.soulset-card { background: linear-gradient(135deg, #C3E0FF, #6EC6FF); }
+.header-left {
+  @apply flex items-center gap-4;
+}
 
-.app-btn { font-weight: 700; font-size: 0.9rem; padding: 8px 0; border-radius: 999px; cursor: pointer; border: none; transition: all 0.3s ease; }
-.duality-btn { background: #FFB700; color: #000; }
-.soulset-btn { background: #4A9EFF; color: #001F3F; }
+.logo {
+  @apply h-12 w-auto;
+}
+
+.header-title {
+  color: var(--foreground);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.header-slogan {
+  color: var(--foreground);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+/* Header Buttons */
+.header-btn {
+  @apply font-semibold px-4 py-2 rounded-full cursor-pointer transition-all;
+  border: none;
+}
+
+.signup-btn {
+  background: linear-gradient(135deg, #FFD84D, #FFB700);
+  color: #000;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
+  color: #001F3F;
+}
+
+.theme-btn {
+  @apply px-3 py-2 rounded-full cursor-pointer text-lg;
+  background: transparent;
+  color: var(--foreground);
+}
+
+/* Cards */
+.app-card {
+  @apply flex flex-col items-center justify-between p-6 rounded-2xl text-center transition-transform transition-shadow;
+  width: 260px;
+  min-height: 220px;
+}
+
+.duality-card {
+  background: linear-gradient(135deg, #FFF5C3, #FFD84D);
+  border: 2px solid var(--gold);
+}
+
+.soulset-card {
+  background: linear-gradient(135deg, #C3E0FF, #6EC6FF);
+  border: 2px solid #4A9EFF;
+}
+
+.app-btn {
+  @apply font-bold text-sm px-6 py-2 rounded-full cursor-pointer transition-all w-full;
+}
+
+.duality-btn {
+  background: #FFB700;
+  color: #000;
+}
+
+.soulset-btn {
+  background: #4A9EFF;
+  color: #001F3F;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .app-card {
+    width: 100%;
+  }
+}
