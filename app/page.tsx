@@ -7,29 +7,44 @@ type Lang = 'en' | 'fr' | 'ar'
 
 const translations: Record<Lang, any> = {
   en: {
-    appName: 'Duality',
-    slogan: 'Explore your inner balance',
-    description:
-      'Duality is an introspective experience designed to help you understand your emotions and navigate between shadow and light.',
-    createAccount: 'Create Account',
+    appName: 'Soulset Hub',
     login: 'Login',
+    signup: 'Create Account',
+    duality: {
+      title: 'Duality',
+      description: 'Explore your inner balance and navigate between shadow and light.'
+    },
+    soulset: {
+      title: 'Soulset Navigator',
+      description: 'Guided therapy to reflect, reset, and improve your emotional journey.'
+    }
   },
   fr: {
-    appName: 'Duality',
-    slogan: 'Explore ton équilibre intérieur',
-    description:
-      'Duality est une expérience introspective conçue pour t’aider à comprendre tes émotions et à naviguer entre l’ombre et la lumière.',
-    createAccount: 'Créer un compte',
+    appName: 'Soulset Hub',
     login: 'Connexion',
+    signup: 'Créer un compte',
+    duality: {
+      title: 'Duality',
+      description: 'Explore ton équilibre intérieur et navigue entre l’ombre et la lumière.'
+    },
+    soulset: {
+      title: 'Soulset Navigator',
+      description: 'Thérapie guidée pour réfléchir, se ressourcer et améliorer ton parcours émotionnel.'
+    }
   },
   ar: {
-    appName: 'Duality',
-    slogan: 'اكتشف توازنك الداخلي',
-    description:
-      'Duality هي تجربة تأملية مصممة لمساعدتك على فهم مشاعرك والتنقل بين الظل والنور.',
-    createAccount: 'إنشاء حساب',
+    appName: 'سولسِت هاب',
     login: 'تسجيل الدخول',
-  },
+    signup: 'إنشاء حساب',
+    duality: {
+      title: 'دوالِتي',
+      description: 'اكتشف توازنك الداخلي وتنقل بين الظل والنور.'
+    },
+    soulset: {
+      title: 'سولسِت نافيجيتور',
+      description: 'علاج موجه للتأمل، إعادة التوازن، وتحسين رحلتك العاطفية.'
+    }
+  }
 }
 
 export default function Page() {
@@ -48,38 +63,52 @@ export default function Page() {
   return (
     <main
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6"
+      className="min-h-screen bg-black text-white flex flex-col px-6"
     >
-      {/* App name + slogan */}
-      <header className="text-center mb-16 max-w-2xl">
-        <h1 className="text-6xl font-extrabold tracking-wide">
-          {t.appName}
-        </h1>
-
-        <p className="mt-4 text-2xl text-zinc-300 italic">
-          {t.slogan}
-        </p>
-
-        <p className="mt-6 text-zinc-400 text-base leading-relaxed">
-          {t.description}
-        </p>
+      {/* Header top right */}
+      <header className="flex justify-between items-center py-6">
+        <h1 className="text-3xl font-bold">{t.appName}</h1>
+        <div className="flex gap-4">
+          <button
+            onClick={() => router.push("/login")}
+            className="header-btn login-btn"
+          >
+            {t.login}
+          </button>
+          <button
+            onClick={() => router.push("/signup")}
+            className="header-btn signup-btn"
+          >
+            {t.signup}
+          </button>
+        </div>
       </header>
 
-      {/* Boutons centraux */}
-      <section className="flex flex-col sm:flex-row gap-8">
-        <button
-          onClick={() => router.push("/signup")}
-          className="main-btn create-btn"
-        >
-          {t.createAccount} ↗
-        </button>
+      {/* Applications centralisées */}
+      <section className="flex flex-col sm:flex-row justify-center items-center gap-12 mt-16 flex-1">
+        {/* Duality */}
+        <div className="app-card">
+          <h2 className="text-3xl font-bold mb-3">{t.duality.title}</h2>
+          <p className="text-zinc-300 mb-6 max-w-xs">{t.duality.description}</p>
+          <button
+            onClick={() => router.push("/duality")}
+            className="app-btn duality-btn"
+          >
+            Open {t.duality.title} ↗
+          </button>
+        </div>
 
-        <button
-          onClick={() => router.push("/login")}
-          className="main-btn login-btn"
-        >
-          {t.login} ↗
-        </button>
+        {/* Soulset Navigator */}
+        <div className="app-card">
+          <h2 className="text-3xl font-bold mb-3">{t.soulset.title}</h2>
+          <p className="text-zinc-300 mb-6 max-w-xs">{t.soulset.description}</p>
+          <button
+            onClick={() => router.push("/soulset")}
+            className="app-btn soulset-btn"
+          >
+            Open {t.soulset.title} ↗
+          </button>
+        </div>
       </section>
     </main>
   )
