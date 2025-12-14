@@ -1,4 +1,4 @@
-import "../globals.css";
+import "./globals.css";
 import { ThemeProvider } from "./context/themeContext";
 import Header from "./components/Header";
 
