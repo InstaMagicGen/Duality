@@ -66,8 +66,6 @@ body {
 
 /* App cards */
 .app-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255,255,255,0.1);
   padding: 28px;
   border-radius: 20px;
   text-align: center;
@@ -78,20 +76,20 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Hover effect */
 .app-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0 40px rgba(255,255,255,0.2);
 }
 
-/* Light mode cards */
-.app-card.light-mode {
-  background: #f5f5f5;
-  border: 2px solid #ddd;
-  color: #111;
+/* Backgrounds for apps */
+.duality-card {
+  background: linear-gradient(135deg, #FFF5C3, #FFD84D);
+  border: 2px solid #FFB700;
 }
-.app-card.light-mode:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(0,0,0,0.15);
+.soulset-card {
+  background: linear-gradient(135deg, #C3E0FF, #6EC6FF);
+  border: 2px solid #4A9EFF;
 }
 
 /* App buttons */
@@ -106,7 +104,7 @@ body {
 }
 
 .duality-btn {
-  background: linear-gradient(135deg, #FFD84D, #FFB700);
+  background: #FFB700;
   color: #000;
   box-shadow: 0 0 15px rgba(255, 200, 0, 0.6);
 }
@@ -116,11 +114,24 @@ body {
 }
 
 .soulset-btn {
-  background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
+  background: #4A9EFF;
   color: #001F3F;
   box-shadow: 0 0 15px rgba(100, 180, 255, 0.6);
 }
 .soulset-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 25px rgba(140, 210, 255, 0.9);
+}
+
+/* Light mode card colors */
+:root[data-theme="light"] .duality-card {
+  background: #FFF8E1;
+  border: 2px solid #FFD84D;
+}
+:root[data-theme="light"] .soulset-card {
+  background: #E1F0FF;
+  border: 2px solid #6EC6FF;
+}
+:root[data-theme="light"] .app-card p {
+  color: #111;
 }
