@@ -24,16 +24,22 @@ body {
 
 /* Header */
 .header {
-  @apply flex justify-between items-center px-6 py-4 relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem; /* équivalent px-4 sm:px-6 */
   position: relative;
 }
 
 .header-left {
-  @apply flex items-center gap-4;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .logo {
-  @apply h-12 w-auto;
+  height: 3rem; /* h-12 */
+  width: auto;
 }
 
 .header-title {
@@ -50,8 +56,12 @@ body {
 
 /* Header Buttons */
 .header-btn {
-  @apply font-semibold px-4 py-2 rounded-full cursor-pointer transition-all;
+  font-weight: 600;
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  border-radius: 999px;
+  cursor: pointer;
   border: none;
+  transition: all 0.3s ease;
 }
 
 .signup-btn {
@@ -65,14 +75,21 @@ body {
 }
 
 .theme-btn {
-  @apply px-3 py-2 rounded-full cursor-pointer text-lg;
   background: transparent;
   color: var(--foreground);
+  font-size: 1.25rem;
 }
 
 /* Cards */
 .app-card {
-  @apply flex flex-col items-center justify-between p-6 rounded-2xl text-center transition-transform transition-shadow;
+  padding: 1.5rem; /* p-6 */
+  border-radius: 1.25rem; /* rounded-2xl */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 260px;
   min-height: 220px;
 }
@@ -87,8 +104,17 @@ body {
   border: 2px solid #4A9EFF;
 }
 
+/* App buttons */
 .app-btn {
-  @apply font-bold text-sm px-6 py-2 rounded-full cursor-pointer transition-all w-full;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
 }
 
 .duality-btn {
