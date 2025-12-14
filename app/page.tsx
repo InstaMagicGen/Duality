@@ -10,6 +10,7 @@ const translations: Record<Lang, any> = {
     appName: 'Soulset Hub',
     login: 'Login',
     signup: 'Create Account',
+    slogan: 'Your journey to inner balance',
     duality: {
       title: 'Duality',
       description: 'Explore your inner balance and navigate between shadow and light.'
@@ -23,6 +24,7 @@ const translations: Record<Lang, any> = {
     appName: 'Soulset Hub',
     login: 'Connexion',
     signup: 'Créer un compte',
+    slogan: 'Votre parcours vers l’équilibre intérieur',
     duality: {
       title: 'Duality',
       description: 'Explore ton équilibre intérieur et navigue entre l’ombre et la lumière.'
@@ -36,6 +38,7 @@ const translations: Record<Lang, any> = {
     appName: 'سولسِت هاب',
     login: 'تسجيل الدخول',
     signup: 'إنشاء حساب',
+    slogan: 'رحلتك نحو التوازن الداخلي',
     duality: {
       title: 'دوالِتي',
       description: 'اكتشف توازنك الداخلي وتنقل بين الظل والنور.'
@@ -70,10 +73,10 @@ export default function Page() {
   return (
     <main
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen flex flex-col items-center justify-start px-6 py-6 bg-background text-foreground transition-colors duration-300 relative"
+      className="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6 bg-background text-foreground transition-colors duration-300 relative"
     >
-      {/* Theme toggle top-left and login/signup top-right */}
-      <header className="w-full flex justify-between items-center mb-16 absolute top-6 left-0 right-0 px-6">
+      {/* Top controls */}
+      <header className="w-full flex justify-between items-center absolute top-6 left-0 right-0 px-4 sm:px-6">
         <button onClick={toggleTheme} className="header-btn theme-btn">
           {theme === 'dark' ? '🌙' : '☀️'}
         </button>
@@ -83,25 +86,24 @@ export default function Page() {
         </div>
       </header>
 
-      {/* App Name & Slogan */}
-      <section className="text-center mt-32 mb-16">
-        <h1 className="text-5xl font-extrabold mb-4">{t.appName}</h1>
-        <p className="text-2xl text-zinc-300 italic">{t.duality.description}</p>
+      {/* Logo + App name + Slogan */}
+      <section className="mt-24 flex flex-col items-center text-center px-4 sm:px-0">
+        <img src="/logo.png" alt="Logo Soulset" className="w-20 sm:w-24 h-20 sm:h-24 mb-4"/>
+        <h1 className="text-4xl sm:text-5xl font-extrabold mb-3">{t.appName}</h1>
+        <p className="text-lg sm:text-2xl italic slogan-text max-w-xl">{t.slogan}</p>
       </section>
 
-      {/* App Cards Centered */}
-      <section className="flex flex-col sm:flex-row justify-center items-center gap-8">
-        {/* Duality Card */}
+      {/* App Cards */}
+      <section className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-12 w-full max-w-4xl px-2 sm:px-0">
         <div className="app-card duality-card">
-          <h2 className="text-2xl font-bold mb-2">{t.duality.title}</h2>
-          <p className="text-zinc-300 mb-4">{t.duality.description}</p>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2">{t.duality.title}</h2>
+          <p className="mb-4 app-desc">{t.duality.description}</p>
           <button onClick={() => router.push("/duality")} className="app-btn duality-btn">{t.duality.title} ↗</button>
         </div>
 
-        {/* Soulset Navigator Card */}
         <div className="app-card soulset-card">
-          <h2 className="text-2xl font-bold mb-2">{t.soulset.title}</h2>
-          <p className="text-zinc-300 mb-4">{t.soulset.description}</p>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2">{t.soulset.title}</h2>
+          <p className="mb-4 app-desc">{t.soulset.description}</p>
           <button onClick={() => router.push("/soulset")} className="app-btn soulset-btn">{t.soulset.title} ↗</button>
         </div>
       </section>
