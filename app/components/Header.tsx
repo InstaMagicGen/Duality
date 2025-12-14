@@ -1,4 +1,5 @@
-'use client'
+'use client';
+
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
@@ -9,27 +10,31 @@ type HeaderProps = {
   slogan: string;
 };
 
-export default function Header({ theme, toggleTheme, appName, slogan }: HeaderProps) {
+export default function Header({
+  theme,
+  toggleTheme,
+  appName,
+  slogan,
+}: HeaderProps) {
   const router = useRouter();
 
   return (
-    <header className="w-full flex justify-between items-center px-6 py-4 bg-background text-foreground">
-      <button onClick={toggleTheme} className="header-btn theme-btn">
+    <header className="w-full flex items-center justify-between px-6 py-4">
+      {/* LEFT */}
+      <button onClick={toggleTheme}>
         {theme === 'dark' ? '🌙' : '☀️'}
       </button>
 
+      {/* CENTER */}
       <div className="text-center">
         <h1 className="text-2xl font-bold">{appName}</h1>
-        <p className="text-sm italic">{slogan}</p>
+        <p className="text-sm opacity-70">{slogan}</p>
       </div>
 
+      {/* RIGHT */}
       <div className="flex gap-3">
-        <button onClick={() => router.push('/login')} className="header-btn login-btn">
-          Login
-        </button>
-        <button onClick={() => router.push('/signup')} className="header-btn signup-btn">
-          Sign Up
-        </button>
+        <button onClick={() => router.push('/login')}>Login</button>
+        <button onClick={() => router.push('/signup')}>Sign up</button>
       </div>
     </header>
   );

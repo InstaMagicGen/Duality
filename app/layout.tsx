@@ -4,7 +4,6 @@ import './globals.css';
 import { useState } from 'react';
 import Header from './components/Header';
 
-
 export default function RootLayout({
   children,
 }: {
@@ -23,7 +22,7 @@ export default function RootLayout({
           theme={theme}
           toggleTheme={toggleTheme}
           appName="DUALITY"
-          slogan="Explore your inner balance"
+          slogan="Unify your inner forces"
         />
         <main>{children}</main>
       </body>
