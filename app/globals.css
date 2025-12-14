@@ -1,15 +1,11 @@
-@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-/* ==============================
-   THEME VARIABLES
-============================== */
+/* Couleurs globales */
 :root {
   --background: #ffffff;
   --foreground: #111111;
-  --accent-duality: #FFB700;
-  --accent-soulset: #4A9EFF;
-  --card-duality-bg: linear-gradient(135deg, #FFF5C3, #FFD84D);
-  --card-soulset-bg: linear-gradient(135deg, #C3E0FF, #6EC6FF);
 }
 
 :root[data-theme="dark"] {
@@ -17,9 +13,6 @@
   --foreground: #f5f5f5;
 }
 
-/* ==============================
-   GLOBAL STYLES
-============================== */
 body {
   background: var(--background);
   color: var(--foreground);
@@ -27,55 +20,43 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* ==============================
-   HEADER BUTTONS
-============================== */
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+}
+
+.logo {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 50px;
+}
+
+/* Buttons */
 .header-btn {
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 999px;
-  transition: all 0.3s ease;
   cursor: pointer;
   border: none;
   font-size: 0.875rem;
+  transition: all 0.3s ease;
 }
 
 .signup-btn {
   background: linear-gradient(135deg, #FFD84D, #FFB700);
   color: #000;
-  box-shadow: 0 0 15px rgba(255, 200, 0, 0.5);
 }
-.signup-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 25px rgba(255, 220, 100, 0.7);
-  color: #fff;
-}
-
 .login-btn {
   background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
   color: #001F3F;
-  box-shadow: 0 0 15px rgba(100, 180, 255, 0.5);
-}
-.login-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 25px rgba(140, 210, 255, 0.7);
-  color: #fff;
 }
 
-.theme-btn {
-  background: transparent;
-  color: var(--foreground);
-  font-size: 1.25rem;
-  padding: 6px 10px;
-  box-shadow: none;
-}
-.theme-btn:hover {
-  transform: scale(1.1);
-}
-
-/* ==============================
-   APP CARDS
-============================== */
+/* Cards */
 .app-card {
   padding: 24px;
   border-radius: 20px;
@@ -84,30 +65,20 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-  color: var(--foreground);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #000; /* Toujours noir, même en dark mode */
 }
 
-/* Hover effect cards */
-.app-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 40px rgba(255,255,255,0.2);
-  color: var(--accent-duality);
-}
-
-/* Backgrounds for apps */
 .duality-card {
-  background: var(--card-duality-bg);
-  border: 2px solid var(--accent-duality);
+  background: linear-gradient(135deg, #FFF5C3, #FFD84D);
+  border: 2px solid #FFB700;
 }
 .soulset-card {
-  background: var(--card-soulset-bg);
-  border: 2px solid var(--accent-soulset);
+  background: linear-gradient(135deg, #C3E0FF, #6EC6FF);
+  border: 2px solid #4A9EFF;
 }
 
-/* ==============================
-   APP BUTTONS
-============================== */
+/* App buttons */
 .app-btn {
   font-weight: 700;
   font-size: 0.9rem;
@@ -115,43 +86,13 @@ body {
   border-radius: 999px;
   cursor: pointer;
   border: none;
-  transition: all 0.3s ease, color 0.3s ease;
+  transition: all 0.3s ease;
 }
-
 .duality-btn {
-  background: var(--accent-duality);
+  background: #FFB700;
   color: #000;
-  box-shadow: 0 0 15px rgba(255, 200, 0, 0.6);
 }
-.duality-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 25px rgba(255, 220, 100, 0.9);
-  color: #fff;
-}
-
 .soulset-btn {
-  background: var(--accent-soulset);
+  background: #4A9EFF;
   color: #001F3F;
-  box-shadow: 0 0 15px rgba(100, 180, 255, 0.6);
-}
-.soulset-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 25px rgba(140, 210, 255, 0.9);
-  color: #fff;
-}
-
-/* ==============================
-   SLOGAN TEXT
-============================== */
-.slogan-text {
-  color: var(--foreground);
-}
-
-/* ==============================
-   RESPONSIVE
-============================== */
-@media (max-width: 640px) {
-  .app-card {
-    width: 100%;
-  }
 }
