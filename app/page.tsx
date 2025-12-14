@@ -1,167 +1,152 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
-import MoodDashboard from './components/MoodDashboard'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+type Lang = 'fr' | 'en' | 'ar'
+type MoodLevel = 1 | 2 | 3 | 4 | 5
 
-type Lang = 'fr' | 'en'
-
-const TEXT: Record<Lang, any> = {
-  fr: {
-    title: 'Soulset Journeys',
-    subtitle:
-      'Deux expériences guidées : Duality pour voir ton futur probable, Soulset Navigator pour scanner ta journée sur un coucher de soleil.',
-    dualityTitle: 'DUALITY · Futur probable',
-    dualityDesc:
-      'Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde).',
-    dualityBtn: 'Ouvrir Duality',
-    soulsetTitle: 'SOULSET NAVIGATOR · Sunset Therapy',
-    soulsetDesc:
-      'Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant.',
-    soulsetBtn: 'Commencer la Sunset Therapy',
-    moodBtn: 'Voir mon suivi de mood',
-    logout: 'Déconnexion',
-    login: 'Connexion'
-  },
-  en: {
-    title: 'Soulset Journeys',
-    subtitle:
-      'Two guided experiences: Duality to see your probable future, Soulset Navigator to scan your day through a sunset.',
-    dualityTitle: 'DUALITY · Probable Future',
-    dualityDesc:
-      'You write what you live. Duality returns a LIFE ECHO (probable future) and a SHADOWTALK (your deep awareness).',
-    dualityBtn: 'Open Duality',
-    soulsetTitle: 'SOULSET NAVIGATOR · Sunset Therapy',
-    soulsetDesc:
-      'Describe your current state and let a short mirror phrase project onto a calming sunset.',
-    soulsetBtn: 'Start Sunset Therapy',
-    moodBtn: 'View my mood tracking',
-    logout: 'Logout',
-    login: 'Login'
-  }
+type MoodLog = {
+  date: string
+  level: MoodLevel
+  note: string
 }
 
-export default function HomePage() {
-  const router = useRouter()
-  const [lang, setLang] = useState<Lang>('fr')
-  const [user, setUser] = useState<any>(null)
+const translations: Record<Lang, any> = {
+  fr: {
+    title: 'Duality',
+    subtitle: 'Exploration intérieure & clarté mentale',
+    connect: 'Créer une connexion',
+    navSoulset: 'Soulset',
+    navDuality: 'Duality',
+    moodTitle: 'Suivi de ton humeur',
+    note: 'Note',
+    save: 'Enregistrer',
+  },
+  en: {
+    title: 'Duality',
+    subtitle: 'Inner exploration & mental clarity',
+    connect: 'Create connection',
+    navSoulset: 'Soulset',
+    navDuality: 'Duality',
+    moodTitle: 'Mood tracking',
+    note: 'Note',
+    save: 'Save',
+  },
+  ar: {
+    title: 'Duality',
+    subtitle: 'الاستكشاف الداخلي والوضوح الذهني',
+    connect: 'إنشاء اتصال',
+    navSoulset: 'سولسِت',
+    navDuality: 'ديوليتي',
+    moodTitle: 'متابعة المزاج',
+    note: 'ملاحظة',
+    save: 'حفظ',
+  },
+}
 
-  const t = TEXT[lang]
+function detectLang(): Lang {
+  if (typeof navigator === 'undefined') return 'en'
+  const l = navigator.language
+  if (l.startsWith('fr')) return 'fr'
+  if (l.startsWith('ar')) return 'ar'
+  return 'en'
+}
+
+export default function Page() {
+  const [lang, setLang] = useState<Lang>('en')
+  const [connected, setConnected] = useState(false)
+  const [logs, setLogs] = useState<MoodLog[]>([])
+  const [level, setLevel] = useState<MoodLevel>(3)
+  const [note, setNote] = useState('')
+
+  const t = translations[lang]
 
   useEffect(() => {
-    const browserLang = navigator.language.startsWith('fr') ? 'fr' : 'en'
-    setLang(browserLang)
-
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user ?? null)
-    })
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-      }
-    )
-
-    return () => {
-      listener.subscription.unsubscribe()
-    }
+    setLang(detectLang())
   }, [])
 
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google'
-    })
-  }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
+  const saveMood = () => {
+    setLogs([
+      ...logs,
+      {
+        date: new Date().toISOString(),
+        level,
+        note,
+      },
+    ])
+    setNote('')
   }
 
   return (
-    <main className="min-h-screen bg-black text-white px-8 py-6">
-      {/* HEADER */}
-      <header className="flex justify-between items-start mb-12">
-        <div>
-          <h1 className="text-4xl font-bold text-blue-300">{t.title}</h1>
-          <p className="text-gray-400 mt-2 max-w-2xl">{t.subtitle}</p>
-        </div>
-
-        <div className="text-right">
-          {user && (
-            <p className="text-sm text-gray-400 mb-2">
-              Connecté en tant que {user.email}
-            </p>
-          )}
-
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="px-5 py-2 rounded-full border border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black transition"
-            >
-              {t.logout}
-            </button>
-          ) : (
-            <button
-              onClick={handleLogin}
-              className="px-5 py-2 rounded-full border border-blue-400 text-blue-300 hover:bg-blue-400 hover:text-black transition"
-            >
-              {t.login}
-            </button>
-          )}
-        </div>
+    <main className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white px-6 py-8">
+      {/* Header */}
+      <header className="flex justify-between items-center">
+        <h1 className="text-xl font-bold tracking-wide">{t.title}</h1>
+        {!connected && (
+          <button
+            onClick={() => setConnected(true)}
+            className="px-4 py-2 rounded-xl bg-white text-black font-semibold hover:scale-105 transition"
+          >
+            {t.connect}
+          </button>
+        )}
       </header>
 
-      {/* MAIN CARDS */}
-      <section className="flex flex-col lg:flex-row gap-12 justify-center items-center mt-24">
-        {/* DUALITY */}
-        <div className="w-full max-w-xl p-8 rounded-3xl border border-yellow-400 bg-gradient-to-br from-black to-yellow-900/10 shadow-[0_0_60px_rgba(255,215,0,0.15)]">
-          <h2 className="text-2xl font-bold text-yellow-300 mb-4">
-            {t.dualityTitle}
-          </h2>
-          <p className="text-gray-300 mb-8">{t.dualityDesc}</p>
+      {/* Center buttons */}
+      {!connected && (
+        <section className="flex flex-col items-center justify-center h-[70vh] gap-6">
+          <h2 className="text-3xl font-light text-center">{t.subtitle}</h2>
 
-          <button
-            onClick={() => router.push('/duality')}
-            className="px-6 py-3 rounded-full bg-yellow-400 text-black font-semibold hover:scale-105 transition"
-          >
-            {t.dualityBtn} →
-          </button>
-        </div>
+          <div className="flex gap-6">
+            <button className="px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 hover:scale-110 transition shadow-lg">
+              {t.navSoulset}
+            </button>
+            <button className="px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 hover:scale-110 transition shadow-lg">
+              {t.navDuality}
+            </button>
+          </div>
+        </section>
+      )}
 
-        {/* SOULSET */}
-        <div className="w-full max-w-xl p-8 rounded-3xl border border-cyan-400 bg-gradient-to-br from-black to-cyan-900/10 shadow-[0_0_60px_rgba(0,200,255,0.15)]">
-          <h2 className="text-2xl font-bold text-cyan-300 mb-4">
-            {t.soulsetTitle}
-          </h2>
-          <p className="text-gray-300 mb-8">{t.soulsetDesc}</p>
+      {/* Mood dashboard */}
+      {connected && (
+        <section className="max-w-xl mx-auto mt-16">
+          <h2 className="text-2xl mb-6">{t.moodTitle}</h2>
 
-          <button
-            onClick={() => router.push('/soulset')}
-            className="px-6 py-3 rounded-full bg-cyan-400 text-black font-semibold hover:scale-105 transition"
-          >
-            {t.soulsetBtn} →
-          </button>
-        </div>
-      </section>
+          <div className="bg-zinc-900 p-6 rounded-2xl shadow-xl space-y-4">
+            <input
+              type="range"
+              min={1}
+              max={5}
+              value={level}
+              onChange={(e) => setLevel(Number(e.target.value) as MoodLevel)}
+              className="w-full"
+            />
 
-      {/* MOOD */}
-      {user && (
-        <section className="mt-24 text-center">
-          <button
-            onClick={() => router.push('/mood')}
-            className="px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 to-yellow-400 text-black font-bold hover:scale-105 transition"
-          >
-            {t.moodBtn}
-          </button>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder={t.note}
+              className="w-full p-3 rounded-xl bg-black border border-zinc-700"
+            />
 
-          <div className="mt-12">
-            <MoodDashboard userId={user.id} />
+            <button
+              onClick={saveMood}
+              className="w-full py-3 rounded-xl bg-white text-black font-semibold hover:scale-105 transition"
+            >
+              {t.save}
+            </button>
+          </div>
+
+          <div className="mt-6 space-y-2">
+            {logs.map((l, i) => (
+              <div
+                key={i}
+                className="text-sm bg-zinc-800 p-3 rounded-xl"
+              >
+                {new Date(l.date).toLocaleString()} — Mood {l.level} — {l.note}
+              </div>
+            ))}
           </div>
         </section>
       )}
