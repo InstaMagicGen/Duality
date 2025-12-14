@@ -1,22 +1,18 @@
-// app/layout.tsx
-import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
+import { ThemeProvider, useTheme } from "./context/themeContext";
 
-export const metadata: Metadata = {
-  title: "DUALITY – Futur & Ombre Intérieure",
-  description:
-    "DUALITY : l'application qui te montre ton futur probable et la voix de ton ombre intérieure, en temps réel.",
+export const metadata = {
+  title: "Soulset Duality",
+  description: "Application Soulset Duality",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className="bg-[#050711] text-slate-100 antialiased">
-        {children}
+      <body>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
