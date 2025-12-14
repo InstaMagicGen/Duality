@@ -1,4 +1,4 @@
-import "../globals.css";
+import "./globals.css";
 import { ThemeProvider, useTheme } from "./context/themeContext";
 
 export const metadata = {
