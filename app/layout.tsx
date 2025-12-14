@@ -1,5 +1,8 @@
 'use client';
 import Header from './components/Header';
+// app/layout.tsx
+import './globals.css';
+import Header from './Header';
 
 import { useState } from 'react';
 
