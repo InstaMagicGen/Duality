@@ -10,7 +10,6 @@ const translations: Record<Lang, any> = {
     appName: 'Soulset Hub',
     login: 'Login',
     signup: 'Create Account',
-    toggleTheme: 'Toggle Theme',
     duality: {
       title: 'Duality',
       description: 'Explore your inner balance and navigate between shadow and light.'
@@ -24,7 +23,6 @@ const translations: Record<Lang, any> = {
     appName: 'Soulset Hub',
     login: 'Connexion',
     signup: 'Créer un compte',
-    toggleTheme: 'Changer le thème',
     duality: {
       title: 'Duality',
       description: 'Explore ton équilibre intérieur et navigue entre l’ombre et la lumière.'
@@ -38,7 +36,6 @@ const translations: Record<Lang, any> = {
     appName: 'سولسِت هاب',
     login: 'تسجيل الدخول',
     signup: 'إنشاء حساب',
-    toggleTheme: 'تغيير الوضع',
     duality: {
       title: 'دوالِتي',
       description: 'اكتشف توازنك الداخلي وتنقل بين الظل والنور.'
@@ -67,9 +64,7 @@ export default function Page() {
   const t = translations[lang];
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -79,33 +74,35 @@ export default function Page() {
     >
       {/* Header */}
       <header className="w-full flex justify-between items-center mb-16">
-        <div></div> {/* placeholder left */}
-        <div className="flex gap-4">
+        <div></div>
+        <div className="flex gap-3">
           <button onClick={() => router.push("/login")} className="header-btn login-btn">{t.login}</button>
           <button onClick={() => router.push("/signup")} className="header-btn signup-btn">{t.signup}</button>
-          <button onClick={toggleTheme} className="header-btn theme-btn">{t.toggleTheme}</button>
+          <button onClick={toggleTheme} className="header-btn theme-btn">
+            {theme === 'dark' ? '🌙' : '☀️'}
+          </button>
         </div>
       </header>
 
       {/* App Name & Slogan */}
       <section className="text-center mb-16">
-        <h1 className="text-6xl font-extrabold mb-4">{t.appName}</h1>
+        <h1 className="text-5xl font-extrabold mb-4">{t.appName}</h1>
         <p className="text-2xl text-zinc-300 italic">{t.duality.description}</p>
       </section>
 
       {/* App Buttons */}
-      <section className="flex flex-col sm:flex-row justify-center items-center gap-12">
-        {/* Duality */}
+      <section className="flex flex-col sm:flex-row justify-center items-center gap-8">
+        {/* Duality Card */}
         <div className="app-card">
-          <h2 className="text-3xl font-bold mb-3">{t.duality.title}</h2>
-          <p className="text-zinc-300 mb-6 max-w-xs">{t.duality.description}</p>
+          <h2 className="text-2xl font-bold mb-2">{t.duality.title}</h2>
+          <p className="text-zinc-300 mb-4">{t.duality.description}</p>
           <button onClick={() => router.push("/duality")} className="app-btn duality-btn">{t.duality.title} ↗</button>
         </div>
 
-        {/* Soulset Navigator */}
+        {/* Soulset Navigator Card */}
         <div className="app-card">
-          <h2 className="text-3xl font-bold mb-3">{t.soulset.title}</h2>
-          <p className="text-zinc-300 mb-6 max-w-xs">{t.soulset.description}</p>
+          <h2 className="text-2xl font-bold mb-2">{t.soulset.title}</h2>
+          <p className="text-zinc-300 mb-4">{t.soulset.description}</p>
           <button onClick={() => router.push("/soulset")} className="app-btn soulset-btn">{t.soulset.title} ↗</button>
         </div>
       </section>

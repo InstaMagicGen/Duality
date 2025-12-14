@@ -24,50 +24,53 @@ body {
 /* Header buttons */
 .header-btn {
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 999px;
   transition: all 0.3s ease;
   cursor: pointer;
   border: none;
+  font-size: 0.875rem;
 }
 
 .signup-btn {
   background: linear-gradient(135deg, #FFD84D, #FFB700);
   color: #000;
-  box-shadow: 0 0 20px rgba(255, 200, 0, 0.6);
+  box-shadow: 0 0 15px rgba(255, 200, 0, 0.5);
 }
 .signup-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(255, 220, 100, 0.9);
+  box-shadow: 0 0 25px rgba(255, 220, 100, 0.7);
 }
 
 .login-btn {
   background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
   color: #001F3F;
-  box-shadow: 0 0 20px rgba(100, 180, 255, 0.6);
+  box-shadow: 0 0 15px rgba(100, 180, 255, 0.5);
 }
 .login-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(140, 210, 255, 0.9);
+  box-shadow: 0 0 25px rgba(140, 210, 255, 0.7);
 }
 
 .theme-btn {
-  background: linear-gradient(135deg, #888, #bbb);
-  color: #fff;
-  box-shadow: 0 0 20px rgba(200,200,200,0.5);
+  background: transparent;
+  color: var(--foreground);
+  font-size: 1.25rem;
+  padding: 6px 10px;
+  box-shadow: none;
 }
 .theme-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(220,220,220,0.7);
+  transform: scale(1.1);
 }
 
 /* App cards */
 .app-card {
   background: rgba(255, 255, 255, 0.05);
-  padding: 36px;
+  border: 2px solid rgba(255,255,255,0.1);
+  padding: 28px;
   border-radius: 20px;
   text-align: center;
-  max-width: 320px;
+  max-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,8 +79,8 @@ body {
 /* App buttons */
 .app-btn {
   font-weight: 700;
-  font-size: 1.25rem;
-  padding: 14px 28px;
+  font-size: 1rem;
+  padding: 10px 24px;
   border-radius: 999px;
   cursor: pointer;
   border: none;
@@ -87,19 +90,19 @@ body {
 .duality-btn {
   background: linear-gradient(135deg, #FFD84D, #FFB700);
   color: #000;
-  box-shadow: 0 0 25px rgba(255, 200, 0, 0.7);
+  box-shadow: 0 0 20px rgba(255, 200, 0, 0.6);
 }
 .duality-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 35px rgba(255, 220, 100, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(255, 220, 100, 0.9);
 }
 
 .soulset-btn {
   background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
   color: #001F3F;
-  box-shadow: 0 0 25px rgba(100, 180, 255, 0.7);
+  box-shadow: 0 0 20px rgba(100, 180, 255, 0.6);
 }
 .soulset-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 35px rgba(140, 210, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(140, 210, 255, 0.9);
 }
