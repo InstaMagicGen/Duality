@@ -1,29 +1,29 @@
 "use client";
-
-import { useTheme } from "../context/themeContext";
-import Image from "next/image";
+import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { theme, toggleTheme } = useTheme();
+  const router = useRouter();
 
   return (
     <header className="header">
-      {/* Bouton Créer un compte à gauche */}
-      <button className="header-btn signup-btn">Créer un compte</button>
+      <div className="flex-1"></div> {/* espace vide à gauche */}
+      
+      <img src="/logo.png" alt="Logo Soulset" className="logo" />
 
-      {/* Logo centré */}
-      <div className="logo">
-        <Image src="/logo.png" alt="Logo" width={120} height={50} />
-      </div>
-
-      <div className="header-right" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        {/* Bouton Dark/Light */}
-        <button className="theme-btn" onClick={toggleTheme}>
-          {theme === "dark" ? "☀️" : "🌙"}
+      <div className="flex gap-3">
+        <button
+          onClick={() => router.push("/login")}
+          className="header-btn login-btn"
+        >
+          Se connecter
         </button>
-
-        {/* Bouton Se connecter à droite */}
-        <button className="header-btn login-btn">Se connecter</button>
+        <button
+          onClick={() => router.push("/signup")}
+          className="header-btn signup-btn"
+        >
+          Créer un compte
+        </button>
       </div>
     </header>
   );

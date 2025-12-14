@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -75,26 +75,21 @@ export default function Page() {
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
       className="min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 py-6 bg-background text-foreground transition-colors duration-300 relative"
     >
-      {/* Top controls */}
-      <header className="w-full flex justify-between items-center absolute top-6 left-0 right-0 px-4 sm:px-6">
+      {/* Top theme button */}
+      <header className="w-full flex justify-end items-center absolute top-6 right-4 sm:right-6">
         <button onClick={toggleTheme} className="header-btn theme-btn">
           {theme === 'dark' ? '🌙' : '☀️'}
         </button>
-        <div className="flex gap-3">
-          <button onClick={() => router.push("/login")} className="header-btn login-btn">{t.login}</button>
-          <button onClick={() => router.push("/signup")} className="header-btn signup-btn">{t.signup}</button>
-        </div>
       </header>
 
-      {/* Logo + App name + Slogan */}
+      {/* App name + Slogan */}
       <section className="mt-24 flex flex-col items-center text-center px-4 sm:px-0">
-        <img src="/logo.png" alt="Logo Soulset" className="w-20 sm:w-24 h-20 sm:h-24 mb-4"/>
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-3">{t.appName}</h1>
         <p className="text-lg sm:text-2xl italic slogan-text max-w-xl">{t.slogan}</p>
       </section>
 
       {/* App Cards */}
-      <section className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-12 w-full max-w-4xl px-2 sm:px-0">
+      <section className="flex flex-row justify-center items-center gap-6 mt-12 w-full max-w-4xl px-2 sm:px-0">
         <div className="app-card duality-card">
           <h2 className="text-xl sm:text-2xl font-bold mb-2">{t.duality.title}</h2>
           <p className="mb-4 app-desc">{t.duality.description}</p>
