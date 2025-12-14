@@ -1,26 +1,32 @@
 'use client';
-import Header from './components/Header';
-// app/layout.tsx
+
 import './globals.css';
-import Header from './Header';
-
 import { useState } from 'react';
+import Header from './components/Header';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'light' : 'dark');
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const appName = 'Soulset Hub';
-  const slogan = 'Votre parcours vers l’équilibre intérieur';
-
   return (
-    <body>
-      <Header theme={theme} toggleTheme={toggleTheme} appName={appName} slogan={slogan} />
-      {children}
-    </body>
+    <html lang="fr" data-theme={theme}>
+      <body className={theme}>
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          appName="DUALITY"
+          slogan="Explore your inner balance"
+        />
+        <main>{children}</main>
+      </body>
+    </html>
   );
 }
