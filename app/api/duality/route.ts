@@ -1,58 +1,50 @@
-import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { input, lang } = await req.json()
+    // 🔐 Sécurité : on vérifie la clé ICI
+    const apiKey = process.env.OPENAI_API_KEY;
 
-    // 1️⃣ Langue cible
-    const language =
-      lang === 'ar'
-        ? 'Arabic'
-        : lang === 'fr'
-        ? 'French'
-        : 'English'
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "OPENAI_API_KEY missing" },
+        { status: 500 }
+      );
+    }
 
-    // 2️⃣ Prompt STRICT (clé du problème)
-    const systemPrompt = `
-You are a deep introspective guide.
-You MUST respond ONLY in ${language}.
-Never mix languages.
+    // ✅ Instanciation ICI (et seulement ici)
+    const openai = new OpenAI({ apiKey });
 
-If the language is Arabic:
-- Use clear modern Arabic
-- No English words
-- No Latin characters
-- Use emotionally deep and poetic Arabic
+    const body = await req.json();
+    const { text, language } = body;
 
-If the language is French:
-- Use elegant, introspective French
+    const systemPrompt = {
+      fr: "Tu es Duality, une conscience miroir introspective.",
+      en: "You are Duality, an introspective mirror consciousness.",
+      ar: "أنت Duality، وعي مرآوي تأملي عميق."
+    }[language || "en"];
 
-Structure the response clearly.
-`
-
-    // 3️⃣ Appel OpenAI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: "gpt-4o-mini",
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: input },
-      ],
-      temperature: 0.8,
-    })
+        { role: "system", content: systemPrompt },
+        { role: "user", content: text }
+      ]
+    });
 
     return NextResponse.json({
-      analysis: completion.choices[0].message.content,
-    })
+      result: completion.choices[0].message.content
+    });
+
   } catch (error) {
-    console.error(error)
+    console.error("Duality API error:", error);
     return NextResponse.json(
-      { error: 'Analysis failed' },
+      { error: "Internal error" },
       { status: 500 }
-    )
+    );
   }
 }
