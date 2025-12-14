@@ -1,5 +1,6 @@
 'use client';
-import Header from './Header';
+import Header from './components/Header';
+
 import { useState } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
