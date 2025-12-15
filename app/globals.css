@@ -9,8 +9,6 @@
   --color-gold: #FFD700;
   --color-duality-bg: #1a1a1a;
   --color-soulset-bg: #0d1f2d;
-  --shadow-gold: 0 0 12px rgba(255, 215, 0, .4);
-  --shadow-cyan: 0 0 12px rgba(0, 255, 255, .4);
 }
 
 /* Body global */
@@ -20,11 +18,11 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-/* Header buttons style */
+/* Header */
 .header-btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 9999px;
-  font-weight: 600;
+  font-weight: 700;
   border: 2px solid var(--color-gold);
   background: transparent;
   color: var(--color-text);
@@ -33,36 +31,31 @@ body {
 .header-btn:hover {
   background: var(--color-gold);
   color: #000;
-  box-shadow: var(--shadow-gold);
+  box-shadow: 0 0 12px rgba(255, 215, 0, .5);
 }
 
-/* Boxes unifiées */
+/* Cards */
 .app-card {
-  width: 360px; /* même taille */
-  min-height: 380px;
+  width: 300px;
+  min-height: 350px;
   border-radius: 1rem;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  backdrop-filter: blur(8px);
   border: 2px solid var(--color-gold);
+  background-color: var(--color-duality-bg);
   transition: transform .3s ease, box-shadow .3s ease;
 }
 .app-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 0 12px rgba(255, 215, 0, .5);
 }
 
-/* Couleurs des cartes */
-.duality-card {
-  background: var(--color-duality-bg);
-}
-.soulset-card {
-  background: var(--color-soulset-bg);
-}
+.duality-card { background: var(--color-duality-bg); }
+.soulset-card { background: var(--color-soulset-bg); }
 
-/* Boutons des cards */
+/* Card buttons */
 .app-btn {
   padding: .6rem 1.4rem;
   border-radius: 9999px;
@@ -74,26 +67,10 @@ body {
   border: 2px solid var(--color-text);
   transition: all .3s ease;
 }
-.app-btn:hover {
-  transform: translateY(-2px);
-}
+.btn-duality { background: var(--color-gold); color: #000; }
+.btn-soulset { background: cyan; color: #000; }
 
-/* Bouton Duality */
-.btn-duality {
-  background: var(--color-gold);
-  color: #000;
-  border-color: var(--color-gold);
-  box-shadow: var(--shadow-gold);
-}
-/* Bouton Soulset */
-.btn-soulset {
-  background: cyan;
-  color: #000;
-  border-color: cyan;
-  box-shadow: var(--shadow-cyan);
-}
-
-/* Footer button */
+/* Footer / CTA */
 .footer-btn {
   padding: 1rem 2rem;
   border-radius: 2rem;
@@ -103,6 +80,4 @@ body {
   box-shadow: 0 0 20px #ff4e50, 0 0 40px #f9d423;
   transition: all .3s ease;
 }
-.footer-btn:hover {
-  transform: scale(1.05);
-}
+.footer-btn:hover { transform: scale(1.05); }
