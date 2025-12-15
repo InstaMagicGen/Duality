@@ -2,36 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Couleurs personnalisées pour le glow et thèmes */
 :root {
-  --background: #000000;
-  --foreground: #ededed;
+  --color-background: #0a0a0a;
+  --color-foreground: #ffffff;
+  --color-gold: #FFD700;
+  --color-duality: #FFD700;
+  --color-soulset: #00FFFF;
 }
 
+/* Body et font */
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Inter', sans-serif;
 }
 
-/* Custom Glow Effects matching the screenshot */
-
-.card-glow-yellow {
-  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.2), /* Bordure fine */
-              0 0 40px -10px rgba(234, 179, 8, 0.3); /* Lueur diffuse */
-  transition: box-shadow 0.3s ease;
+/* Effets glow pour cartes */
+.glow-yellow {
+  box-shadow: 0 0 10px var(--color-duality), 0 0 20px var(--color-duality);
+}
+.glow-cyan {
+  box-shadow: 0 0 10px var(--color-soulset), 0 0 20px var(--color-soulset);
 }
 
-.card-glow-yellow:hover {
-  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.5),
-              0 0 60px -10px rgba(234, 179, 8, 0.5);
+/* Boutons */
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-duality {
+  background-color: var(--color-duality);
+  color: #000;
+}
+.btn-soulset {
+  background-color: var(--color-soulset);
+  color: #000;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 8px #fff;
 }
 
-.card-glow-blue {
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.2),
-              0 0 40px -10px rgba(34, 211, 238, 0.3);
-  transition: box-shadow 0.3s ease;
+/* Header */
+.header-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.card-glow-blue:hover {
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.5),
-              0 0 60px -10px rgba(34, 211, 238, 0.5);
+/* Layout général */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
