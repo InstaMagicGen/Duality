@@ -2,75 +2,114 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
 
-type Lang = 'en' | 'fr' | 'ar';
+type Lang = 'fr' | 'en' | 'ar';
 
 const translations: Record<Lang, any> = {
   en: {
-    duality: { title: 'DUALITY · Probable Future', desc: 'You write what you live; Duality returns a LIFE ECHO and a SHADOWTALK.', tags: 'LIFE ECHO · SHADOWTALK', button: 'Enter Duality' },
-    soulset: { title: 'SOULSET NAVIGATOR · Sunset Therapy', desc: 'Describe your current state and let a short mirror phrase project onto a calming sunset.', tags: 'SCAN · SUNSET THERAPY', button: 'Enter Soulset' },
-    mood: 'View my mood tracking',
-    loginRedirect: 'Login / Create Account to View Mood',
+    duality: {
+      title: 'DUALITY · Probable Future',
+      desc: 'Write what you live. Duality returns a LIFE ECHO and SHADOWTALK.',
+      tags: 'LIFE ECHO · SHADOWTALK',
+      btn: 'Go to Duality',
+    },
+    soulset: {
+      title: 'SOULSET NAVIGATOR · Sunset Therapy',
+      desc: 'Describe your current state and see a mirrored phrase on a soothing sunset.',
+      tags: 'SCAN · SUNSET THERAPY',
+      btn: 'Go to Soulset',
+    },
+    mood: 'See my mood tracking',
   },
   fr: {
-    duality: { title: 'DUALITY · Futur probable', desc: 'Tu écris ce que tu vis ; Duality renvoie un LIFE ECHO et un SHADOWTALK.', tags: 'LIFE ECHO · SHADOWTALK', button: 'Accéder à Duality' },
-    soulset: { title: 'SOULSET NAVIGATOR · Sunset Therapy', desc: 'Décris ton état du moment et laisse une courte phrase miroir se projeter.', tags: 'SCAN · SUNSET THERAPY', button: 'Accéder à Soulset' },
+    duality: {
+      title: 'DUALITY · Futur probable',
+      desc: 'Tu écris ce que tu vis. Duality renvoie un LIFE ECHO et SHADOWTALK.',
+      tags: 'LIFE ECHO · SHADOWTALK',
+      btn: 'Aller à Duality',
+    },
+    soulset: {
+      title: 'SOULSET NAVIGATOR · Sunset Therapy',
+      desc: 'Décris ton état du moment et laisse une phrase miroir sur un coucher de soleil.',
+      tags: 'SCAN · SUNSET THERAPY',
+      btn: 'Aller à Soulset',
+    },
     mood: 'Voir mon suivi de mood',
-    loginRedirect: 'Connecte-toi pour voir le suivi',
   },
   ar: {
-    duality: { title: 'دوالِتي · المستقبل المحتمل', desc: 'أنت تكتب ما تعيشه؛ Duality تعكس LIFE ECHO وSHADOWTALK.', tags: 'LIFE ECHO · SHADOWTALK', button: 'الدخول إلى دوالِتي' },
-    soulset: { title: 'سولسِت نافيجيتور · Sunset Therapy', desc: 'صف حالتك الحالية، ثم دع عبارة قصيرة تنعكس على غروب هادئ.', tags: 'SCAN · SUNSET THERAPY', button: 'الدخول إلى سولسِت' },
-    mood: 'عرض تتبع المزاج',
-    loginRedirect: 'سجل الدخول لعرض التتبع',
+    duality: {
+      title: 'دوالِتي · المستقبل المحتمل',
+      desc: 'اكتب ما تعيشه. Duality تُرجع LIFE ECHO و SHADOWTALK.',
+      tags: 'LIFE ECHO · SHADOWTALK',
+      btn: 'اذهب إلى Duality',
+    },
+    soulset: {
+      title: 'سولسِت نافيجيتور · Sunset Therapy',
+      desc: 'صف حالتك الحالية واترك جملة قصيرة تنعكس على غروب هادئ.',
+      tags: 'SCAN · SUNSET THERAPY',
+      btn: 'اذهب إلى Soulset',
+    },
+    mood: 'عرض تتبع المزاج الخاص بي',
   },
 };
 
 export default function Page() {
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLang] = useState<Lang>('fr');
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const t = translations[lang];
 
   useEffect(() => {
-    const systemLang = navigator.language.toLowerCase();
-    if (systemLang.startsWith('fr')) setLang('fr');
-    else if (systemLang.startsWith('ar')) setLang('ar');
+    const l = navigator.language.toLowerCase();
+    if (l.startsWith('fr')) setLang('fr');
+    else if (l.startsWith('ar')) setLang('ar');
     else setLang('en');
   }, []);
 
-  const t = translations[lang];
-
-  const handleMoodClick = () => {
-    if (!isLoggedIn) router.push('/login');
-    else router.push('/mood-tracking');
-  };
+  const user = null; // TODO: remplacer par supabase.auth.getUser().user si connecté
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen gap-12 px-4 sm:px-6">
-      <div className="flex gap-8 justify-center flex-wrap">
-        <div className="app-card duality-card">
-          <h2 className="text-yellow-400 text-xl font-bold mb-2">{t.duality.title}</h2>
-          <p className="text-gray-200 mb-4">{t.duality.desc}</p>
-          <p className="text-sm text-yellow-200 mb-4">{t.duality.tags}</p>
-          <button onClick={() => router.push('/duality')} className="app-btn btn-duality">
-            {t.duality.button} <ArrowRight size={18} />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black px-4 py-8">
+      {/* CARTES */}
+      <div className="flex flex-col md:flex-row gap-6 justify-center">
+        {/* DUALITY */}
+        <div className="w-72 md:w-80 p-5 border-2 border-yellow-400 glow-yellow rounded-2xl flex flex-col justify-between">
+          <h2 className="text-yellow-400 font-bold text-lg mb-2">{t.duality.title}</h2>
+          <p className="text-sm text-neutral-300 mb-3">{t.duality.desc}</p>
+          <p className="text-xs text-neutral-400 mb-3">{t.duality.tags}</p>
+          <button
+            onClick={() => router.push('/duality')}
+            className="w-full py-2 rounded-full bg-yellow-400 text-black font-semibold shadow-lg hover:brightness-110 transition"
+          >
+            {t.duality.btn}
           </button>
         </div>
 
-        <div className="app-card soulset-card">
-          <h2 className="text-cyan-400 text-xl font-bold mb-2">{t.soulset.title}</h2>
-          <p className="text-gray-200 mb-4">{t.soulset.desc}</p>
-          <p className="text-sm text-cyan-200 mb-4">{t.soulset.tags}</p>
-          <button onClick={() => router.push('/soulset')} className="app-btn btn-soulset">
-            {t.soulset.button} <ArrowRight size={18} />
+        {/* SOULSET NAV */}
+        <div className="w-72 md:w-80 p-5 border-2 border-cyan-400 glow-cyan rounded-2xl flex flex-col justify-between">
+          <h2 className="text-cyan-400 font-bold text-lg mb-2">{t.soulset.title}</h2>
+          <p className="text-sm text-neutral-300 mb-3">{t.soulset.desc}</p>
+          <p className="text-xs text-neutral-400 mb-3">{t.soulset.tags}</p>
+          <button
+            onClick={() => router.push('/soulset')}
+            className="w-full py-2 rounded-full bg-cyan-400 text-black font-semibold shadow-lg hover:brightness-110 transition"
+          >
+            {t.soulset.btn}
           </button>
         </div>
       </div>
 
-      <button className="footer-btn" onClick={handleMoodClick}>
-        {!isLoggedIn ? t.loginRedirect : t.mood}
-      </button>
-    </main>
+      {/* BOUTON MOOD */}
+      <div className="mt-12">
+        <button
+          onClick={() => {
+            if (user) router.push('/mood');
+            else router.push('/auth?mode=login');
+          }}
+          className="btn-mood"
+        >
+          {t.mood}
+        </button>
+      </div>
+    </div>
   );
 }

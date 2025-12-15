@@ -2,43 +2,47 @@
 
 import './globals.css';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
-type LayoutProps = { children: React.ReactNode };
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
-export default function RootLayout({ children }: LayoutProps) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
-
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col">
-        <header className="w-full flex justify-between items-center px-6 py-4 bg-background text-foreground">
-          <button onClick={toggleTheme} className="header-btn">
-            {theme === 'dark' ? '🌙' : '☀️'}
-          </button>
+    <div className="min-h-screen flex flex-col">
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-6 py-4 bg-black/90 shadow-lg">
+        <button
+          onClick={toggleTheme}
+          className="text-sm px-3 py-1 border border-yellow-400 rounded-full hover:brightness-110 transition"
+        >
+          {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
+        </button>
 
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">Soulset Hub</h1>
-            <p className="text-sm italic">Votre parcours vers l’équilibre intérieur</p>
-          </div>
+        <div className="text-center">
+          <h1 className="text-xl md:text-2xl font-bold text-yellow-400">Soulset Journeys</h1>
+          <p className="text-sm text-neutral-400">Votre parcours vers l’équilibre intérieur</p>
+        </div>
 
-          <div className="flex gap-4">
-            <button onClick={() => window.location.href='/login'} className="auth-btn">
-              Se connecter
-            </button>
-            <button onClick={() => window.location.href='/signup'} className="auth-btn">
-              Créer un compte
-            </button>
-          </div>
-        </header>
+        <div className="flex items-center gap-3">
+          <Link href="/auth?mode=login" className="btn-auth btn-gold">
+            Se connecter
+          </Link>
+          <Link href="/auth?mode=signup" className="btn-auth btn-gold">
+            Créer un compte
+          </Link>
+        </div>
+      </header>
 
-        <main className="flex-1">{children}</main>
-      </body>
-    </html>
+      {/* MAIN CONTENT */}
+      <main className="flex-1">{children}</main>
+    </div>
   );
 }
