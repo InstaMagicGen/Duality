@@ -2,14 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Scrollbar stylée */
-::-webkit-scrollbar {
-  width: 8px;
+/* Boutons principaux */
+.btn {
+  @apply bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors;
 }
-::-webkit-scrollbar-thumb {
-  background-color: #EAB308;
-  border-radius: 4px;
+
+.btn-container {
+  @apply flex justify-center gap-6 mt-10; /* espace égal entre les boutons */
 }
-::-webkit-scrollbar-track {
-  background: #1F2937;
+
+/* Header */
+.header {
+  @apply w-full flex justify-between items-center p-6 bg-gray-900 text-white;
+}
+
+.lang-select {
+  @apply bg-gray-700 text-white py-2 px-4 rounded;
 }
