@@ -1,31 +1,31 @@
-'use client';
+'use client'
 
-import './globals.css';
-import { useState } from 'react';
-import Header from './components/Header';
+import './globals.css'
+import { useState } from 'react'
+import Header from './components/Header'
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
 
   return (
-    <html lang="fr" data-theme={theme}>
-      <body className={theme}>
+    <html lang="en" data-theme={theme}>
+      <body>
         <Header
           theme={theme}
           toggleTheme={toggleTheme}
-          appName="DUALITY"
-          slogan="Unify your inner forces"
+          appName="Soulset Hub"
+          slogan="Your journey to inner balance"
         />
-        <main>{children}</main>
+        {children}
       </body>
     </html>
-  );
+  )
 }

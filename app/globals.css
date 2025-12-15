@@ -1,135 +1,69 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Couleurs globales */
 :root {
-  --background: #ffffff;
-  --foreground: #111111;
-  --gold: #FFD84D;
+  --bg: #0e0e11;
+  --fg: #ffffff;
+  --accent: #c7a14a;
 }
 
-:root[data-theme="dark"] {
-  --background: #000000;
-  --foreground: #ffffff;
-  --gold: #FFD84D;
+[data-theme='light'] {
+  --bg: #ffffff;
+  --fg: #111111;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
 }
 
-/* Header */
+/* HEADER */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem; /* équivalent px-4 sm:px-6 */
-  position: relative;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logo {
-  height: 3rem; /* h-12 */
-  width: auto;
-}
-
-.header-title {
-  color: var(--foreground);
-  font-weight: 700;
-  font-size: 1.5rem;
-}
-
-.header-slogan {
-  color: var(--foreground);
-  font-style: italic;
-  font-size: 0.875rem;
-}
-
-/* Header Buttons */
-.header-btn {
-  font-weight: 600;
-  padding: 0.5rem 1rem; /* px-4 py-2 */
-  border-radius: 999px;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.signup-btn {
-  background: linear-gradient(135deg, #FFD84D, #FFB700);
-  color: #000;
-}
-
-.login-btn {
-  background: linear-gradient(135deg, #6EC6FF, #4A9EFF);
-  color: #001F3F;
-}
-
-.theme-btn {
-  background: transparent;
-  color: var(--foreground);
-  font-size: 1.25rem;
-}
-
-/* Cards */
-.app-card {
-  padding: 1.5rem; /* p-6 */
-  border-radius: 1.25rem; /* rounded-2xl */
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 260px;
-  min-height: 220px;
-}
-
-.duality-card {
-  background: linear-gradient(135deg, #FFF5C3, #FFD84D);
-  border: 2px solid var(--gold);
-}
-
-.soulset-card {
-  background: linear-gradient(135deg, #C3E0FF, #6EC6FF);
-  border: 2px solid #4A9EFF;
-}
-
-/* App buttons */
-.app-btn {
-  font-weight: 700;
-  font-size: 0.875rem;
-  padding: 0.5rem 1.5rem;
-  border-radius: 999px;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s ease;
+  position: fixed;
+  top: 0;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.header-center {
   text-align: center;
 }
 
-.duality-btn {
-  background: #FFB700;
-  color: #000;
+.header-btn {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--fg);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.soulset-btn {
-  background: #4A9EFF;
-  color: #001F3F;
+.header-btn.primary {
+  background: var(--accent);
+  color: black;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .app-card {
-    width: 100%;
-  }
+/* PAGE */
+.page-container {
+  padding-top: 120px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.cards {
+  display: flex;
+  gap: 24px;
+}
+
+.card {
+  border: 1px solid var(--accent);
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 300px;
 }
