@@ -2,63 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Couleurs personnalisées pour le glow et thèmes */
+/* Variables couleurs premium */
 :root {
-  --color-background: #0a0a0a;
-  --color-foreground: #ffffff;
+  --color-bg: #0b0b0b;
+  --color-text: #f5f5f5;
   --color-gold: #FFD700;
-  --color-duality: #FFD700;
-  --color-soulset: #00FFFF;
+  --color-duality-bg: #1a1a1a;
+  --color-duality-glow: #FFD700;
+  --color-soulset-bg: #0d1f2d;
+  --color-soulset-glow: #00ffff;
 }
 
-/* Body et font */
+/* Body global */
 body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+  background-color: var(--color-bg);
+  color: var(--color-text);
   font-family: 'Inter', sans-serif;
 }
 
-/* Effets glow pour cartes */
+/* Glow effects */
 .glow-yellow {
-  box-shadow: 0 0 10px var(--color-duality), 0 0 20px var(--color-duality);
+  box-shadow: 0 0 15px var(--color-duality-glow), 0 0 30px var(--color-duality-glow)/50;
 }
 .glow-cyan {
-  box-shadow: 0 0 10px var(--color-soulset), 0 0 20px var(--color-soulset);
+  box-shadow: 0 0 15px var(--color-soulset-glow), 0 0 30px var(--color-soulset-glow)/50;
 }
 
-/* Boutons */
-.btn {
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.btn-duality {
-  background-color: var(--color-duality);
-  color: #000;
-}
-.btn-soulset {
-  background-color: var(--color-soulset);
-  color: #000;
-}
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 8px #fff;
-}
-
-/* Header */
+/* Header buttons */
 .header-btn {
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.theme-btn {
+  background-color: transparent;
+  border: 2px solid var(--color-text);
+}
+
+.login-btn {
+  background-color: #1f2937;
+  color: var(--color-text);
+}
+
+.signup-btn {
+  background-color: #4b5563;
+  color: var(--color-text);
+}
+
+/* App cards */
+.app-card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  max-width: 320px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backdrop-filter: blur(8px);
+}
+
+.app-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-/* Layout général */
-.main-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+.footer-btn {
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #ff4e50, #f9d423);
+  color: #000;
+  box-shadow: 0 0 20px #ff4e50, 0 0 40px #f9d423;
+  transition: all 0.3s ease;
 }

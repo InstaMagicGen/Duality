@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,22 +8,50 @@ type Lang = 'en' | 'fr' | 'ar';
 
 const translations: Record<Lang, any> = {
   en: {
-    duality: { title: 'DUALITY · Futur probable', desc: 'Tu écris ce que tu vis, Duality renvoie un LIFE ECHO et un SHADOWTALK.', tags: 'LIFE ECHO · SHADOWTALK' },
-    soulset: { title: 'SOULSET NAVIGATOR · Sunset Therapy', desc: 'Décris ton état du moment, puis laisse une phrase miroir se projeter sur un coucher de soleil apaisant.', tags: 'SCAN · SUNSET THERAPY' },
+    duality: {
+      title: 'DUALITY · Futur probable',
+      desc: 'Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde).',
+      tags: 'LIFE ECHO · SHADOWTALK'
+    },
+    soulset: {
+      title: 'SOULSET NAVIGATOR · Sunset Therapy',
+      desc: 'Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant.',
+      tags: 'SCAN · SUNSET THERAPY'
+    },
+    footerBtn: 'Voir mon suivi de mood'
   },
   fr: {
-    duality: { title: 'DUALITY · Futur probable', desc: 'Tu écris ce que tu vis, Duality renvoie un LIFE ECHO et un SHADOWTALK.', tags: 'LIFE ECHO · SHADOWTALK' },
-    soulset: { title: 'SOULSET NAVIGATOR · Sunset Therapy', desc: 'Décris ton état du moment, puis laisse une phrase miroir se projeter sur un coucher de soleil apaisant.', tags: 'SCAN · SUNSET THERAPY' },
+    duality: {
+      title: 'DUALITY · Futur probable',
+      desc: 'Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde).',
+      tags: 'LIFE ECHO · SHADOWTALK'
+    },
+    soulset: {
+      title: 'SOULSET NAVIGATOR · Sunset Therapy',
+      desc: 'Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant.',
+      tags: 'SCAN · SUNSET THERAPY'
+    },
+    footerBtn: 'Voir mon suivi de mood'
   },
   ar: {
-    duality: { title: 'دوالِتي · المستقبل المحتمل', desc: 'اكتب ما تعيشه، Duality يُعيد LIFE ECHO و SHADOWTALK.', tags: 'LIFE ECHO · SHADOWTALK' },
-    soulset: { title: 'سولسِت نافيجيتور · علاج الغروب', desc: 'صف حالتك الحالية، ثم اترك عبارة قصيرة تعكس شعورك على غروب الشمس.', tags: 'SCAN · SUNSET THERAPY' },
-  },
+    duality: {
+      title: 'دوالِتي · المستقبل المحتمل',
+      desc: 'اكتب ما تعيشه، Duality تعكس LIFE ECHO (المستقبل المحتمل) وSHADOWTALK (وعيك العميق).',
+      tags: 'LIFE ECHO · SHADOWTALK'
+    },
+    soulset: {
+      title: 'سولسِت نافيجيتور · Sunset Therapy',
+      desc: 'صف حالتك الحالية، ثم دع جملة قصيرة تنعكس على غروب الشمس المريح.',
+      tags: 'SCAN · SUNSET THERAPY'
+    },
+    footerBtn: 'عرض تتبع مزاجي'
+  }
 };
 
 export default function Page() {
-  const router = useRouter();
   const [lang, setLang] = useState<Lang>('en');
+  const router = useRouter();
+  const t = translations[lang];
 
   useEffect(() => {
     const systemLang = navigator.language.toLowerCase();
@@ -32,37 +60,39 @@ export default function Page() {
     else setLang('en');
   }, []);
 
-  const t = translations[lang];
-
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-black px-4">
-      <section className="flex flex-col sm:flex-row gap-8 mt-16">
-        {/* Duality Box */}
-        <div className="bg-black border border-yellow-400 glow-yellow p-6 rounded-xl max-w-xs text-center">
-          <h2 className="text-yellow-400 font-bold text-xl mb-2">{t.duality.title}</h2>
-          <p className="text-gray-200 mb-4">{t.duality.desc}</p>
-          <p className="text-yellow-200 text-sm mb-4">{t.duality.tags}</p>
+    <main className="flex flex-col items-center justify-center min-h-screen gap-12 px-4 sm:px-6">
+      {/* Boxes container */}
+      <div className="flex flex-row gap-8 justify-center items-start flex-wrap">
+        {/* DUALITY */}
+        <div className="app-card glow-yellow border border-yellow-500">
+          <h2 className="text-yellow-400 text-xl font-bold mb-2">{t.duality.title}</h2>
+          <p className="text-gray-300 mb-4">{t.duality.desc}</p>
+          <p className="text-sm text-yellow-200 mb-4">{t.duality.tags}</p>
           <button
+            className="app-btn bg-yellow-400 text-black"
             onClick={() => router.push('/duality')}
-            className="btn btn-duality flex items-center justify-center mx-auto gap-2"
           >
-            Go <ArrowRight size={16} />
+            {t.duality.title} <ArrowRight size={18} />
           </button>
         </div>
 
-        {/* Soulset Navigator Box */}
-        <div className="bg-black border border-cyan-400 glow-cyan p-6 rounded-xl max-w-xs text-center">
-          <h2 className="text-cyan-400 font-bold text-xl mb-2">{t.soulset.title}</h2>
-          <p className="text-gray-200 mb-4">{t.soulset.desc}</p>
-          <p className="text-cyan-200 text-sm mb-4">{t.soulset.tags}</p>
+        {/* SOULSET NAVIGATOR */}
+        <div className="app-card glow-cyan border border-cyan-400">
+          <h2 className="text-cyan-400 text-xl font-bold mb-2">{t.soulset.title}</h2>
+          <p className="text-gray-300 mb-4">{t.soulset.desc}</p>
+          <p className="text-sm text-cyan-200 mb-4">{t.soulset.tags}</p>
           <button
+            className="app-btn bg-cyan-400 text-black"
             onClick={() => router.push('/soulset')}
-            className="btn btn-soulset flex items-center justify-center mx-auto gap-2"
           >
-            Go <ArrowRight size={16} />
+            {t.soulset.title} <ArrowRight size={18} />
           </button>
         </div>
-      </section>
+      </div>
+
+      {/* Footer Button */}
+      <button className="footer-btn mt-12">{t.footerBtn}</button>
     </main>
   );
 }
