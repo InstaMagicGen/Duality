@@ -1,47 +1,80 @@
+"use client";
+
 import "./globals.css";
 import { ReactNode, useState, useEffect } from "react";
+import Link from "next/link";
 
 export const metadata = {
   title: "Soulset Journeys",
-  description: "Explore your inner balance",
+  description: "Two premium guided journeys: Duality & Soulset Navigator",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    if (darkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [darkMode]);
 
   return (
     <html lang="fr">
-      <body className={`min-h-screen font-sans ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`}>
+      <body className="bg-neutral-900 dark:bg-black text-white transition-colors">
         {/* Header */}
-        <header className="flex justify-between items-center px-6 py-4 max-w-6xl mx-auto">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              className="px-4 py-2 rounded-full border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition"
-            >
-              {theme === "dark" ? "🌙" : "☀️"}
-            </button>
-          </div>
+        <header className="flex items-center justify-between px-6 py-4 border-b border-yellow-500">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="px-4 py-2 rounded-full border border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black transition"
+          >
+            {darkMode ? "☀️ Light" : "🌙 Dark"}
+          </button>
 
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Soulset Journeys</h1>
-            <p className="text-subtle">Explore your inner balance</p>
+            <h1 className="font-bold text-xl md:text-2xl text-yellow-400">
+              Soulset Journeys
+            </h1>
+            <p className="text-xs text-neutral-400">Explore your journey</p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="btn-auth btn-gold">Se connecter</button>
-            <button className="btn-auth btn-blue">Créer un compte</button>
+          <div className="flex gap-3">
+            <Link
+              href="/auth"
+              className="px-4 py-2 rounded-full border border-yellow-400 hover:bg-yellow-400 hover:text-black transition"
+            >
+              Se connecter
+            </Link>
+            <Link
+              href="/auth?mode=signup"
+              className="px-4 py-2 rounded-full border border-yellow-400 hover:bg-yellow-400 hover:text-black transition"
+            >
+              Créer un compte
+            </Link>
           </div>
         </header>
 
-        {/* Main content */}
-        <main className="flex flex-col items-center justify-center px-4 py-6">{children}</main>
+        {/* Boutons principaux Duality / Soulset */}
+        <main className="flex flex-col items-center justify-center min-h-[80vh] gap-6 px-4">
+          <div className="flex gap-6">
+            <Link
+              href="/duality"
+              className="flex flex-col items-center justify-center w-40 h-40 bg-duality rounded-2xl border-2 border-gold text-white text-center p-4 hover:scale-105 transition-transform"
+            >
+              <h2 className="font-bold text-lg">Duality</h2>
+              <p className="text-sm mt-2">Explore your probable future</p>
+            </Link>
+
+            <Link
+              href="/soulset"
+              className="flex flex-col items-center justify-center w-40 h-40 bg-soulset rounded-2xl border-2 border-gold text-white text-center p-4 hover:scale-105 transition-transform"
+            >
+              <h2 className="font-bold text-lg">Soulset</h2>
+              <p className="text-sm mt-2">Scan your day on a sunset</p>
+            </Link>
+          </div>
+
+          {/* Zone enfants (ex: pages dynamiques) */}
+          {children}
+        </main>
       </body>
     </html>
   );
