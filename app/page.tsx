@@ -48,7 +48,7 @@ export default function Page() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen gap-12 px-4 sm:px-6">
-      <div className="flex flex-row gap-8 justify-center flex-wrap">
+      <div className="flex gap-8 justify-center flex-wrap">
         <div className="app-card duality-card">
           <h2 className="text-yellow-400 text-xl font-bold mb-2">{t.duality.title}</h2>
           <p className="text-gray-200 mb-4">{t.duality.desc}</p>

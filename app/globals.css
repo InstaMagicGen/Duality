@@ -34,6 +34,23 @@ body {
   box-shadow: 0 0 12px rgba(255, 215, 0, .5);
 }
 
+/* Auth buttons */
+.auth-btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.8rem 1rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  border: 2px solid var(--color-gold);
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  color: #000;
+  transition: all .3s ease;
+}
+.auth-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
 /* Cards */
 .app-card {
   width: 300px;
@@ -44,16 +61,21 @@ body {
   flex-direction: column;
   justify-content: space-between;
   border: 2px solid var(--color-gold);
-  background-color: var(--color-duality-bg);
   transition: transform .3s ease, box-shadow .3s ease;
 }
-.app-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 12px rgba(255, 215, 0, .5);
-}
+.app-card:hover { transform: translateY(-3px); }
 
-.duality-card { background: var(--color-duality-bg); }
-.soulset-card { background: var(--color-soulset-bg); }
+/* Colors */
+.duality-card {
+  background: var(--color-duality-bg);
+  border-color: var(--color-gold);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+.soulset-card {
+  background: var(--color-soulset-bg);
+  border-color: cyan;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
 
 /* Card buttons */
 .app-btn {
@@ -62,15 +84,14 @@ body {
   font-weight: 700;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: .5rem;
   cursor: pointer;
-  border: 2px solid var(--color-text);
-  transition: all .3s ease;
 }
 .btn-duality { background: var(--color-gold); color: #000; }
 .btn-soulset { background: cyan; color: #000; }
 
-/* Footer / CTA */
+/* Footer / Mood button */
 .footer-btn {
   padding: 1rem 2rem;
   border-radius: 2rem;

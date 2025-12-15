@@ -1,19 +1,18 @@
 'use client';
 
 import './globals.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
+type LayoutProps = { children: React.ReactNode };
 
 export default function RootLayout({ children }: LayoutProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'light' : 'dark');
-  };
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   return (
     <html lang="en">
@@ -29,10 +28,10 @@ export default function RootLayout({ children }: LayoutProps) {
           </div>
 
           <div className="flex gap-4">
-            <button onClick={() => window.location.href='/login'} className="header-btn footer-btn">
+            <button onClick={() => window.location.href='/login'} className="auth-btn">
               Se connecter
             </button>
-            <button onClick={() => window.location.href='/signup'} className="header-btn footer-btn">
+            <button onClick={() => window.location.href='/signup'} className="auth-btn">
               Créer un compte
             </button>
           </div>
