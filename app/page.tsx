@@ -1,115 +1,73 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-type Lang = 'fr' | 'en' | 'ar';
+type Lang = "en" | "fr" | "ar";
 
 const translations: Record<Lang, any> = {
   en: {
-    duality: {
-      title: 'DUALITY · Probable Future',
-      desc: 'Write what you live. Duality returns a LIFE ECHO and SHADOWTALK.',
-      tags: 'LIFE ECHO · SHADOWTALK',
-      btn: 'Go to Duality',
-    },
-    soulset: {
-      title: 'SOULSET NAVIGATOR · Sunset Therapy',
-      desc: 'Describe your current state and see a mirrored phrase on a soothing sunset.',
-      tags: 'SCAN · SUNSET THERAPY',
-      btn: 'Go to Soulset',
-    },
-    mood: 'See my mood tracking',
+    duality: { title: "DUALITY · Futur probable", desc: "Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde)." },
+    soulset: { title: "SOULSET NAVIGATOR · Sunset Therapy", desc: "Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant." },
   },
   fr: {
-    duality: {
-      title: 'DUALITY · Futur probable',
-      desc: 'Tu écris ce que tu vis. Duality renvoie un LIFE ECHO et SHADOWTALK.',
-      tags: 'LIFE ECHO · SHADOWTALK',
-      btn: 'Aller à Duality',
-    },
-    soulset: {
-      title: 'SOULSET NAVIGATOR · Sunset Therapy',
-      desc: 'Décris ton état du moment et laisse une phrase miroir sur un coucher de soleil.',
-      tags: 'SCAN · SUNSET THERAPY',
-      btn: 'Aller à Soulset',
-    },
-    mood: 'Voir mon suivi de mood',
+    duality: { title: "DUALITY · Futur probable", desc: "Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde)." },
+    soulset: { title: "SOULSET NAVIGATOR · Sunset Therapy", desc: "Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant." },
   },
   ar: {
-    duality: {
-      title: 'دوالِتي · المستقبل المحتمل',
-      desc: 'اكتب ما تعيشه. Duality تُرجع LIFE ECHO و SHADOWTALK.',
-      tags: 'LIFE ECHO · SHADOWTALK',
-      btn: 'اذهب إلى Duality',
-    },
-    soulset: {
-      title: 'سولسِت نافيجيتور · Sunset Therapy',
-      desc: 'صف حالتك الحالية واترك جملة قصيرة تنعكس على غروب هادئ.',
-      tags: 'SCAN · SUNSET THERAPY',
-      btn: 'اذهب إلى Soulset',
-    },
-    mood: 'عرض تتبع المزاج الخاص بي',
+    duality: { title: "دوالِتي · المستقبل المحتمل", desc: "اكتب ما تعيشه، Duality تعكس LIFE ECHO (المستقبل المحتمل) و SHADOWTALK (وعيك العميق)." },
+    soulset: { title: "سولسِت نافيجيتور · Sunset Therapy", desc: "صف حالتك الحالية، ثم دع جملة قصيرة تعكس حالتك على غروب الشمس." },
   },
 };
 
-export default function Page() {
-  const [lang, setLang] = useState<Lang>('fr');
+export default function HomePage() {
+  const [lang, setLang] = useState<Lang>("fr");
   const router = useRouter();
-  const t = translations[lang];
 
   useEffect(() => {
-    const l = navigator.language.toLowerCase();
-    if (l.startsWith('fr')) setLang('fr');
-    else if (l.startsWith('ar')) setLang('ar');
-    else setLang('en');
+    const l = window.navigator.language.toLowerCase();
+    if (l.startsWith("fr")) setLang("fr");
+    else if (l.startsWith("ar")) setLang("ar");
+    else setLang("en");
   }, []);
 
-  const user = null; // TODO: remplacer par supabase.auth.getUser().user si connecté
+  const t = translations[lang];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black px-4 py-8">
-      {/* CARTES */}
-      <div className="flex flex-col md:flex-row gap-6 justify-center">
+    <div className="flex flex-col items-center justify-center gap-8 mt-12 max-w-5xl mx-auto">
+      <div className="flex gap-6 w-full justify-center">
         {/* DUALITY */}
-        <div className="w-72 md:w-80 p-5 border-2 border-yellow-400 glow-yellow rounded-2xl flex flex-col justify-between">
-          <h2 className="text-yellow-400 font-bold text-lg mb-2">{t.duality.title}</h2>
-          <p className="text-sm text-neutral-300 mb-3">{t.duality.desc}</p>
-          <p className="text-xs text-neutral-400 mb-3">{t.duality.tags}</p>
+        <div className="flex-1 border border-yellow-400 rounded-2xl p-6 bg-black glow-yellow max-w-sm">
+          <h2 className="text-xl font-bold text-yellow-300 mb-2">{t.duality.title}</h2>
+          <p className="text-subtle mb-4">{t.duality.desc}</p>
           <button
-            onClick={() => router.push('/duality')}
-            className="w-full py-2 rounded-full bg-yellow-400 text-black font-semibold shadow-lg hover:brightness-110 transition"
+            className="btn-auth btn-gold w-full flex justify-center gap-2"
+            onClick={() => router.push("/duality")}
           >
-            {t.duality.btn}
+            {t.duality.title} ➔
           </button>
         </div>
 
-        {/* SOULSET NAV */}
-        <div className="w-72 md:w-80 p-5 border-2 border-cyan-400 glow-cyan rounded-2xl flex flex-col justify-between">
-          <h2 className="text-cyan-400 font-bold text-lg mb-2">{t.soulset.title}</h2>
-          <p className="text-sm text-neutral-300 mb-3">{t.soulset.desc}</p>
-          <p className="text-xs text-neutral-400 mb-3">{t.soulset.tags}</p>
+        {/* SOULSET NAVIGATOR */}
+        <div className="flex-1 border border-cyan-400 rounded-2xl p-6 bg-black glow-cyan max-w-sm">
+          <h2 className="text-xl font-bold text-cyan-300 mb-2">{t.soulset.title}</h2>
+          <p className="text-subtle mb-4">{t.soulset.desc}</p>
           <button
-            onClick={() => router.push('/soulset')}
-            className="w-full py-2 rounded-full bg-cyan-400 text-black font-semibold shadow-lg hover:brightness-110 transition"
+            className="btn-auth btn-blue w-full flex justify-center gap-2"
+            onClick={() => router.push("/soulset")}
           >
-            {t.soulset.btn}
+            {t.soulset.title} ➔
           </button>
         </div>
       </div>
 
-      {/* BOUTON MOOD */}
-      <div className="mt-12">
-        <button
-          onClick={() => {
-            if (user) router.push('/mood');
-            else router.push('/auth?mode=login');
-          }}
-          className="btn-mood"
-        >
-          {t.mood}
-        </button>
-      </div>
+      {/* Bouton Mood - uniquement après connexion */}
+      <button
+        className="btn-mood mt-12"
+        onClick={() => router.push("/auth")}
+      >
+        Voir mon suivi de mood
+      </button>
     </div>
   );
 }

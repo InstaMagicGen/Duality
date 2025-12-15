@@ -2,22 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Couleurs néon/glow pour premium look */
-body {
-  @apply bg-black text-white font-sans;
-}
-
-html[data-theme='dark'] {
-  --bg-primary: #000;
-  --text-primary: #fff;
-}
-
-html[data-theme='light'] {
-  --bg-primary: #f9f9f9;
-  --text-primary: #111;
-}
-
-/* Glow pour cartes */
+/* Classes utilitaires pour glow/ombre */
 .glow-yellow {
   box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
 }
@@ -32,8 +17,16 @@ html[data-theme='light'] {
 .btn-gold {
   @apply bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black shadow-yellow-400/60;
 }
+.btn-blue {
+  @apply bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 text-black shadow-cyan-400/60;
+}
 
-/* Bouton mood */
+/* Bouton Mood */
 .btn-mood {
   @apply bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 text-black font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition;
+}
+
+/* Small text */
+.text-subtle {
+  @apply text-neutral-400 text-sm;
 }
