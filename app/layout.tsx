@@ -1,31 +1,20 @@
-'use client'
+import "./globals.css";
 
-import './globals.css'
-import { useState } from 'react'
-import Header from './components/Header'
+export const metadata = {
+  title: "Soulset Journeys",
+  description: "Inner exploration through consciousness & sunset therapy",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
-  }
-
   return (
-    <html lang="en" data-theme={theme}>
+    <html lang="fr">
       <body>
-        <Header
-          theme={theme}
-          toggleTheme={toggleTheme}
-          appName="Soulset Hub"
-          slogan="Your journey to inner balance"
-        />
         {children}
       </body>
     </html>
-  )
+  );
 }

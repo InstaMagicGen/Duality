@@ -1,190 +1,27 @@
-/* ================================
-   TAILWIND BASE
-================================ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-/* ================================
-   THEME VARIABLES
-================================ */
-:root {
-  --bg-light: #f9fafb;
-  --bg-dark: #0b0b0e;
-
-  --text-light: #0f172a;
-  --text-dark: #f8fafc;
-
-  --gold: #d4af37;
-
-  --card-dark: #111318;
-  --card-light: #ffffff;
-
-  --sunset-1: #ff7a18;
-  --sunset-2: #ffb347;
-
-  --conscious-1: #6366f1;
-  --conscious-2: #8b5cf6;
-}
-
-/* ================================
-   GLOBAL THEME
-================================ */
-html {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-[data-theme="light"] {
-  background-color: var(--bg-light);
-  color: var(--text-light);
-}
-
-
-/* ================================
-   GLOBAL RESET
-================================ */
-* {
-  box-sizing: border-box;
-}
-
+/* Base reset */
+html,
 body {
-  margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+  margin: 0;
+  background-color: #000000;
+  color: #e5e7eb;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial;
 }
 
-
-/* ================================
-   LAYOUT HELPERS
-================================ */
-.bg-background {
-  background-color: var(--bg-dark);
+/* Glow helpers */
+.glow-yellow {
+  box-shadow: 0 0 40px rgba(234, 179, 8, 0.25);
 }
 
-[data-theme="light"] .bg-background {
-  background-color: var(--bg-light);
+.glow-blue {
+  box-shadow: 0 0 40px rgba(34, 211, 238, 0.25);
 }
 
-.text-foreground {
-  color: var(--text-dark);
-}
-
-[data-theme="light"] .text-foreground {
-  color: var(--text-light);
-}
-
-
-/* ================================
-   APP CARDS (DUALITY / SOULSET)
-================================ */
-.app-card {
-  max-width: 420px;
-  width: 100%;
-  padding: 2rem;
-  border-radius: 1.25rem;
-  border: 1px solid var(--gold);
-  background: var(--card-dark);
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-[data-theme="light"] .app-card {
-  background: var(--card-light);
-}
-
-.app-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
-}
-
-
-/* ================================
-   DESCRIPTIONS
-================================ */
-.app-desc {
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
-
-
-/* ================================
-   BUTTONS
-================================ */
-.app-btn {
-  margin-top: 1.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 500;
-  border: 1px solid var(--gold);
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.app-btn:hover {
-  background: var(--gold);
-  color: #000;
-}
-
-
-/* ================================
-   DUALITY (CONSCIOUSNESS)
-================================ */
-.duality-card {
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.15),
-    rgba(139, 92, 246, 0.15)
-  );
-}
-
-.duality-btn:hover {
-  background: linear-gradient(
-    135deg,
-    var(--conscious-1),
-    var(--conscious-2)
-  );
-  color: #fff;
-}
-
-
-/* ================================
-   SOULSET (SUNSET)
-================================ */
-.soulset-card {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 122, 24, 0.15),
-    rgba(255, 179, 71, 0.15)
-  );
-}
-
-.soulset-btn:hover {
-  background: linear-gradient(
-    135deg,
-    var(--sunset-1),
-    var(--sunset-2)
-  );
-  color: #000;
-}
-
-
-/* ================================
-   HEADER BUTTONS (SI UTILISÉS)
-================================ */
-.header-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--gold);
-  background: transparent;
-  cursor: pointer;
-}
-
-.header-btn:hover {
-  background: var(--gold);
-  color: #000;
+.glow-gradient {
+  box-shadow: 0 0 60px rgba(236, 72, 153, 0.45);
 }
