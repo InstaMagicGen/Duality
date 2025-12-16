@@ -1,35 +1,33 @@
 "use client";
-
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Header() {
-  const [dark, setDark] = useState(true);
+  const [theme, setTheme] = useState("dark");
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   function toggleTheme() {
-    setDark(!dark);
-    document.body.classList.toggle("light");
+    setTheme(theme === "dark" ? "light" : "dark");
   }
 
   return (
-    <header className="header">
-      {/* LEFT */}
-      <button onClick={toggleTheme} className="theme-btn">
-        {dark ? "☀️" : "🌙"}
-      </button>
-
-      {/* CENTER */}
-      <div className="logo">Soulset Journeys</div>
-
-      {/* RIGHT */}
-      <div className="auth">
-        <Link href="/login" className="auth-btn">
-          Se connecter
-        </Link>
-        <Link href="/signup" className="auth-btn outline">
-          Créer un compte
-        </Link>
+    <header className="global-header">
+      <div className="logo">
+        <Image src="/logo.png" alt="Logo" width={40} height={40} />
+        <span>SunsetApp</span>
       </div>
+
+      <div className="center-title">
+        <h1>SunsetApp</h1>
+        <p>Explore your day & future with Duality + Soulset</p>
+      </div>
+
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {theme === "dark" ? "Light" : "Dark"}
+      </button>
     </header>
   );
 }

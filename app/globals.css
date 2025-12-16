@@ -1,164 +1,159 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* RESET */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* global.css */
+:root {
+  --color-bg-light: #f9f9f9;
+  --color-bg-dark: #0f0f14;
+  --color-text-light: #111;
+  --color-text-dark: #f1f1f1;
+  --color-accent: #38bdf8;
+  --color-accent-dark: #facc15;
 }
 
-/* BASE */
-body {
-  background: #020617;
-  color: #fff;
-  font-family: system-ui, sans-serif;
-  min-height: 100vh;
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
 }
 
 body.light {
-  background: #f8fafc;
-  color: #020617;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-light);
 }
 
-/* HEADER */
-.header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  padding: 20px 32px;
+body.dark {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-dark);
 }
 
-.logo {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 700;
-}
+a { text-decoration: none; }
 
-.theme-btn {
-  font-size: 20px;
-  background: none;
-  border: none;
+button {
   cursor: pointer;
-  color: inherit;
+  transition: all 0.3s ease;
 }
 
-/* AUTH BUTTONS */
-.auth {
+.home-buttons-container {
   display: flex;
-  gap: 12px;
-}
-
-.auth-btn {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: #0ea5e9;
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.auth-btn:hover {
-  opacity: 0.9;
-}
-
-.auth-btn.outline {
-  background: transparent;
-  border: 1px solid #0ea5e9;
-  color: #0ea5e9;
-}
-
-/* FIX MODE CLAIR — TEXTE VISIBLE */
-body.light .auth-btn {
-  background: #0ea5e9;
-  color: #ffffff;
-}
-
-body.light .auth-btn.outline {
-  background: transparent;
-  color: #020617;            /* FIX TEXTE */
-  border-color: #0ea5e9;
-}
-
-/* HOME */
-.home {
-  text-align: center;
-  padding: 40px 24px;
-}
-
-.subtitle {
-  max-width: 900px;
-  margin: 0 auto 40px;
-  opacity: 0.8;
-}
-
-/* CARDS */
-.cards {
-  display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 32px;
-  margin-bottom: 40px;
+  align-items: center;
+  height: calc(100vh - 80px); /* header height */
+  gap: 2rem;
 }
 
-.card {
-  width: 420px;
-  padding: 32px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+.home-button-box {
+  width: 280px;
+  padding: 2rem;
+  border-radius: 2rem;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+.home-button-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
 }
 
-.duality {
-  border: 1px solid #facc15;
+.home-button-box h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
 }
 
-.soulset {
+.home-button-box p {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+header.global-header {
+  width: 100%;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #1e293b, #0f172a);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header.global-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+header.global-header .logo img {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
+header.global-header .center-title {
+  text-align: center;
+  flex: 1;
+}
+
+header.global-header .center-title h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+header.global-header .center-title p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #a5b4fc;
+}
+
+header.global-header .theme-toggle {
+  background: transparent;
   border: 1px solid #38bdf8;
+  color: #38bdf8;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
 }
 
-.card h2 {
-  margin-bottom: 12px;
+.rtl { direction: rtl; text-align: right; }
+.ltr { direction: ltr; text-align: left; }
+
+/* Buttons and forms for Duality & Soulset */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.card p {
-  opacity: 0.8;
-  margin-bottom: 20px;
+textarea {
+  width: 100%;
+  border-radius: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #38bdf8;
+  background-color: rgba(0,0,0,0.4);
+  color: white;
+  font-size: 0.9rem;
+  resize: none;
 }
 
-/* CARD BUTTONS */
-.card-btn {
-  display: inline-block;
-  padding: 10px 18px;
-  border-radius: 999px;
-  text-decoration: none;
+input[type="text"], input[type="email"], input[type="password"] {
+  width: 100%;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #38bdf8;
+  background-color: rgba(0,0,0,0.4);
+  color: white;
+}
+
+button.primary {
+  background: #38bdf8;
+  color: black;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1.5rem;
   font-weight: 600;
 }
 
-.yellow {
-  background: #facc15;
-  color: #000;
-}
-
-.blue {
-  background: #38bdf8;
-  color: #000;
-}
-
-/* MOOD */
-.mood-btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 14px 26px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #fb7185, #facc15);
-  color: #000;
-  text-decoration: none;
-  font-weight: 700;
+button.primary:hover {
+  background: #60a5fa;
 }
