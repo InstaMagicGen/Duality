@@ -1,26 +1,33 @@
 // app/components/translations.ts
-export const translations = {
-  home: {
-    duality: {
-      en: { title: "Duality", desc: "Discover your probable future by exploring your choices." },
-      fr: { title: "Dualité", desc: "Découvre ton futur probable en explorant tes choix." },
-      ar: { title: "ثنائية", desc: "اكتشف مستقبلك المحتمل من خلال استكشاف اختياراتك." }
-    },
-    soulset: {
-      en: { title: "Soulset Navigator", desc: "Scan your day with a therapeutic sunset." },
-      fr: { title: "Soulset Navigator", desc: "Scanne ta journée sur un coucher de soleil thérapeutique." },
-      ar: { title: "مستكشف الروح", desc: "امسح يومك مع غروب الشمس العلاجي." }
-    }
-  },
+type Lang = "en" | "fr" | "ar";
+
+export const translations: any = {
   buttons: {
-    login: { en: "Log In", fr: "Se connecter", ar: "تسجيل الدخول" },
-    signup: { en: "Sign Up", fr: "Créer un compte", ar: "إنشاء حساب" }
+    login: { en: "Login", fr: "Se connecter", ar: "تسجيل الدخول" },
+    signup: { en: "Sign Up", fr: "Créer un compte", ar: "إنشاء حساب" },
   },
-  analysis: {
-    deep: {
-      en: "You expressed something important. Here's a reflection of your situation:",
-      fr: "Tu as exprimé quelque chose d’important. Voici un premier miroir de ta situation :",
-      ar: "لقد عبرت عن شيء مهم. إليك انعكاس لحالتك:"
-    }
-  }
+  home: {
+    title: { en: "Welcome Home", fr: "Bienvenue", ar: "مرحبا" },
+    description: {
+      en: "This is the home page",
+      fr: "Ceci est la page d'accueil",
+      ar: "هذه هي الصفحة الرئيسية",
+    },
+  },
+  duality: {
+    title: { en: "Duality", fr: "Dualité", ar: "الازدواجية" },
+    description: {
+      en: "Explore your duality",
+      fr: "Explorez votre dualité",
+      ar: "استكشف ازدواجيتك",
+    },
+  },
+  soulset: {
+    title: { en: "Soulset", fr: "Soulset", ar: "Soulset" },
+    description: {
+      en: "Dive into your soul",
+      fr: "Plongez dans votre âme",
+      ar: "اغمر في روحك",
+    },
+  },
 };

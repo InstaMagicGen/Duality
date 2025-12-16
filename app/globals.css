@@ -1,73 +1,25 @@
 /* globals.css */
-html, body {
+body {
   margin: 0;
-  padding: 0;
-  font-family: "Inter", sans-serif;
+  font-family: sans-serif;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
   background-color: #f5f5f5;
 }
 
-header.header-container {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
-  background: linear-gradient(90deg, #4b6cb7, #182848);
-}
-
-header nav {
-  display: flex;
-  gap: 1rem;
-}
-
-header .header-button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+.header-button {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #0070f3;
   color: white;
-  background-color: #ff7f50;
+  border-radius: 5px;
   text-decoration: none;
-  font-weight: 600;
-  transition: background 0.3s ease;
 }
 
-header .header-button:hover {
-  background-color: #ff6347;
-}
-
-.home-buttons-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 3rem;
-  padding: 4rem 2rem;
-}
-
-.home-button-box {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+.main-container {
   padding: 2rem;
-  border-radius: 16px;
-  color: white;
-  width: 250px;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.home-button-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 10px 20px rgba(0,0,0,0.2);
-}
-
-.page-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0px 6px 18px rgba(0,0,0,0.1);
-}
-
-.analysis-box {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #e0f7fa;
-  border-radius: 12px;
-  font-style: italic;
 }
