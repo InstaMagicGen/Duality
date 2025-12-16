@@ -1,8 +1,9 @@
-import "./global.css";
+// app/layout.tsx
+import "/globals.css"; // <-- chemin direct depuis la racine
 
 export const metadata = {
   title: "Soulset",
-  description: "Duality & Soulset Journey",
+  description: "Soulset Navigator",
 };
 
 export default function RootLayout({
