@@ -1,48 +1,46 @@
 "use client";
-import Header from "../components/Header";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Header from "./components/Header";
 
 type Lang = "fr" | "en" | "ar";
 
-const translations: Record<Lang, { duality: string; soulset: string; dualityDesc: string; soulsetDesc: string }> = {
+const translations: Record<Lang, any> = {
   fr: {
     duality: "Duality",
-    soulset: "Soulset Navigator",
     dualityDesc: "Découvre ton futur probable en explorant tes choix.",
+    soulset: "Soulset Navigator",
     soulsetDesc: "Scanne ta journée sur un coucher de soleil thérapeutique.",
   },
   en: {
     duality: "Duality",
+    dualityDesc: "Discover your probable future by exploring your choices.",
     soulset: "Soulset Navigator",
-    dualityDesc: "Explore your probable future through your choices.",
     soulsetDesc: "Scan your day on a therapeutic sunset.",
   },
   ar: {
-    duality: "ثنائية",
-    soulset: "ملاح غروب الروح",
-    dualityDesc: "اكتشف مستقبلك المحتمل من خلال خياراتك.",
-    soulsetDesc: "مسح يومك على غروب شمس علاجي.",
+    duality: "دواليتي",
+    dualityDesc: "اكتشف مستقبلك المحتمل من خلال استكشاف خياراتك.",
+    soulset: "ملاح سولسيت",
+    soulsetDesc: "امسح يومك على غروب الشمس العلاجي.",
   },
 };
 
 export default function HomePage() {
   const [lang, setLang] = useState<Lang>("fr");
+  const t = translations[lang];
 
   useEffect(() => {
-    const l = (navigator.language || "fr").toLowerCase();
+    const l = window.navigator.language?.toLowerCase() || "fr";
     if (l.startsWith("fr")) setLang("fr");
     else if (l.startsWith("ar")) setLang("ar");
     else setLang("en");
   }, []);
 
-  const t = translations[lang];
-  const directionClass = lang === "ar" ? "rtl" : "ltr";
-
   return (
-    <main className={directionClass}>
+    <>
       <Header />
-      <div className="home-buttons-container">
+      <main className="home-buttons-container flex flex-col md:flex-row justify-center items-center min-h-[80vh] gap-10 px-4">
         <Link href="/duality">
           <div className="home-button-box">
             <h2>{t.duality}</h2>
@@ -55,7 +53,7 @@ export default function HomePage() {
             <p>{t.soulsetDesc}</p>
           </div>
         </Link>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

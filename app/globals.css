@@ -1,159 +1,54 @@
-/* global.css */
-:root {
-  --color-bg-light: #f9f9f9;
-  --color-bg-dark: #0f0f14;
-  --color-text-light: #111;
-  --color-text-dark: #f1f1f1;
-  --color-accent: #38bdf8;
-  --color-accent-dark: #facc15;
-}
-
-html, body {
+/* Reset et bases */
+html, body, #__next {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
-  scroll-behavior: smooth;
+  background-color: #111;
+  color: #fff;
 }
 
-body.light {
-  background-color: var(--color-bg-light);
-  color: var(--color-text-light);
-}
-
-body.dark {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-dark);
-}
-
-a { text-decoration: none; }
-
-button {
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
+/* Boutons Home */
 .home-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.home-button-box {
+  background: linear-gradient(145deg, #fcd34d, #f59e0b);
+  color: #000;
+  padding: 2rem;
+  border-radius: 2rem;
+  width: 250px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 80px); /* header height */
-  gap: 2rem;
-}
-
-.home-button-box {
-  width: 280px;
-  padding: 2rem;
-  border-radius: 2rem;
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
-  color: white;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 30px rgba(252, 211, 77, 0.5);
+  cursor: pointer;
 }
-
 .home-button-box:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  box-shadow: 0 0 40px rgba(252, 211, 77, 0.8);
 }
 
-.home-button-box h2 {
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+.dark .home-button-box {
+  background: linear-gradient(145deg, #4b5563, #1f2937);
+  color: #fcd34d;
+  box-shadow: 0 0 30px rgba(252, 211, 77, 0.5);
 }
 
-.home-button-box p {
-  font-size: 0.9rem;
-  line-height: 1.3;
-}
+h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+p { font-size: 0.875rem; }
 
-header.global-header {
-  width: 100%;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(90deg, #1e293b, #0f172a);
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-header.global-header .logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-header.global-header .logo img {
-  height: 40px;
-  width: 40px;
-  object-fit: contain;
-}
-
-header.global-header .center-title {
-  text-align: center;
-  flex: 1;
-}
-
-header.global-header .center-title h1 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-header.global-header .center-title p {
-  margin: 0;
-  font-size: 0.75rem;
-  color: #a5b4fc;
-}
-
-header.global-header .theme-toggle {
-  background: transparent;
-  border: 1px solid #38bdf8;
-  color: #38bdf8;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.75rem;
-}
-
-.rtl { direction: rtl; text-align: right; }
-.ltr { direction: ltr; text-align: left; }
-
-/* Buttons and forms for Duality & Soulset */
-.form-container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-textarea {
-  width: 100%;
-  border-radius: 1.5rem;
-  padding: 1rem;
-  border: 1px solid #38bdf8;
-  background-color: rgba(0,0,0,0.4);
-  color: white;
-  font-size: 0.9rem;
-  resize: none;
-}
-
-input[type="text"], input[type="email"], input[type="password"] {
-  width: 100%;
-  border-radius: 1rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid #38bdf8;
-  background-color: rgba(0,0,0,0.4);
-  color: white;
-}
-
-button.primary {
-  background: #38bdf8;
-  color: black;
-  padding: 0.75rem 1.5rem;
-  border-radius: 1.5rem;
-  font-weight: 600;
-}
-
-button.primary:hover {
-  background: #60a5fa;
+/* Scrollbar dark mode */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb {
+  background-color: #fcd34d;
+  border-radius: 3px;
 }
