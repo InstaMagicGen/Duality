@@ -52,42 +52,37 @@ export default function Home() {
 
   useEffect(() => {
     const browserLang = navigator.language.slice(0, 2);
-    if (browserLang === "en" || browserLang === "ar") {
-      setLang(browserLang);
-    } else {
-      setLang("fr");
-    }
+    if (browserLang === "en" || browserLang === "ar") setLang(browserLang);
+    else setLang("fr");
   }, []);
 
   const t = TEXT[lang];
 
   return (
-    <main className="home" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <p className="subtitle">{t.subtitle}</p>
+    <main className="home max-w-6xl mx-auto text-center px-4 py-10" dir={lang === "ar" ? "rtl" : "ltr"}>
+      <p className="subtitle mb-12 text-lg md:text-xl">{t.subtitle}</p>
 
-      <div className="cards">
+      <div className="cards flex flex-col md:flex-row justify-center gap-10 mb-12">
         {/* DUALITY */}
-        <div className="card duality">
-          <h2>{t.dualityTitle}</h2>
-          <p>{t.dualityDesc}</p>
-
-          <Link href="/duality" className="card-btn yellow">
+        <div className="card duality flex-1 border-2 border-yellow-400 rounded-3xl p-8 shadow-lg hover:scale-105 transition-transform">
+          <h2 className="text-2xl font-semibold mb-3">{t.dualityTitle}</h2>
+          <p className="mb-6 opacity-80">{t.dualityDesc}</p>
+          <Link href="/duality" className="card-btn yellow px-6 py-3 rounded-full font-semibold inline-block">
             {t.dualityBtn}
           </Link>
         </div>
 
         {/* SOULSET */}
-        <div className="card soulset">
-          <h2>{t.soulsetTitle}</h2>
-          <p>{t.soulsetDesc}</p>
-
-          <Link href="/soulset" className="card-btn blue">
+        <div className="card soulset flex-1 border-2 border-sky-400 rounded-3xl p-8 shadow-lg hover:scale-105 transition-transform">
+          <h2 className="text-2xl font-semibold mb-3">{t.soulsetTitle}</h2>
+          <p className="mb-6 opacity-80">{t.soulsetDesc}</p>
+          <Link href="/soulset" className="card-btn blue px-6 py-3 rounded-full font-semibold inline-block">
             {t.soulsetBtn}
           </Link>
         </div>
       </div>
 
-      <Link href="/mood" className="mood-btn">
+      <Link href="/mood" className="mood-btn bg-gradient-to-r from-rose-500 via-orange-400 to-amber-300 px-8 py-4 rounded-full inline-block font-bold text-black hover:brightness-110 transition">
         {t.moodBtn}
       </Link>
     </main>
