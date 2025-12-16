@@ -1,24 +1,35 @@
 "use client";
 
 import { useState } from "react";
-
-type Lang = "fr" | "en" | "ar";
+import Link from "next/link";
 
 export default function Header() {
-  const [lang, setLang] = useState<Lang>("fr");
+  const [dark, setDark] = useState(true);
+
+  function toggleTheme() {
+    setDark(!dark);
+    document.body.classList.toggle("light");
+  }
 
   return (
     <header className="header">
-      <h1 className="text-2xl font-bold">Soulset Journeys</h1>
-      <select
-        className="lang-select"
-        value={lang}
-        onChange={(e) => setLang(e.target.value as Lang)}
-      >
-        <option value="fr">FR</option>
-        <option value="en">EN</option>
-        <option value="ar">AR</option>
-      </select>
+      {/* LEFT */}
+      <button onClick={toggleTheme} className="theme-btn">
+        {dark ? "☀️" : "🌙"}
+      </button>
+
+      {/* CENTER */}
+      <div className="logo">Soulset Journeys</div>
+
+      {/* RIGHT */}
+      <div className="auth">
+        <Link href="/login" className="auth-btn">
+          Se connecter
+        </Link>
+        <Link href="/signup" className="auth-btn outline">
+          Créer un compte
+        </Link>
+      </div>
     </header>
   );
 }

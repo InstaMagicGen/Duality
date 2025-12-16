@@ -1,15 +1,21 @@
-"use client";
-
 import "./globals.css";
-import { ReactNode } from "react";
 import Header from "./components/Header";
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export const metadata = {
+  title: "Soulset Journeys",
+  description: "Duality & Soulset Navigator",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="fr">
-      <body className="bg-black text-white">
+      <body>
         <Header />
-        <main>{children}</main>
+        {children}
       </body>
     </html>
   );
