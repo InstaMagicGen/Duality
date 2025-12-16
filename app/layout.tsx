@@ -1,9 +1,9 @@
 // app/layout.tsx
-import "/globals.css"; // <-- chemin direct depuis la racine
+import "./global.css"; // <-- Assure-toi que le chemin correspond
 
 export const metadata = {
-  title: "Soulset",
-  description: "Soulset Navigator",
+  title: "Duality / Soulset",
+  description: "Navigation app",
 };
 
 export default function RootLayout({
@@ -11,9 +11,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="fr">
-      <body>{children}</body>
-    </html>
-  );
+  return <html lang="fr"><body>{children}</body></html>;
 }
