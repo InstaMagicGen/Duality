@@ -1,9 +1,8 @@
-import "./globals.css";
-import Header from "./components/Header";
+import "./global.css";
 
 export const metadata = {
-  title: "Soulset Journeys",
-  description: "Duality & Soulset Navigator",
+  title: "Soulset",
+  description: "Duality & Soulset Journey",
 };
 
 export default function RootLayout({
@@ -13,10 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body>
-        <Header />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
