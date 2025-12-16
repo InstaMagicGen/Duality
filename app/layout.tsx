@@ -1,5 +1,5 @@
 // app/layout.tsx
-import "./global.css"; // <-- Assure-toi que le chemin correspond
+import "./globals.css"; // <-- Assure-toi que le chemin correspond
 
 export const metadata = {
   title: "Duality / Soulset",
