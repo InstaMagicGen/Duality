@@ -1,45 +1,35 @@
 'use client';
-
-import { LogOut, Sun, Moon } from "lucide-react";
+import { Sun, Moon, LogOut } from "lucide-react";
 import Link from "next/link";
 
-interface HeaderProps {
-  t: any;
-  isDark: boolean;
-  toggleTheme: () => void;
-}
-
-export default function Header({ t, isDark, toggleTheme }: HeaderProps) {
+export default function Header({ t, isDark, toggleTheme }: any) {
   return (
-    <header className="w-full p-8 flex justify-between items-start z-50">
-      <div className="max-w-xl">
-        <h1 className="text-4xl font-bold text-white bg-blue-900/40 px-3 py-1 inline-block rounded">
+    <header className="w-full py-6 px-10 flex justify-between items-center fixed top-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/5">
+      {/* GAUCHE : Theme Switch */}
+      <div className="flex-1 flex justify-start">
+        <button onClick={toggleTheme} className="p-2 rounded-full border border-white/10 text-white hover:bg-white/5 transition-all">
+          {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </div>
+
+      {/* CENTRE : Branding & Slogan */}
+      <div className="flex-[2] text-center">
+        <h1 className="text-3xl font-black text-white uppercase italic leading-none tracking-tighter">
           {t.header.appName}
         </h1>
-        <p className="text-gray-500 text-sm mt-2 leading-tight">
-          {t.header.subtitle}
+        <p className="text-[10px] uppercase tracking-[0.4em] text-cyan-400 font-bold mt-1">
+          ELEVATE YOUR INNER VISION
         </p>
       </div>
 
-      <div className="text-right flex flex-col items-end gap-4">
-        <div className="flex items-center gap-4">
-          {/* Bouton de Thème */}
-          <button 
-            onClick={toggleTheme}
-            className="p-2 rounded-full border border-white/10 hover:bg-white/10 transition-all text-white"
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+      {/* DROITE : Auth */}
+      <div className="flex-1 flex flex-col items-end gap-1">
+        <div className="text-[10px] text-gray-500 uppercase">Connecté : <span className="text-white font-bold">zr.mehdi01@gmail.com</span></div>
+        <Link href="/auth">
+          <button className="flex items-center gap-2 px-5 py-1.5 rounded-full border border-yellow-500/50 text-[11px] font-bold text-white hover:bg-yellow-500/10 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+            Déconnexion <LogOut size={12} />
           </button>
-          
-          <div className="text-right">
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider">Connecté en tant que</p>
-            <p className="text-white font-bold text-xs tracking-tight">zr.mehdi01@gmail.com</p>
-          </div>
-        </div>
-
-        <button className="px-6 py-2 border border-yellow-500/50 rounded-full text-white text-xs font-bold hover:bg-yellow-500/10 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)] flex items-center gap-2">
-          Déconnexion <LogOut size={12} />
-        </button>
+        </Link>
       </div>
     </header>
   );

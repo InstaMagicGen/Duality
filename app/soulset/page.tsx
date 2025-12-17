@@ -1,38 +1,39 @@
 'use client';
-
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import { translations, Lang } from "../components/translations";
+import { Wind, SunMedium } from "lucide-react";
 
 export default function SoulsetPage() {
   const [lang, setLang] = useState<Lang>("fr");
   const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    const browserLang = navigator.language.split('-')[0] as Lang;
-    if (translations[browserLang]) setLang(browserLang);
-  }, []);
-
   const t = translations[lang];
 
   return (
-    <main className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${isDark ? 'bg-black text-white' : 'bg-gray-50 text-black'}`}>
-      {/* HEADER avec props de thème */}
+    <main className="min-h-screen bg-black text-white flex flex-col items-center">
       <Header t={t} isDark={isDark} toggleTheme={() => setIsDark(!isDark)} />
+      
+      <div className="w-full max-w-5xl mt-32 px-6 flex flex-col items-center text-center gap-12">
+        <div className="flex flex-col items-center gap-2 text-cyan-400">
+          <SunMedium size={48} className="animate-pulse" />
+          <h1 className="text-4xl font-bold uppercase italic tracking-tighter">Soulset Navigator</h1>
+          <p className="text-gray-500 uppercase tracking-[0.3em] text-[10px]">Sunset Therapy Mode</p>
+        </div>
 
-      <div className="flex-grow flex items-center justify-center px-4 pb-20">
-        <div className="w-full max-w-4xl p-[1px] rounded-[2rem] bg-gradient-to-b from-cyan-500/20 to-transparent">
-          <div className={`${isDark ? 'bg-[#050505]' : 'bg-white'} rounded-[2rem] p-12 border border-white/5 shadow-[0_0_60px_-12px_rgba(6,182,212,0.2)] transition-colors duration-300`}>
-            <h1 className="text-4xl font-bold text-cyan-400 mb-6 uppercase italic tracking-tighter">
-              {t.soulset.title}
-            </h1>
-            <div className="space-y-6 text-gray-400 text-lg">
-               <p className="leading-relaxed">{t.soulset.desc}</p>
-               <div className={`h-64 border border-dashed ${isDark ? 'border-white/10' : 'border-black/10'} rounded-2xl flex items-center justify-center text-sm italic`}>
-                 Interface Soulset Navigator en cours d'initialisation...
-               </div>
-            </div>
-          </div>
+        {/* Espace immersif Sunset */}
+        <div className="w-full aspect-video bg-gradient-to-t from-orange-500/20 via-blue-900/10 to-transparent rounded-[3rem] border border-cyan-500/20 flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(6,182,212,0.1)]">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm group-hover:backdrop-blur-none transition-all duration-700" />
+            <p className="z-10 text-cyan-100 italic text-xl">"Respirez au rythme de l'horizon..."</p>
+        </div>
+
+        {/* Contrôles de thérapie */}
+        <div className="flex gap-6 w-full max-w-2xl">
+          <button className="flex-1 py-4 border border-cyan-500/30 rounded-2xl bg-cyan-500/5 hover:bg-cyan-500/10 transition-all font-bold text-xs uppercase tracking-widest">
+            Scanner mon état
+          </button>
+          <button className="flex-1 py-4 bg-cyan-400 text-black rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-transform">
+            Démarrer la Sunset Therapy
+          </button>
         </div>
       </div>
     </main>
