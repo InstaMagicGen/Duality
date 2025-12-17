@@ -1,17 +1,22 @@
-"use client";
-
-import React, { ReactNode, useState } from "react";
-import Header from "./components/Header";
-import { t } from "./components/translations";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
+const inter = Inter({ subsets: ["latin"] });
 
+export const metadata: Metadata = {
+  title: "Soulset Journeys",
+  description: "Duality & Soulset Navigator Experiences",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang={lang}>
-      <body>
-        <Header lang={lang} setLang={setLang} />
+    <html lang="fr">
+      <body className={`${inter.className} min-h-screen bg-black antialiased`}>
         {children}
       </body>
     </html>

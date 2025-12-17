@@ -1,56 +1,100 @@
+export type Lang = "fr" | "en" | "ar";
+
 export const translations = {
   fr: {
-    subtitle: "Explorer ton futur et ton état intérieur",
-    home: "Accueil",
-    soulset: "Soulset",
-    duality: "Duality",
-    login: "Connexion",
-    home_title: "Bienvenue dans Soulset",
-    home_desc: "Une exploration émotionnelle et cognitive personnalisée.",
-    soulset_desc: "Analyse profonde de ton état intérieur",
-    duality_desc: "Lecture de tes contradictions mentales",
-    soulset_title: "Analyse Soulset",
-    soulset_analysis: "Cette analyse explore ton état émotionnel actuel et révèle les tensions internes dominantes.",
-    duality_title: "Analyse Duality",
-    duality_analysis: "Duality met en lumière le conflit entre ce que tu montres et ce que tu ressens.",
-    auth_title: "Accès sécurisé",
-    auth_desc: "Connecte-toi pour sauvegarder ton parcours",
+    meta: {
+      title: "Soulset Journeys",
+      desc: "Exploration intérieure & conscience augmentée",
+    },
+    header: {
+      appName: "Soulset Journeys",
+      subtitle: "Deux expériences guidées : Duality pour voir ton futur probable, Soulset Navigator pour scanner ta journée sur un coucher de soleil.",
+      connectedAs: "Connecté en tant que",
+      logout: "Déconnexion",
+    },
+    duality: {
+      title: "DUALITY · Futur probable",
+      desc: "Tu écris ce que tu vis, Duality renvoie un LIFE ECHO (futur probable) et un SHADOWTALK (ta conscience profonde).",
+      tags: "LIFE ECHO · SHADOWTALK",
+      btn: "Ouvrir Duality",
+    },
+    soulset: {
+      title: "SOULSET NAVIGATOR · Sunset Therapy",
+      desc: "Décris ton état du moment, puis laisse une phrase miroir courte se projeter sur un coucher de soleil apaisant.",
+      tags: "SCAN · SUNSET THERAPY",
+      btn: "Commencer la Sunset Therapy",
+    },
+    moodBtn: "Voir mon suivi de mood",
+    auth: {
+      loginTitle: "Connexion",
+      email: "Email",
+      password: "Mot de passe",
+      submit: "Se connecter",
+      back: "Retour accueil",
+    }
   },
   en: {
-    subtitle: "Explore your future and inner state",
-    home: "Home",
-    soulset: "Soulset",
-    duality: "Duality",
-    login: "Login",
-    home_title: "Welcome to Soulset",
-    home_desc: "A personalized emotional and cognitive exploration.",
-    soulset_desc: "Deep analysis of your inner state",
-    duality_desc: "Reading of your mental contradictions",
-    soulset_title: "Soulset Analysis",
-    soulset_analysis: "This analysis explores your current emotional state and dominant inner tensions.",
-    duality_title: "Duality Analysis",
-    duality_analysis: "Duality reveals the conflict between what you show and what you feel.",
-    auth_title: "Secure access",
-    auth_desc: "Log in to save your journey",
+    meta: {
+      title: "Soulset Journeys",
+      desc: "Inner exploration & augmented consciousness",
+    },
+    header: {
+      appName: "Soulset Journeys",
+      subtitle: "Two guided experiences: Duality to see your probable future, Soulset Navigator to scan your day on a sunset.",
+      connectedAs: "Connected as",
+      logout: "Logout",
+    },
+    duality: {
+      title: "DUALITY · Probable Future",
+      desc: "You write what you live, Duality returns a LIFE ECHO (probable future) and a SHADOWTALK (your deep consciousness).",
+      tags: "LIFE ECHO · SHADOWTALK",
+      btn: "Open Duality",
+    },
+    soulset: {
+      title: "SOULSET NAVIGATOR · Sunset Therapy",
+      desc: "Describe your current state, then let a short mirror phrase project onto a soothing sunset.",
+      tags: "SCAN · SUNSET THERAPY",
+      btn: "Start Sunset Therapy",
+    },
+    moodBtn: "View my mood tracking",
+    auth: {
+      loginTitle: "Login",
+      email: "Email",
+      password: "Password",
+      submit: "Sign In",
+      back: "Back to home",
+    }
   },
   ar: {
-    subtitle: "اكتشف مستقبلك وحالتك الداخلية",
-    home: "الرئيسية",
-    soulset: "سولسِت",
-    duality: "الثنائية",
-    login: "تسجيل الدخول",
-    home_title: "مرحبًا بك في Soulset",
-    home_desc: "استكشاف عاطفي وذهني مخصص لك.",
-    soulset_desc: "تحليل عميق لحالتك الداخلية",
-    duality_desc: "قراءة التناقضات الذهنية",
-    soulset_title: "تحليل Soulset",
-    soulset_analysis: "هذا التحليل يستكشف حالتك العاطفية الحالية ويكشف التوترات الداخلية.",
-    duality_title: "تحليل Duality",
-    duality_analysis: "Duality يكشف الصراع بين ما تُظهره وما تشعر به.",
-    auth_title: "وصول آمن",
-    auth_desc: "سجل الدخول لحفظ رحلتك",
+    meta: {
+      title: "رحلات سولسِت",
+      desc: "استكشاف داخلي ووعي معزز",
+    },
+    header: {
+      appName: "رحلات سولسِت",
+      subtitle: "تجربتان موجهتان: دواليتي لرؤية مستقبلك المحتمل، وسولسِت نافيغيتور لمسح يومك عند غروب الشمس.",
+      connectedAs: "متصل باسم",
+      logout: "خروج",
+    },
+    duality: {
+      title: "دوالِتي · المستقبل المحتمل",
+      desc: "أنت تكتب ما تعيشه، ودوالِتي يعكس صدى الحياة والحديث العميق للوعي.",
+      tags: "صدى الحياة · حديث الظل",
+      btn: "فتح دوالِتي",
+    },
+    soulset: {
+      title: "سولسِت نافيجيتور · علاج الغروب",
+      desc: "صف حالتك الحالية ودع جملة قصيرة تنعكس على غروب هادئ.",
+      tags: "فحص · علاج الغروب",
+      btn: "بدء علاج الغروب",
+    },
+    moodBtn: "عرض تتبع المزاج",
+    auth: {
+      loginTitle: "تسجيل الدخول",
+      email: "البريد الإلكتروني",
+      password: "كلمة المرور",
+      submit: "دخول",
+      back: "عودة للرئيسية",
+    }
   },
 };
-
-export const t = (key: string, lang: "fr" | "en" | "ar") =>
-  (translations[lang] as Record<string, string>)[key] || key;

@@ -1,162 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --bg: #050505;
-  --fg: #ffffff;
-  --gold: #facc15;
-  --gold-soft: rgba(250, 204, 21, 0.35);
-  --blue: #67d4ff;
+  --background: #000000;
+  --foreground: #ededed;
 }
 
-* {
-  box-sizing: border-box;
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden; /* Évite le scroll horizontal dû aux effets de lumière */
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top, #0a0a0a, #000);
-  color: var(--fg);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+/* --- Effets Néon & Glow (Respect de la Maquette) --- */
+
+/* Carte Jaune (Duality) */
+.glow-card-yellow {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(234, 179, 8, 0.3); /* Jaune discret */
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.1);
+  transition: all 0.4s ease;
 }
 
-/* ================= HEADER ================= */
-.global-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px 48px;
-  background-color: #000;
+.glow-card-yellow:hover {
+  border-color: rgba(234, 179, 8, 0.8);
+  box-shadow: 0 0 40px rgba(234, 179, 8, 0.25), inset 0 0 20px rgba(234, 179, 8, 0.05);
+  transform: translateY(-2px);
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+/* Carte Bleue (Soulset) */
+.glow-card-blue {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(34, 211, 238, 0.3); /* Cyan discret */
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+  transition: all 0.4s ease;
 }
 
-.header-center {
-  text-align: center;
+.glow-card-blue:hover {
+  border-color: rgba(34, 211, 238, 0.8);
+  box-shadow: 0 0 40px rgba(34, 211, 238, 0.25), inset 0 0 20px rgba(34, 211, 238, 0.05);
+  transform: translateY(-2px);
 }
 
-.header-center h1 {
-  font-size: 32px;
-  margin: 0;
+/* Bouton Gradient (Mood) */
+.glow-gradient-btn {
+  background: linear-gradient(90deg, #ec4899 0%, #f97316 50%, #eab308 100%);
+  box-shadow: 0 0 30px rgba(236, 72, 153, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.header-center p {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-/* ================= BUTTONS ================= */
-.btn {
-  padding: 10px 22px;
-  border-radius: 999px;
-  font-size: 14px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all .2s ease;
-}
-
-.btn-gold {
-  background: var(--gold);
-  color: black;
-  box-shadow: 0 0 25px var(--gold-soft);
-}
-
-.btn-gold-outline {
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  background: transparent;
-}
-
-.btn-blue {
-  background: var(--blue);
-  color: black;
-  box-shadow: 0 0 25px rgba(103,212,255,.4);
-}
-
-/* ================= MAIN ================= */
-.page {
-  padding: 80px 48px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 48px;
-  margin-top: 80px;
-}
-
-/* ================= CARDS ================= */
-.card {
-  border-radius: 24px;
-  padding: 36px;
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.card:hover {
+.glow-gradient-btn:hover {
   transform: scale(1.05);
-}
-
-.card-gold {
-  border: 1px solid var(--gold);
-  box-shadow: 0 0 40px var(--gold-soft);
-}
-
-.card-blue {
-  border: 1px solid var(--blue);
-  box-shadow: 0 0 40px rgba(103,212,255,.35);
-}
-
-.card h2 {
-  margin-top: 0;
-}
-
-.card p {
-  opacity: 0.85;
-}
-
-/* ================= TEXTAREA ================= */
-textarea {
-  width: 100%;
-  min-height: 140px;
-  background: #000;
-  border: 1px solid var(--gold);
-  border-radius: 18px;
-  padding: 16px;
-  color: white;
-  resize: vertical;
-  box-shadow: 0 0 20px var(--gold-soft);
-}
-
-textarea:focus {
-  outline: none;
-}
-
-/* ================= AUTH ================= */
-.auth-box {
-  max-width: 420px;
-  margin: 120px auto;
-  padding: 36px;
-  border-radius: 24px;
-  border: 1px solid var(--gold);
-  box-shadow: 0 0 40px var(--gold-soft);
-}
-
-.auth-box input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 14px;
-  border-radius: 14px;
-  border: 1px solid #444;
-  background: #000;
-  color: white;
+  box-shadow: 0 0 50px rgba(249, 115, 22, 0.6);
 }
