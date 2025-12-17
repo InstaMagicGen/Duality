@@ -1,41 +1,30 @@
-"use client";
-
-import React, { useContext } from "react";
-import { ThemeContext } from "../context/themeContext";
-import { t } from "./translations";
+import React from "react";
 
 type HeaderProps = {
   lang: "fr" | "en" | "ar";
 };
 
 export default function Header({ lang }: HeaderProps) {
-  const { theme, toggleTheme } = useContext(ThemeContext);
-
   return (
-    <header className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-900 shadow-md">
+    <header className="bg-white dark:bg-gray-900 shadow-md p-4 flex justify-between items-center">
       {/* Dark/Light toggle */}
-      <button
-        onClick={toggleTheme}
-        className="mr-4 p-2 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-      >
-        {theme === "dark" ? "☀️" : "🌙"}
+      <button className="px-3 py-1 border rounded text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        🌙 / ☀️
       </button>
 
-      {/* App name + slogan */}
-      <div className="text-center flex-1">
-        <h1 className="text-xl font-bold">Soulset</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {t("subtitle", lang)}
-        </p>
+      {/* Nom de l'app + slogan */}
+      <div className="text-center">
+        <h1 className="font-bold text-2xl text-gray-900 dark:text-gray-100">Soulset</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Explorer ton futur et ton état intérieur</p>
       </div>
 
       {/* Boutons connexion / créer compte */}
       <div className="flex gap-4">
-        <button className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
-          {t("login", lang)}
+        <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+          Se connecter
         </button>
-        <button className="px-4 py-2 rounded border border-blue-600 text-blue-600 hover:bg-blue-100 dark:hover:bg-gray-800 transition">
-          {lang === "fr" ? "Créer un compte" : lang === "en" ? "Sign Up" : "إنشاء حساب"}
+        <button className="px-4 py-2 bg-gold text-white rounded hover:bg-yellow-500 transition">
+          Créer un compte
         </button>
       </div>
     </header>
