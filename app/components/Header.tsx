@@ -3,7 +3,8 @@
 import React from "react";
 import { useLang } from "./useLang";
 import { t } from "./translations";
-import "@/styles/pages.css";
+import "../globals.css";
+
 
 export default function Header() {
   const { lang, setLang } = useLang();
