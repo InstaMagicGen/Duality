@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import Header from "../components/Header";
+import React, { ReactNode, useState } from "react";
+import Header from "./components/Header";
+import { t } from "./components/translations";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

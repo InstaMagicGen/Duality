@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import Header from "../components/Header";
-import { t } from "../components/translations";
+import Header from "./components/Header";
+import { t } from "./components/translations";
 
 type Props = {
   lang: "fr" | "en" | "ar";
