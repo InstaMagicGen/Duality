@@ -2,6 +2,7 @@
 
 import React from "react";
 
+
 const translations = {
   fr: { title: "Bienvenue sur InstaMagicGen", desc: "Votre univers créatif" },
   en: { title: "Welcome to InstaMagicGen", desc: "Your creative universe" },
