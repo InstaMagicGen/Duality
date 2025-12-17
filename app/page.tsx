@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Sparkles, Wind } from "lucide-react";
 import Link from "next/link";
 import Header from "./components/Header";
 import { translations, Lang } from "./components/translations";
@@ -18,64 +17,67 @@ export default function Home() {
   const t = translations[lang];
 
   return (
-    <main className={`min-h-screen flex flex-col ${isDark ? 'bg-black text-white' : 'bg-gray-50 text-black'}`}>
-      
-      {/* Background Glows (Arrière-plan uniquement) */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px]" />
-      </div>
-
-      {/* HEADER */}
+    <main className="min-h-screen bg-black text-white flex flex-col font-sans">
+      {/* HEADER FIXE EN HAUT */}
       <Header t={t} isDark={isDark} toggleTheme={() => setIsDark(!isDark)} />
 
-      {/* CONTENU CENTRAL */}
-      <div className="flex-grow flex flex-col items-center justify-center p-6 z-10">
+      {/* CONTENEUR PRINCIPAL CENTRÉ */}
+      <div className="flex-grow flex flex-col items-center justify-center px-4 pb-20">
         
-        {/* Grille des modules Duality / Soulset */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-5xl">
+        {/* GRILLE DES DEUX CARTES */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
           
-          {/* CARTE DUALITY */}
-          <div className="group relative bg-[#0a0a0a] rounded-[2.5rem] p-10 border border-white/10 hover:border-amber-500/50 transition-all duration-500 shadow-2xl flex flex-col items-center text-center">
-            <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 text-amber-500">
-              <Sparkles size={40} />
+          {/* CARTE DUALITY (JAUNE/AMBRE) */}
+          <div className="relative group p-[1px] rounded-[2rem] bg-gradient-to-b from-yellow-500/20 to-transparent">
+            <div className="bg-[#050505] rounded-[2rem] p-10 h-full border border-white/5 shadow-[0_0_50px_-12px_rgba(234,179,8,0.3)]">
+              <h2 className="text-3xl font-bold mb-4 text-yellow-400">
+                {t.duality.title}
+              </h2>
+              <p className="text-gray-400 text-lg leading-relaxed mb-12">
+                {t.duality.desc}
+              </p>
+              
+              <div className="flex justify-between items-center mt-auto">
+                <span className="text-[10px] tracking-[0.2em] text-yellow-700 font-bold uppercase">
+                  {t.duality.tags}
+                </span>
+                <Link href="/duality">
+                  <button className="px-8 py-3 bg-yellow-400 text-black rounded-full font-bold flex items-center gap-2 hover:bg-yellow-300 transition-all text-sm">
+                    {t.duality.btn} <span className="text-lg">↗</span>
+                  </button>
+                </Link>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold mb-4 text-amber-100 uppercase tracking-tight">
-              {t.duality.title}
-            </h2>
-            <p className="text-gray-400 text-sm leading-relaxed mb-8">
-              {t.duality.desc}
-            </p>
-            <Link href="/duality" className="w-full">
-              <button className="w-full py-4 rounded-2xl bg-amber-500 text-black font-black uppercase tracking-widest text-xs hover:bg-amber-400 transition-all">
-                {t.duality.btn}
-              </button>
-            </Link>
           </div>
 
-          {/* CARTE SOULSET */}
-          <div className="group relative bg-[#0a0a0a] rounded-[2.5rem] p-10 border border-white/10 hover:border-cyan-500/50 transition-all duration-500 shadow-2xl flex flex-col items-center text-center">
-            <div className="mb-6 p-4 rounded-2xl bg-cyan-500/10 text-cyan-500">
-              <Wind size={40} />
+          {/* CARTE SOULSET (BLEU) */}
+          <div className="relative group p-[1px] rounded-[2rem] bg-gradient-to-b from-cyan-500/20 to-transparent">
+            <div className="bg-[#050505] rounded-[2rem] p-10 h-full border border-white/5 shadow-[0_0_50px_-12px_rgba(6,182,212,0.3)]">
+              <h2 className="text-3xl font-bold mb-4 text-cyan-400">
+                {t.soulset.title}
+              </h2>
+              <p className="text-gray-400 text-lg leading-relaxed mb-12">
+                {t.soulset.desc}
+              </p>
+              
+              <div className="flex justify-between items-center mt-auto">
+                <span className="text-[10px] tracking-[0.2em] text-cyan-700 font-bold uppercase">
+                  {t.soulset.tags}
+                </span>
+                <Link href="/soulset">
+                  <button className="px-8 py-3 bg-cyan-400 text-black rounded-full font-bold flex items-center gap-2 hover:bg-cyan-300 transition-all text-sm">
+                    {t.soulset.btn} <span className="text-lg">↗</span>
+                  </button>
+                </Link>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold mb-4 text-cyan-100 uppercase tracking-tight">
-              {t.soulset.title}
-            </h2>
-            <p className="text-gray-400 text-sm leading-relaxed mb-8">
-              {t.soulset.desc}
-            </p>
-            <Link href="/soulset" className="w-full">
-              <button className="w-full py-4 rounded-2xl bg-cyan-500 text-black font-black uppercase tracking-widest text-xs hover:bg-cyan-400 transition-all">
-                {t.soulset.btn}
-              </button>
-            </Link>
           </div>
 
-        </section>
+        </div>
 
-        {/* BOUTON MOOD (Bas de page mais dans le flux) */}
+        {/* BOUTON MOOD GRADIENT (BAS) */}
         <div className="mt-16">
-          <button className="px-10 py-3 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">
+          <button className="px-12 py-4 bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 text-black font-black rounded-2xl text-xl hover:scale-105 transition-transform shadow-lg">
             {t.moodBtn}
           </button>
         </div>
