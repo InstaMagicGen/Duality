@@ -1,13 +1,10 @@
-import "./globals.css";
-import Header from "./components/Header";
+import "../globals.css"; // Import global.css à la racine
+import React from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html>
-      <body>
-        <Header />
-        {children}
-      </body>
+    <html lang="fr">
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,18 +1,9 @@
 "use client";
+import { useState } from "react";
 
-import { useEffect, useState } from "react";
+type Lang = "fr" | "en" | "ar";
 
-export type Lang = "fr" | "en" | "ar";
-
-export default function useLang(): Lang {
-  const [lang, setLang] = useState<Lang>("en");
-
-  useEffect(() => {
-    const l = navigator.language.toLowerCase();
-    if (l.startsWith("fr")) setLang("fr");
-    else if (l.startsWith("ar")) setLang("ar");
-    else setLang("en");
-  }, []);
-
-  return lang;
+export function useLang() {
+  const [lang, setLang] = useState<Lang>("fr");
+  return { lang, setLang };
 }

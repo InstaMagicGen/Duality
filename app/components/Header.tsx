@@ -1,33 +1,21 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
+import React from "react";
 import { useLang } from "./useLang";
 import { t } from "./translations";
+import "@/styles/pages.css";
 
 export default function Header() {
-  const { lang, toggleLang } = useLang();
+  const { lang, setLang } = useLang();
 
   return (
-    <header className="global-header">
-      <div className="header-left">
-        <Image src="/logo.png" alt="Soulset" width={42} height={42} />
-        <div>
-          <h1>Soulset</h1>
-          <p>{t("subtitle", lang)}</p>
-        </div>
-      </div>
-
-      <nav className="header-nav">
-        <Link href="/">{t("home", lang)}</Link>
-        <Link href="/soulset">{t("soulset", lang)}</Link>
-        <Link href="/duality">{t("duality", lang)}</Link>
-        <Link href="/auth">{t("login", lang)}</Link>
+    <header className="header-container">
+      <h1>{t("welcome", lang)}</h1>
+      <nav>
+        <button onClick={() => setLang("fr")}>FR</button>
+        <button onClick={() => setLang("en")}>EN</button>
+        <button onClick={() => setLang("ar")}>AR</button>
       </nav>
-
-      <button onClick={toggleLang} className="lang-btn">
-        {lang.toUpperCase()}
-      </button>
     </header>
   );
 }
