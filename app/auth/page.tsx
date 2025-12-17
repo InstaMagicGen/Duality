@@ -3,7 +3,7 @@
 import Header from "@/components/Header";
 import { useLang } from "@/components/useLang";
 import { t } from "@/components/translations";
-import "./globals.css";
+
 
 export default function AuthPage() {
   const { lang } = useLang();
