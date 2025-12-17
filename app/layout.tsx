@@ -1,7 +1,7 @@
 "use client";
 
 import "./globals.css"; // chemin correct
-import React from "react";
+import React, { useState } from "react"; // <-- ajout de useState
 import Header from "./components/Header";  
 
 
