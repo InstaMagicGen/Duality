@@ -1,32 +1,33 @@
 "use client";
 
-import Header from "@/components/Header";
-import { useLang } from "@/components/useLang";
-import { t } from "@/components/translations";
-import "../globals.css";
+import React from "react";
 
-export default function HomePage() {
-  const { lang } = useLang();
+const translations = {
+  fr: { title: "Bienvenue sur InstaMagicGen", desc: "Votre univers créatif" },
+  en: { title: "Welcome to InstaMagicGen", desc: "Your creative universe" },
+  ar: { title: "مرحبًا بك في InstaMagicGen", desc: "عالمك الإبداعي" },
+};
+
+export default function Home() {
+  // Langue par défaut, sera remplacée via Header
+  const lang = "fr";
+  const t = translations[lang];
 
   return (
-    <>
-      <Header />
-      <main className="page">
-        <h2>{t("home_title", lang)}</h2>
-        <p>{t("home_desc", lang)}</p>
+    <main className="page">
+      <h1>{t.title}</h1>
+      <p>{t.desc}</p>
 
-        <div className="cards">
-          <a href="/soulset" className="card">
-            <h3>{t("soulset", lang)}</h3>
-            <p>{t("soulset_desc", lang)}</p>
-          </a>
-
-          <a href="/duality" className="card">
-            <h3>{t("duality", lang)}</h3>
-            <p>{t("duality_desc", lang)}</p>
-          </a>
+      <div className="cards">
+        <div className="card card-gold">
+          <h2>Card 1</h2>
+          <p>Exemple de contenu pour la carte 1</p>
         </div>
-      </main>
-    </>
+        <div className="card card-blue">
+          <h2>Card 2</h2>
+          <p>Exemple de contenu pour la carte 2</p>
+        </div>
+      </div>
+    </main>
   );
 }

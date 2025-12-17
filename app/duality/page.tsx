@@ -1,25 +1,21 @@
 "use client";
 
 import React from "react";
-import { useLang } from "@/components/useLang";
-import { t } from "@/components/translations";
-import "../globals.css";
 
-export default function DualityPage() {
-  const { lang, setLang } = useLang();
+const translations = {
+  fr: { title: "Dualité", desc: "Explorez les deux côtés de votre créativité" },
+  en: { title: "Duality", desc: "Explore the two sides of your creativity" },
+  ar: { title: "الازدواجية", desc: "استكشف جانبي إبداعك" },
+};
+
+export default function Duality() {
+  const lang = "fr";
+  const t = translations[lang];
 
   return (
-    <div className="page-container">
-      <header>
-        <button onClick={() => setLang("fr")}>FR</button>
-        <button onClick={() => setLang("en")}>EN</button>
-        <button onClick={() => setLang("ar")}>AR</button>
-      </header>
-      <main>
-        <h1>{t("duality_title", lang)}</h1>
-        <p>{t("duality_description", lang)}</p>
-        <button className="primary-btn">{t("start_duality", lang)}</button>
-      </main>
-    </div>
+    <main className="page">
+      <h1>{t.title}</h1>
+      <p>{t.desc}</p>
+    </main>
   );
 }
