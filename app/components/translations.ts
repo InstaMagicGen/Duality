@@ -1,3 +1,4 @@
+export type Lang = "fr" | "en" | "ar";
 export const translations = {
   fr: {
     subtitle: "Explorer ton futur et ton état intérieur",
