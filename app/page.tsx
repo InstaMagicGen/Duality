@@ -1,20 +1,31 @@
-// app/page.tsx
 "use client";
 
-import Header from "./components/Header";
-import { useLang } from "./components/useLang";
-import { translations } from "./components/translations";
+import Link from "next/link";
+import useLang from "./components/useLang";
+import { t } from "./components/translations";
 
 export default function HomePage() {
   const lang = useLang();
 
   return (
-    <div>
-      <Header />
-      <main className="main-container">
-        <h1>{translations.home.title[lang]}</h1>
-        <p>{translations.home.description[lang]}</p>
-      </main>
-    </div>
+    <section className="home">
+      <div className="cards">
+        <div className="card duality">
+          <h2>{t.duality.title[lang]}</h2>
+          <p>{t.duality.desc[lang]}</p>
+          <Link href="/duality">
+            <button className="btn primary">{t.duality.cta[lang]}</button>
+          </Link>
+        </div>
+
+        <div className="card soulset">
+          <h2>{t.soulset.title[lang]}</h2>
+          <p>{t.soulset.desc[lang]}</p>
+          <Link href="/soulset">
+            <button className="btn secondary">{t.soulset.cta[lang]}</button>
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }

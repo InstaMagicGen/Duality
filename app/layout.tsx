@@ -1,10 +1,7 @@
+"use client";
+
 import "./globals.css";
 import Header from "./components/Header";
-
-export const metadata = {
-  title: "Soulset / Duality",
-  description: "Explore ton futur et ton humeur",
-};
 
 export default function RootLayout({
   children,
@@ -12,10 +9,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html>
       <body>
         <Header />
-        {children}
+        <main>{children}</main>
       </body>
     </html>
   );

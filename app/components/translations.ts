@@ -1,33 +1,50 @@
-// app/components/translations.ts
-type Lang = "en" | "fr" | "ar";
+import { Lang } from "./useLang";
 
-export const translations: any = {
-  buttons: {
-    login: { en: "Login", fr: "Se connecter", ar: "تسجيل الدخول" },
-    signup: { en: "Sign Up", fr: "Créer un compte", ar: "إنشاء حساب" },
-  },
-  home: {
-    title: { en: "Welcome Home", fr: "Bienvenue", ar: "مرحبا" },
-    description: {
-      en: "This is the home page",
-      fr: "Ceci est la page d'accueil",
-      ar: "هذه هي الصفحة الرئيسية",
+export const t = {
+  header: {
+    title: { fr: "Soulset", en: "Soulset", ar: "سولسِت" },
+    subtitle: {
+      fr: "Explorer ton futur & ton humeur",
+      en: "Explore your future & mood",
+      ar: "استكشف مستقبلك ومزاجك",
     },
+    login: { fr: "Se connecter", en: "Login", ar: "تسجيل الدخول" },
+    signup: { fr: "Créer un compte", en: "Create account", ar: "إنشاء حساب" },
   },
+
   duality: {
-    title: { en: "Duality", fr: "Dualité", ar: "الازدواجية" },
-    description: {
-      en: "Explore your duality",
-      fr: "Explorez votre dualité",
-      ar: "استكشف ازدواجيتك",
+    title: {
+      fr: "DUALITY · Futur probable",
+      en: "DUALITY · Probable future",
+      ar: "الازدواجية · المستقبل المحتمل",
+    },
+    desc: {
+      fr: "Tu écris ce que tu ressens. Duality renvoie un écho de ton futur.",
+      en: "You write what you feel. Duality reflects your future echo.",
+      ar: "اكتب ما تشعر به، وستحصل على صدى مستقبلك.",
+    },
+    cta: {
+      fr: "Ouvrir Duality",
+      en: "Open Duality",
+      ar: "فتح الازدواجية",
     },
   },
+
   soulset: {
-    title: { en: "Soulset", fr: "Soulset", ar: "Soulset" },
-    description: {
-      en: "Dive into your soul",
-      fr: "Plongez dans votre âme",
-      ar: "اغمر في روحك",
+    title: {
+      fr: "SOULSET NAVIGATOR · Sunset Therapy",
+      en: "SOULSET NAVIGATOR · Sunset Therapy",
+      ar: "مستكشف الروح · علاج الغروب",
+    },
+    desc: {
+      fr: "Décris ton état intérieur et laisse le soleil apaiser ton esprit.",
+      en: "Describe your inner state and let the sunset calm your mind.",
+      ar: "صف حالتك الداخلية ودع الغروب يهدئ روحك.",
+    },
+    cta: {
+      fr: "Commencer la thérapie",
+      en: "Start therapy",
+      ar: "ابدأ العلاج",
     },
   },
 };

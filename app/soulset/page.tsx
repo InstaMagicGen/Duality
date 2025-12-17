@@ -1,24 +1,16 @@
 "use client";
 
-import Header from "../components/Header";
-import { useLang } from "../components/useLang";
-import { i18n } from "../components/i18n";
+import useLang from "../components/useLang";
+import { t } from "../components/translations";
 
 export default function SoulsetPage() {
   const lang = useLang();
 
   return (
-    <div className="page">
-      <Header />
-
-      <main>
-        <h2>{i18n.soulset.title[lang]}</h2>
-        <p>{i18n.soulset.description[lang]}</p>
-
-        <p className="analysis">
-          {i18n.analysis[lang]}
-        </p>
-      </main>
-    </div>
+    <section className="journey soulset">
+      <h1>{t.soulset.title[lang]}</h1>
+      <p>{t.soulset.desc[lang]}</p>
+      <textarea placeholder="..." />
+    </section>
   );
 }
