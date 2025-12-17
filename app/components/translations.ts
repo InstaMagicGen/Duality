@@ -2,10 +2,6 @@ export type Lang = "fr" | "en" | "ar";
 
 export const translations = {
   fr: {
-    meta: {
-      title: "Soulset Journeys",
-      desc: "Exploration intérieure & conscience augmentée",
-    },
     header: {
       appName: "Soulset Journeys",
       subtitle: "Deux expériences guidées : Duality pour voir ton futur probable, Soulset Navigator pour scanner ta journée sur un coucher de soleil.",
@@ -34,10 +30,6 @@ export const translations = {
     }
   },
   en: {
-    meta: {
-      title: "Soulset Journeys",
-      desc: "Inner exploration & augmented consciousness",
-    },
     header: {
       appName: "Soulset Journeys",
       subtitle: "Two guided experiences: Duality to see your probable future, Soulset Navigator to scan your day on a sunset.",
@@ -57,19 +49,9 @@ export const translations = {
       btn: "Start Sunset Therapy",
     },
     moodBtn: "View my mood tracking",
-    auth: {
-      loginTitle: "Login",
-      email: "Email",
-      password: "Password",
-      submit: "Sign In",
-      back: "Back to home",
-    }
+    auth: { loginTitle: "Login", email: "Email", password: "Password", submit: "Sign In", back: "Back to home" }
   },
   ar: {
-    meta: {
-      title: "رحلات سولسِت",
-      desc: "استكشاف داخلي ووعي معزز",
-    },
     header: {
       appName: "رحلات سولسِت",
       subtitle: "تجربتان موجهتان: دواليتي لرؤية مستقبلك المحتمل، وسولسِت نافيغيتور لمسح يومك عند غروب الشمس.",
@@ -89,12 +71,6 @@ export const translations = {
       btn: "بدء علاج الغروب",
     },
     moodBtn: "عرض تتبع المزاج",
-    auth: {
-      loginTitle: "تسجيل الدخول",
-      email: "البريد الإلكتروني",
-      password: "كلمة المرور",
-      submit: "دخول",
-      back: "عودة للرئيسية",
-    }
-  },
+    auth: { loginTitle: "تسجيل الدخول", email: "البريد الإلكتروني", password: "كلمة المرور", submit: "دخول", back: "عودة للرئيسية" }
+  }
 };
