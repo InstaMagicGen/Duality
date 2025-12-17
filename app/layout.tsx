@@ -1,6 +1,6 @@
 "use client";
 
-import "../global.css";      // anciennement ../globals.css
+import "./global.css";      // anciennement ../globals.css
 import React, { useState } from "react";
 import Header from "./components/Header";  
 
