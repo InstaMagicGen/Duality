@@ -1,17 +1,16 @@
 "use client";
 
+import React from "react";
+import { t } from "../components/translations";
 import Header from "../components/Header";
 import { useLang } from "../components/useLang";
-import { t } from "../components/translations";
-
-
 
 export default function AuthPage() {
-  const { lang } = useLang();
+  const { lang, setLang } = useLang();
 
   return (
     <>
-      <Header />
+      <Header lang={lang} setLang={setLang} />
       <main className="page">
         <h2>{t("auth_title", lang)}</h2>
         <p>{t("auth_desc", lang)}</p>
