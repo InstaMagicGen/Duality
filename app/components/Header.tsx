@@ -1,32 +1,43 @@
-import React from "react";
+"use client";
+
+import React, { useContext } from "react";
+import { ThemeContext } from "../context/themeContext";
+import { t } from "./translations";
 
 type HeaderProps = {
   lang: "fr" | "en" | "ar";
 };
 
-export default function Header({ lang }: HeaderProps) {
+const Header: React.FC<HeaderProps> = ({ lang }) => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-md p-4 flex justify-between items-center">
-      {/* Dark/Light toggle */}
-      <button className="px-3 py-1 border rounded text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
-        🌙 / ☀️
+    <header className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-md">
+      {/* Dark / Light mode */}
+      <button
+        onClick={toggleTheme}
+        className="px-3 py-1 border rounded bg-gray-700 hover:bg-gray-600 transition"
+      >
+        {theme === "dark" ? "☀️" : "🌙"}
       </button>
 
-      {/* Nom de l'app + slogan */}
+      {/* App Name & Slogan */}
       <div className="text-center">
-        <h1 className="font-bold text-2xl text-gray-900 dark:text-gray-100">Soulset</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Explorer ton futur et ton état intérieur</p>
+        <h1 className="text-2xl font-bold">Soulset</h1>
+        <p className="text-sm">{t("subtitle", lang)}</p>
       </div>
 
-      {/* Boutons connexion / créer compte */}
-      <div className="flex gap-4">
-        <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-          Se connecter
+      {/* Auth buttons */}
+      <div className="space-x-2">
+        <button className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition">
+          {t("login", lang)}
         </button>
-        <button className="px-4 py-2 bg-gold text-white rounded hover:bg-yellow-500 transition">
-          Créer un compte
+        <button className="px-4 py-2 rounded border border-blue-600 hover:bg-blue-600 hover:text-white transition">
+          {t("signup", lang)}
         </button>
       </div>
     </header>
   );
-}
+};
+
+export default Header;

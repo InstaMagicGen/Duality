@@ -1,34 +1,37 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
+import { t } from "../components/translations";
 
-
-const translations = {
-  fr: { title: "Bienvenue sur InstaMagicGen", desc: "Votre univers créatif" },
-  en: { title: "Welcome to InstaMagicGen", desc: "Your creative universe" },
-  ar: { title: "مرحبًا بك في InstaMagicGen", desc: "عالمك الإبداعي" },
+type Props = {
+  lang: "fr" | "en" | "ar";
 };
 
-export default function Home() {
-  // Langue par défaut, sera remplacée via Header
-  const lang = "fr";
-  const t = translations[lang];
+const HomePage: React.FC<Props> = ({ lang }) => {
+  const router = useRouter();
 
   return (
-    <main className="page">
-      <h1>{t.title}</h1>
-      <p>{t.desc}</p>
+    <main className="max-w-5xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Soulset Card */}
+      <div
+        onClick={() => router.push("/soulset")}
+        className="cursor-pointer p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition hover:scale-105"
+      >
+        <h2 className="text-xl font-bold">{t("soulset", lang)}</h2>
+        <p className="mt-2">{t("soulset_desc", lang)}</p>
+      </div>
 
-      <div className="cards">
-        <div className="card card-gold">
-          <h2>Card 1</h2>
-          <p>Exemple de contenu pour la carte 1</p>
-        </div>
-        <div className="card card-blue">
-          <h2>Card 2</h2>
-          <p>Exemple de contenu pour la carte 2</p>
-        </div>
+      {/* Duality Card */}
+      <div
+        onClick={() => router.push("/duality")}
+        className="cursor-pointer p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition hover:scale-105"
+      >
+        <h2 className="text-xl font-bold">{t("duality", lang)}</h2>
+        <p className="mt-2">{t("duality_desc", lang)}</p>
       </div>
     </main>
   );
-}
+};
+
+export default HomePage;
