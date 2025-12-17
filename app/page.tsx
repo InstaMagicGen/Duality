@@ -2,7 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { t } from "../components/translations";
+import { t } from "@/components/translations";
+
 
 type Props = {
   lang: "fr" | "en" | "ar";
