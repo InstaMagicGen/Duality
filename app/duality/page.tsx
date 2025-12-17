@@ -1,18 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { t } from "../components/translations";
 
-type Props = { lang: "fr" | "en" | "ar" };
+const DualityPage: React.FC = () => {
+  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
 
-const DualityPage: React.FC<Props> = ({ lang }) => {
+  useEffect(() => {
+    const browserLang = navigator.language.slice(0, 2);
+    if (["fr", "en", "ar"].includes(browserLang)) setLang(browserLang as "fr" | "en" | "ar");
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <main className="max-w-3xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-4">{t("duality", lang)}</h1>
-        <p className="mb-6">{t("duality_desc", lang)}</p>
-      </main>
-    </div>
+    <main className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-4">{t("duality_title", lang)}</h1>
+      <p className="mb-6">{t("duality_analysis", lang)}</p>
+    </main>
   );
 };
 
