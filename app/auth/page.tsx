@@ -5,8 +5,10 @@ import Header from "../components/Header";
 import { t } from "../components/translations";
 
 type Props = {
-  lang?: "fr" | "en" | "ar"; // optionnel pour éviter undefined
+  lang: "fr" | "en" | "ar";
+  setLang: (lang: "fr" | "en" | "ar") => void;
 };
+
 
 const AuthPage: React.FC<Props> = ({ lang, setLang }) => {
   return (
