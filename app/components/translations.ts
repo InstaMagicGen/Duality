@@ -75,5 +75,11 @@ export const translations = {
   },
 };
 
+// Fonction simple pour accéder aux traductions directement
 export const t = (key: string, lang: "fr" | "en" | "ar") =>
   translations[lang][key] || key;
+
+// Hook React pour utiliser dans les composants
+export const useTranslations = (lang: "fr" | "en" | "ar") => {
+  return (key: string) => translations[lang][key] || key;
+};
