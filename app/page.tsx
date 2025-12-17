@@ -1,15 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { t } from "./components/translations";
 
-type Props = {
-  lang: "fr" | "en" | "ar";
-};
-
-const HomePage: React.FC<Props> = ({ lang }) => {
+const HomePage: React.FC = () => {
   const router = useRouter();
+
+  // Langue par défaut pour le build
+  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
+
+  useEffect(() => {
+    const browserLang = navigator.language.slice(0, 2);
+    if (browserLang === "fr" || browserLang === "en" || browserLang === "ar") {
+      setLang(browserLang);
+    }
+  }, []);
 
   return (
     <main className="max-w-5xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
