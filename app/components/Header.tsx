@@ -1,40 +1,49 @@
 "use client";
 
-import React, { useContext } from "react";
-import { ThemeContext } from "../context/themeContext";
-import { t } from "./translations";
+import React, { useState, useEffect } from "react";
 
 type HeaderProps = {
   lang: "fr" | "en" | "ar";
 };
 
 const Header: React.FC<HeaderProps> = ({ lang }) => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    if (dark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [dark]);
+
+  const toggleTheme = () => setDark(!dark);
+
+  const translations = {
+    fr: { login: "Connexion", signup: "Créer un compte", appName: "Soulset", slogan: "Explorer ton futur et ton état intérieur" },
+    en: { login: "Login", signup: "Sign Up", appName: "Soulset", slogan: "Explore your future and inner state" },
+    ar: { login: "تسجيل الدخول", signup: "إنشاء حساب", appName: "Soulset", slogan: "اكتشف مستقبلك وحالتك الداخلية" },
+  };
+
+  const t = translations[lang];
 
   return (
-    <header className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-md">
-      {/* Dark / Light mode */}
+    <header className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-md">
+      {/* Dark/Light */}
       <button
         onClick={toggleTheme}
-        className="px-3 py-1 border rounded bg-gray-700 hover:bg-gray-600 transition"
+        className="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
       >
-        {theme === "dark" ? "☀️" : "🌙"}
+        {dark ? "🌙" : "☀️"}
       </button>
 
-      {/* App Name & Slogan */}
+      {/* Nom + Slogan */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Soulset</h1>
-        <p className="text-sm">{t("subtitle", lang)}</p>
+        <h1 className="text-xl font-bold">{t.appName}</h1>
+        <p className="text-sm">{t.slogan}</p>
       </div>
 
-      {/* Auth buttons */}
-      <div className="space-x-2">
-        <button className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition">
-          {t("login", lang)}
-        </button>
-        <button className="px-4 py-2 rounded border border-blue-600 hover:bg-blue-600 hover:text-white transition">
-          {t("signup", lang)}
-        </button>
+      {/* Connexion / Créer un compte */}
+      <div className="space-x-4">
+        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">{t.login}</button>
+        <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">{t.signup}</button>
       </div>
     </header>
   );
