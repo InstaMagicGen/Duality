@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { t } from "../components/translations";
 import Header from "../components/Header";
 
 export default function SoulsetPage() {
-  // Détection automatique de la langue du navigateur
   const browserLang = typeof navigator !== "undefined" ? navigator.language.slice(0, 2) : "fr";
-  const lang = browserLang === "ar" ? "ar" : browserLang === "en" ? "en" : "fr";
+  const defaultLang = browserLang === "ar" ? "ar" : browserLang === "en" ? "en" : "fr";
 
+  const [lang, setLang] = useState<"fr" | "en" | "ar">(defaultLang);
   const [userInput, setUserInput] = useState("");
   const [analysis, setAnalysis] = useState("");
 
   const handleAnalyze = () => {
-    // Exemple de génération d'analyse aléatoire (à remplacer par ton backend ou API)
     const analyses = [
       t("soulset_analysis", lang),
       "Votre état intérieur est équilibré mais vigilant.",
@@ -26,7 +25,7 @@ export default function SoulsetPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <Header />
+      <Header lang={lang} setLang={setLang} />
       <main className="max-w-3xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-4">{t("soulset_title", lang)}</h1>
         <p className="mb-6">{t("soulset_desc", lang)}</p>
