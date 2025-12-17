@@ -5,8 +5,7 @@ import Header from "../components/Header";
 import { t } from "../components/translations";
 
 type Props = {
-  lang: "fr" | "en" | "ar";
-  setLang: React.Dispatch<React.SetStateAction<"fr" | "en" | "ar">>;
+  lang?: "fr" | "en" | "ar"; // optionnel pour éviter undefined
 };
 
 const AuthPage: React.FC<Props> = ({ lang, setLang }) => {
