@@ -1,38 +1,29 @@
+// app/components/Header.tsx
 "use client";
 
 import React from "react";
+import { useTranslations } from "./translations";
 
-type HeaderProps = {
-  lang: string;
-  setLang: (lang: string) => void;
-};
+export type Lang = "fr" | "en" | "ar";
 
-export default function Header({ lang, setLang }: HeaderProps) {
+interface HeaderProps {
+  lang: Lang;
+  setLang: React.Dispatch<React.SetStateAction<Lang>>; // correction du type
+}
+
+const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
+  const t = useTranslations();
+
   return (
     <header className="header">
-      <div className="logo">
-        <h1>Duality App</h1>
-      </div>
+      <h1>{t("header_title", lang)}</h1>
       <nav>
-        <button
-          className={lang === "fr" ? "active" : ""}
-          onClick={() => setLang("fr")}
-        >
-          FR
-        </button>
-        <button
-          className={lang === "en" ? "active" : ""}
-          onClick={() => setLang("en")}
-        >
-          EN
-        </button>
-        <button
-          className={lang === "ar" ? "active" : ""}
-          onClick={() => setLang("ar")}
-        >
-          AR
-        </button>
+        <button onClick={() => setLang("fr")}>{t("lang_fr", lang)}</button>
+        <button onClick={() => setLang("en")}>{t("lang_en", lang)}</button>
+        <button onClick={() => setLang("ar")}>{t("lang_ar", lang)}</button>
       </nav>
     </header>
   );
-}
+};
+
+export default Header;
