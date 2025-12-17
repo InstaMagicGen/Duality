@@ -1,29 +1,33 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import useLang from "./useLang";
+import { useLang } from "./useLang";
 import { t } from "./translations";
 
 export default function Header() {
-  const lang = useLang();
+  const { lang, toggleLang } = useLang();
 
   return (
-    <header className="header">
-      <div className="header-left">Logo</div>
-
-      <div className="header-center">
-        <h1>{t.header.title[lang]}</h1>
-        <p>{t.header.subtitle[lang]}</p>
+    <header className="global-header">
+      <div className="header-left">
+        <Image src="/logo.png" alt="Soulset" width={42} height={42} />
+        <div>
+          <h1>Soulset</h1>
+          <p>{t("subtitle", lang)}</p>
+        </div>
       </div>
 
-      <div className="header-right">
-        <Link href="/auth">
-          <button className="btn ghost">{t.header.login[lang]}</button>
-        </Link>
-        <Link href="/auth">
-          <button className="btn outline">{t.header.signup[lang]}</button>
-        </Link>
-      </div>
+      <nav className="header-nav">
+        <Link href="/">{t("home", lang)}</Link>
+        <Link href="/soulset">{t("soulset", lang)}</Link>
+        <Link href="/duality">{t("duality", lang)}</Link>
+        <Link href="/auth">{t("login", lang)}</Link>
+      </nav>
+
+      <button onClick={toggleLang} className="lang-btn">
+        {lang.toUpperCase()}
+      </button>
     </header>
   );
 }

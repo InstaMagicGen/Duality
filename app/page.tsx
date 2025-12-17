@@ -1,31 +1,31 @@
 "use client";
 
-import Link from "next/link";
-import useLang from "./components/useLang";
-import { t } from "./components/translations";
+import Header from "@/components/Header";
+import { useLang } from "@/components/useLang";
+import { t } from "@/components/translations";
 
 export default function HomePage() {
-  const lang = useLang();
+  const { lang } = useLang();
 
   return (
-    <section className="home">
-      <div className="cards">
-        <div className="card duality">
-          <h2>{t.duality.title[lang]}</h2>
-          <p>{t.duality.desc[lang]}</p>
-          <Link href="/duality">
-            <button className="btn primary">{t.duality.cta[lang]}</button>
-          </Link>
-        </div>
+    <>
+      <Header />
+      <main className="page">
+        <h2>{t("home_title", lang)}</h2>
+        <p>{t("home_desc", lang)}</p>
 
-        <div className="card soulset">
-          <h2>{t.soulset.title[lang]}</h2>
-          <p>{t.soulset.desc[lang]}</p>
-          <Link href="/soulset">
-            <button className="btn secondary">{t.soulset.cta[lang]}</button>
-          </Link>
+        <div className="cards">
+          <a href="/soulset" className="card">
+            <h3>{t("soulset", lang)}</h3>
+            <p>{t("soulset_desc", lang)}</p>
+          </a>
+
+          <a href="/duality" className="card">
+            <h3>{t("duality", lang)}</h3>
+            <p>{t("duality_desc", lang)}</p>
+          </a>
         </div>
-      </div>
-    </section>
+      </main>
+    </>
   );
 }

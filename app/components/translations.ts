@@ -1,50 +1,79 @@
-import { Lang } from "./useLang";
+export const translations = {
+  fr: {
+    subtitle: "Explorer ton futur et ton état intérieur",
+    home: "Accueil",
+    soulset: "Soulset",
+    duality: "Duality",
+    login: "Connexion",
 
-export const t = {
-  header: {
-    title: { fr: "Soulset", en: "Soulset", ar: "سولسِت" },
-    subtitle: {
-      fr: "Explorer ton futur & ton humeur",
-      en: "Explore your future & mood",
-      ar: "استكشف مستقبلك ومزاجك",
-    },
-    login: { fr: "Se connecter", en: "Login", ar: "تسجيل الدخول" },
-    signup: { fr: "Créer un compte", en: "Create account", ar: "إنشاء حساب" },
+    home_title: "Bienvenue dans Soulset",
+    home_desc: "Une exploration émotionnelle et cognitive personnalisée.",
+
+    soulset_desc: "Analyse profonde de ton état intérieur",
+    duality_desc: "Lecture de tes contradictions mentales",
+
+    soulset_title: "Analyse Soulset",
+    soulset_analysis:
+      "Cette analyse explore ton état émotionnel actuel et révèle les tensions internes dominantes.",
+
+    duality_title: "Analyse Duality",
+    duality_analysis:
+      "Duality met en lumière le conflit entre ce que tu montres et ce que tu ressens.",
+
+    auth_title: "Accès sécurisé",
+    auth_desc: "Connecte-toi pour sauvegarder ton parcours",
   },
 
-  duality: {
-    title: {
-      fr: "DUALITY · Futur probable",
-      en: "DUALITY · Probable future",
-      ar: "الازدواجية · المستقبل المحتمل",
-    },
-    desc: {
-      fr: "Tu écris ce que tu ressens. Duality renvoie un écho de ton futur.",
-      en: "You write what you feel. Duality reflects your future echo.",
-      ar: "اكتب ما تشعر به، وستحصل على صدى مستقبلك.",
-    },
-    cta: {
-      fr: "Ouvrir Duality",
-      en: "Open Duality",
-      ar: "فتح الازدواجية",
-    },
+  en: {
+    subtitle: "Explore your future and inner state",
+    home: "Home",
+    soulset: "Soulset",
+    duality: "Duality",
+    login: "Login",
+
+    home_title: "Welcome to Soulset",
+    home_desc: "A personalized emotional and cognitive exploration.",
+
+    soulset_desc: "Deep analysis of your inner state",
+    duality_desc: "Reading of your mental contradictions",
+
+    soulset_title: "Soulset Analysis",
+    soulset_analysis:
+      "This analysis explores your current emotional state and dominant inner tensions.",
+
+    duality_title: "Duality Analysis",
+    duality_analysis:
+      "Duality reveals the conflict between what you show and what you feel.",
+
+    auth_title: "Secure access",
+    auth_desc: "Log in to save your journey",
   },
 
-  soulset: {
-    title: {
-      fr: "SOULSET NAVIGATOR · Sunset Therapy",
-      en: "SOULSET NAVIGATOR · Sunset Therapy",
-      ar: "مستكشف الروح · علاج الغروب",
-    },
-    desc: {
-      fr: "Décris ton état intérieur et laisse le soleil apaiser ton esprit.",
-      en: "Describe your inner state and let the sunset calm your mind.",
-      ar: "صف حالتك الداخلية ودع الغروب يهدئ روحك.",
-    },
-    cta: {
-      fr: "Commencer la thérapie",
-      en: "Start therapy",
-      ar: "ابدأ العلاج",
-    },
+  ar: {
+    subtitle: "اكتشف مستقبلك وحالتك الداخلية",
+    home: "الرئيسية",
+    soulset: "سولسِت",
+    duality: "الثنائية",
+    login: "تسجيل الدخول",
+
+    home_title: "مرحبًا بك في Soulset",
+    home_desc: "استكشاف عاطفي وذهني مخصص لك.",
+
+    soulset_desc: "تحليل عميق لحالتك الداخلية",
+    duality_desc: "قراءة التناقضات الذهنية",
+
+    soulset_title: "تحليل Soulset",
+    soulset_analysis:
+      "هذا التحليل يستكشف حالتك العاطفية الحالية ويكشف التوترات الداخلية.",
+
+    duality_title: "تحليل Duality",
+    duality_analysis:
+      "Duality يكشف الصراع بين ما تُظهره وما تشعر به.",
+
+    auth_title: "وصول آمن",
+    auth_desc: "سجل الدخول لحفظ رحلتك",
   },
 };
+
+export const t = (key: string, lang: "fr" | "en" | "ar") =>
+  translations[lang][key] || key;
