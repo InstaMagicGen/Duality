@@ -1,8 +1,9 @@
 "use client";
 
-import Header from "@/components/Header";
-import { useLang } from "@/components/useLang";
-import { t } from "@/components/translations";
+import Header from "../components/Header";
+import { useLang } from "../components/useLang";
+import { t } from "../components/translations";
+
 
 
 export default function AuthPage() {
