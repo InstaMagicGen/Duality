@@ -1,30 +1,25 @@
-// app/components/Header.tsx
 "use client";
 
 import Link from "next/link";
 import { useLang } from "./useLang";
-import { translations } from "./translations";
-
-// Définition stricte des langues pour TypeScript
-type Lang = "en" | "fr" | "ar";
+import { i18n } from "./i18n";
 
 export default function Header() {
   const lang = useLang();
-  const langTyped = lang as Lang; // Force TypeScript à accepter
 
   return (
-    <header className="header-container">
-      <div className="logo">
-        <Link href="/">Soulset</Link>
+    <header className="header">
+      <h1>{i18n.header.title[lang]}</h1>
+
+      <div className="header-buttons">
+        <Link href="/login" className="btn">
+          {i18n.header.login[lang]}
+        </Link>
+
+        <Link href="/signup" className="btn btn-outline">
+          {i18n.header.signup[lang]}
+        </Link>
       </div>
-      <nav>
-        <Link href="/login" className="header-button">
-          {translations.buttons.login[langTyped]}
-        </Link>
-        <Link href="/signup" className="header-button">
-          {translations.buttons.signup[langTyped]}
-        </Link>
-      </nav>
     </header>
   );
 }
