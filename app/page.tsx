@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { t } from "./components/translations";
+import { t } from "../components/translations";
 
 type Props = {
   lang: "fr" | "en" | "ar";
@@ -21,7 +21,6 @@ const HomePage: React.FC<Props> = ({ lang }) => {
           <h2>{t("soulset", lang)}</h2>
           <p>{t("soulset_desc", lang)}</p>
         </div>
-
         <div
           className="card card-blue"
           onClick={() => router.push("/duality")}
