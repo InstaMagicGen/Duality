@@ -1,49 +1,59 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-  const { text, lang } = await req.json();
-
-  if (!text || text.length < 10) {
-    return NextResponse.json({
-      result:
-        lang === "ar"
-          ? "الرجاء كتابة نص أعمق للتحليل."
-          : lang === "en"
-          ? "Please write a deeper text for analysis."
-          : "Merci d’écrire un texte plus profond pour l’analyse.",
-    });
-  }
-
-  const analysis = {
-    fr: `Analyse Soulset :
-
-Ton texte révèle un état émotionnel dominé par une tension intérieure silencieuse.
-Tu sembles en phase de transition, partagé entre lucidité et fatigue mentale.
-Il existe une volonté de compréhension profonde, mais aussi une peur de l’immobilité.
-
-Conseil :
-Accorde-toi un moment de pause consciente. Ton esprit réclame de la clarté, pas de la pression.`,
-
-    en: `Soulset Analysis:
-
-Your text reveals a dominant inner emotional tension.
-You appear to be in a transitional phase, between clarity and mental fatigue.
-There is a strong desire for understanding, mixed with a fear of stagnation.
-
-Advice:
-Allow yourself conscious pauses. Your mind needs clarity, not pressure.`,
-
-    ar: `تحليل Soulset:
-
-نصك يكشف عن توتر داخلي عاطفي مسيطر.
-يبدو أنك تمر بمرحلة انتقالية بين الوضوح والإرهاق الذهني.
-هناك رغبة عميقة في الفهم، يقابلها خوف من الجمود.
-
-نصيحة:
-امنح نفسك لحظات وعي وهدوء. عقلك يحتاج إلى وضوح لا إلى ضغط.`,
-  };
-
-  return NextResponse.json({
-    result: analysis[lang] || analysis.fr,
+export async function GET() {
+  return NextResponse.json({ 
+    message: 'Soulset analysis API',
+    version: '1.0.0',
+    endpoints: ['/questions', '/analyze', '/results']
   });
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { answers } = body;
+    
+    if (!answers || !Array.isArray(answers)) {
+      return NextResponse.json(
+        { error: 'Invalid answers format' },
+        { status: 400 }
+      );
+    }
+    
+    // Calculate average score
+    const averageScore = answers.reduce((a: number, b: number) => a + b, 0) / answers.length;
+    const overallScore = Math.round((1 - averageScore / 4) * 100);
+    
+    const analysis = {
+      overallScore,
+      categoryScores: {
+        emotional: Math.round(Math.random() * 100),
+        cognitive: Math.round(Math.random() * 100),
+        social: Math.round(Math.random() * 100),
+        physical: Math.round(Math.random() * 100)
+      },
+      recommendations: [
+        'Practice daily gratitude journaling',
+        'Engage in regular physical activity',
+        'Prioritize quality sleep',
+        'Connect with supportive relationships'
+      ],
+      insights: [
+        'You show strong emotional awareness',
+        'Consider exploring mindfulness practices',
+        'Your social connections are a strength'
+      ]
+    };
+    
+    return NextResponse.json({
+      success: true,
+      analysis,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Analysis failed' },
+      { status: 500 }
+    );
+  }
 }

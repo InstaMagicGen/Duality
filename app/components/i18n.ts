@@ -1,53 +1,64 @@
-export type Lang = "fr" | "en" | "ar";
+'use client';
 
-export const i18n = {
-  header: {
-    title: {
-      fr: "Bienvenue",
-      en: "Welcome",
-      ar: "مرحبا",
-    },
-    login: {
-      fr: "Se connecter",
-      en: "Log in",
-      ar: "تسجيل الدخول",
-    },
-    signup: {
-      fr: "Créer un compte",
-      en: "Sign up",
-      ar: "إنشاء حساب",
-    },
-  },
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { Language, t as translationFunction } from './translations';
 
-  duality: {
-    title: {
-      fr: "Dualité",
-      en: "Duality",
-      ar: "الازدواجية",
-    },
-    description: {
-      fr: "Explore ton équilibre intérieur.",
-      en: "Explore your inner balance.",
-      ar: "اكتشف توازنك الداخلي.",
-    },
-  },
+interface I18nContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
 
-  soulset: {
-    title: {
-      fr: "Soulset",
-      en: "Soulset",
-      ar: "مجموعة الروح",
-    },
-    description: {
-      fr: "Une lecture profonde de ton état intérieur.",
-      en: "A deep reading of your inner state.",
-      ar: "قراءة عميقة لحالتك الداخلية.",
-    },
-  },
+const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-  analysis: {
-    fr: "Analyse en cours…",
-    en: "Analysis in progress…",
-    ar: "جاري التحليل…",
-  },
-};
+interface I18nProviderProps {
+  children: ReactNode;
+  defaultLanguage?: Language;
+}
+
+export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderProps) {
+  const [language, setLanguage] = useState<Language>(defaultLanguage);
+
+  useEffect(() => {
+    // Try to get language from localStorage
+    const savedLanguage = localStorage.getItem('language') as Language;
+    if (savedLanguage && ['fr', 'en', 'ar'].includes(savedLanguage)) {
+      setLanguage(savedLanguage);
+      return;
+    }
+
+    // Try to get from browser language
+    const browserLang = navigator.language.split('-')[0] as Language;
+    if (['fr', 'en', 'ar'].includes(browserLang)) {
+      setLanguage(browserLang);
+    }
+  }, []);
+
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang);
+    localStorage.setItem('language', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  };
+
+  const t = (key: string) => translationFunction(key, language);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
+
+  return (
+    <I18nContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+      {children}
+    </I18nContext.Provider>
+  );
+}
+
+export function useI18n() {
+  const context = useContext(I18nContext);
+  if (context === undefined) {
+    throw new Error('useI18n must be used within an I18nProvider');
+  }
+  return context;
+}
