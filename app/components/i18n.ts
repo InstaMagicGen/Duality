@@ -46,16 +46,11 @@ export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderP
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-  const contextValue = {
-    language,
-    setLanguage: handleSetLanguage,
-    t
-  };
-
-  return (
-    <I18nContext.Provider value={contextValue}>
-      {children}
-    </I18nContext.Provider>
+  // Version SANS variable intermédiaire - syntaxe directe
+  return React.createElement(
+    I18nContext.Provider,
+    { value: { language, setLanguage: handleSetLanguage, t } },
+    children
   );
 }
 
