@@ -1,4 +1,5 @@
 import "./globals.css";
+import Header from "./components/Header";
 import { LangProvider } from "./components/useLang";
 
 export default function RootLayout({
@@ -7,9 +8,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html>
       <body>
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          <Header />
+          <main className="app-container">{children}</main>
+        </LangProvider>
       </body>
     </html>
   );
