@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "@/components/Header";
-import { useLang } from "@/components/useLang";
-import { t } from "@/components/translations";
+import Header from "./components/Header";
+import { useLang } from "./components/useLang";
+import { t } from "./components/translations";
 import Link from "next/link";
 
 export default function Home() {
@@ -11,16 +11,16 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="center">
-        <h2>{t("homeTitle", lang)}</h2>
-        <p className="intro">{t("homeText", lang)}</p>
+      <main className="main-container">
+        <h1 className="title">{t("home_title", lang)}</h1>
+        <p className="subtitle">{t("home_subtitle", lang)}</p>
 
         <div className="actions">
-          <Link href="/soulset" className="main-btn">
-            {t("soulsetTitle", lang)}
+          <Link href="/duality" className="gold-button">
+            {t("duality", lang)}
           </Link>
-          <Link href="/duality" className="main-btn secondary">
-            {t("dualityTitle", lang)}
+          <Link href="/soulset" className="gold-button">
+            {t("soulset", lang)}
           </Link>
         </div>
       </main>

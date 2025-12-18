@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "@/components/Header";
-import { useLang } from "@/components/useLang";
-import { t } from "@/components/translations";
+import Header from "../components/Header";
+import { useLang } from "../components/useLang";
+import { t } from "../components/translations";
 
 export default function Duality() {
   const { lang } = useLang();
@@ -10,10 +10,17 @@ export default function Duality() {
   return (
     <>
       <Header />
-      <main className="center">
-        <h2>{t("dualityTitle", lang)}</h2>
-        <p className="analysis">{t("dualityText", lang)}</p>
-        <button className="main-btn secondary">{t("start", lang)}</button>
+      <main className="page-container">
+        <h1 className="title">{t("duality_title", lang)}</h1>
+
+        <textarea
+          className="input-box"
+          placeholder={t("duality_placeholder", lang)}
+        />
+
+        <button className="gold-button">
+          {t("analyze", lang)}
+        </button>
       </main>
     </>
   );

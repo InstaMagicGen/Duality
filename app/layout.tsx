@@ -1,13 +1,13 @@
 import "./globals.css";
-import { LangProvider } from "@/components/useLang";
+import { LangProvider } from "./components/useLang";
 
 export default function RootLayout({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body>
         <LangProvider>{children}</LangProvider>
       </body>
