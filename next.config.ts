@@ -9,10 +9,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Force l'utilisation de Webpack au lieu de Turbopack
-  experimental: {
-    turbo: false
-  }
+  // DÉSACTIVE Turbopack (bonne syntaxe pour Next.js 16)
+  // L'option est au niveau supérieur, pas dans "experimental"
+  turbopack: undefined, // ou simplement ne le mets pas du tout
 };
 
 export default nextConfig;
