@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -10,11 +9,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Configuration correcte pour Turbopack (au niveau supérieur)
-  turbopack: {
-    // Ajoute ici les options spécifiques à Turbopack si besoin
-    // resolveAlias: {...},
-  },
+  // Force l'utilisation de Webpack au lieu de Turbopack
+  experimental: {
+    turbo: false
+  }
 };
 
 export default nextConfig;
