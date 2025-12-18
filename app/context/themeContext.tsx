@@ -1,40 +1,49 @@
-"use client";
+'use client';
 
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = "light" | "dark";
+type Theme = 'light' | 'dark';
 
-type ThemeContextType = {
+interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
-};
+}
 
-export const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
-  toggleTheme: () => {},
-});
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>("light");
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    // Récupérer le thème enregistré ou la préférence du navigateur
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle("dark", savedTheme === "dark");
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
+    const storedTheme = localStorage.getItem('theme') as Theme;
+    if (storedTheme) {
+      setTheme(storedTheme);
+      document.documentElement.classList.toggle('dark', storedTheme === 'dark');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+      document.documentElement.classList.add('dark');
     }
   }, []);
 
   const toggleTheme = () => {
-    const newTheme: Theme = theme === "light" ? "dark" : "light";
+    const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-    localStorage.setItem("theme", newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
-  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
-};
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+// Ajouter cet export qui était manquant
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}
