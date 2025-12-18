@@ -1,8 +1,3 @@
-# Supprime l'ancien fichier
-rm app/components/i18n.ts
-
-# Crée un nouveau fichier avec VIM (pas d'encodage bizarre)
-cat > app/components/i18n.ts << 'EOF'
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -71,4 +66,3 @@ export function useI18n() {
   }
   return context;
 }
-EOF

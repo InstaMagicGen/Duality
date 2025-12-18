@@ -9,9 +9,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // DÉSACTIVE Turbopack (bonne syntaxe pour Next.js 16)
-  // L'option est au niveau supérieur, pas dans "experimental"
-  turbopack: undefined, // ou simplement ne le mets pas du tout
+  // Version minimaliste - pas d'options expérimentales
 };
 
 export default nextConfig;
