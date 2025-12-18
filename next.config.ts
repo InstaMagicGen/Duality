@@ -10,12 +10,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Désactiver Turbopack si nécessaire
-  experimental: {
-    turbo: {
-      // Configuration de Turbopack
-    }
-  }
+  // Configuration correcte pour Turbopack (au niveau supérieur)
+  turbopack: {
+    // Ajoute ici les options spécifiques à Turbopack si besoin
+    // resolveAlias: {...},
+  },
 };
 
 export default nextConfig;

@@ -48,11 +48,12 @@ export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderP
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-  return (
-    <I18nContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
-      {children}
-    </I18nContext.Provider>
-  );
+// Cette ligne doit être EXACTEMENT comme ça, avec des guillemets autour de 'value'
+return (
+  <I18nContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+    {children}
+  </I18nContext.Provider>
+);
 }
 
 export function useI18n() {
