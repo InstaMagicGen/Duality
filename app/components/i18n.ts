@@ -20,14 +20,12 @@ export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderP
   const [language, setLanguage] = useState<Language>(defaultLanguage);
 
   useEffect(() => {
-    // Try to get language from localStorage
     const savedLanguage = localStorage.getItem('language') as Language;
     if (savedLanguage && ['fr', 'en', 'ar'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
       return;
     }
 
-    // Try to get from browser language
     const browserLang = navigator.language.split('-')[0] as Language;
     if (['fr', 'en', 'ar'].includes(browserLang)) {
       setLanguage(browserLang);
@@ -48,12 +46,17 @@ export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderP
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-// Cette ligne doit être EXACTEMENT comme ça, avec des guillemets autour de 'value'
-return (
-  <I18nContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
-    {children}
-  </I18nContext.Provider>
-);
+  const contextValue = {
+    language,
+    setLanguage: handleSetLanguage,
+    t
+  };
+
+  return (
+    <I18nContext.Provider value={contextValue}>
+      {children}
+    </I18nContext.Provider>
+  );
 }
 
 export function useI18n() {
