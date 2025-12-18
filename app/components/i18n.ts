@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Language, t as translationFunction } from './translations';
 
 interface I18nContextType {
@@ -46,7 +46,7 @@ export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderP
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-  // Version SANS variable intermédiaire - syntaxe directe
+  // Utilise React.createElement au lieu de JSX pour éviter le bug Turbopack
   return React.createElement(
     I18nContext.Provider,
     { value: { language, setLanguage: handleSetLanguage, t } },
