@@ -46,7 +46,7 @@ export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderP
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-  // Utilise React.createElement au lieu de JSX pour éviter le bug Turbopack
+  // Utilise React.createElement au lieu de JSX
   return React.createElement(
     I18nContext.Provider,
     { value: { language, setLanguage: handleSetLanguage, t } },

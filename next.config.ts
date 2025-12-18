@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Version minimaliste - pas d'options expérimentales
 };
 
 export default nextConfig;
