@@ -1,12 +1,15 @@
-import './globals.css';
-import Header from './components/Header';
+import "./globals.css";
+import { LangProvider } from "@/components/useLang";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="fr">
-      <body className="bg-black">
-        <Header /> 
-        {children}
+    <html suppressHydrationWarning>
+      <body>
+        <LangProvider>{children}</LangProvider>
       </body>
     </html>
   );

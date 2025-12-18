@@ -1,56 +1,89 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --background: #000000;
-  --foreground: #ededed;
-}
-
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  overflow-x: hidden; /* Évite le scroll horizontal dû aux effets de lumière */
+  margin: 0;
+  background: radial-gradient(circle at top, #141414, #000);
+  color: #f1f1f1;
+  font-family: Inter, sans-serif;
 }
 
-/* --- Effets Néon & Glow (Respect de la Maquette) --- */
-
-/* Carte Jaune (Duality) */
-.glow-card-yellow {
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(234, 179, 8, 0.3); /* Jaune discret */
-  box-shadow: 0 0 20px rgba(234, 179, 8, 0.1);
-  transition: all 0.4s ease;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
 }
 
-.glow-card-yellow:hover {
-  border-color: rgba(234, 179, 8, 0.8);
-  box-shadow: 0 0 40px rgba(234, 179, 8, 0.25), inset 0 0 20px rgba(234, 179, 8, 0.05);
-  transform: translateY(-2px);
+.header-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-/* Carte Bleue (Soulset) */
-.glow-card-blue {
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(34, 211, 238, 0.3); /* Cyan discret */
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
-  transition: all 0.4s ease;
+.header h1 {
+  margin: 0;
 }
 
-.glow-card-blue:hover {
-  border-color: rgba(34, 211, 238, 0.8);
-  box-shadow: 0 0 40px rgba(34, 211, 238, 0.25), inset 0 0 20px rgba(34, 211, 238, 0.05);
-  transform: translateY(-2px);
+.header p {
+  font-size: 12px;
+  opacity: 0.7;
 }
 
-/* Bouton Gradient (Mood) */
-.glow-gradient-btn {
-  background: linear-gradient(90deg, #ec4899 0%, #f97316 50%, #eab308 100%);
-  box-shadow: 0 0 30px rgba(236, 72, 153, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.lang-btn {
+  background: none;
+  border: 1px solid #444;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.glow-gradient-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 50px rgba(249, 115, 22, 0.6);
+.center {
+  min-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.main-btn {
+  width: 260px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #6d5dfc, #8e7bff);
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  box-shadow: 0 0 25px rgba(120, 100, 255, 0.4);
+}
+
+.main-btn.secondary {
+  background: linear-gradient(135deg, #444, #222);
+}
+.input-box {
+  width: 320px;
+  min-height: 120px;
+  background: #0f0f0f;
+  border: 1px solid #6d5dfc;
+  border-radius: 14px;
+  padding: 14px;
+  color: white;
+  margin: 20px 0;
+}
+
+.result-box {
+  margin-top: 24px;
+  max-width: 420px;
+  background: rgba(255,255,255,0.05);
+  border-left: 3px solid #6d5dfc;
+  padding: 16px;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  text-align: left;
 }
