@@ -1,5 +1,5 @@
 'use client';
-import { Sun, Moon, UserPlus, LogIn } from "lucide-react";
+import { Sun, Moon, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -15,21 +15,15 @@ export default function Header() {
       </div>
 
       <div className="flex-[2] text-center">
-        <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none">
-          SOULSET JOURNEYS
-        </h1>
-        <p className="text-[8px] uppercase tracking-[0.3em] text-cyan-400 font-bold mt-1">
-          ELEVATE YOUR INNER VISION
-        </p>
+        <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none">SOULSET JOURNEYS</h1>
+        <p className="text-[8px] uppercase tracking-[0.3em] text-cyan-400 font-bold mt-1">ELEVATE YOUR INNER VISION</p>
       </div>
 
       <div className="flex-1 flex justify-end items-center gap-4">
-        <Link href="/auth" className="text-[11px] font-bold text-gray-400 hover:text-white transition-colors flex items-center gap-1">
+        <Link href="/auth" className="text-[11px] font-bold text-gray-400 hover:text-white flex items-center gap-1">
           <LogIn size={14} /> CONNEXION
         </Link>
-        <Link href="/auth" className="px-4 py-2 rounded-full bg-white text-black text-[10px] font-black hover:bg-gray-200 transition-all">
-          S'INSCRIRE
-        </Link>
+        <Link href="/auth" className="px-4 py-2 rounded-full bg-white text-black text-[10px] font-black">S'INSCRIRE</Link>
       </div>
     </header>
   );
