@@ -1,50 +1,45 @@
 'use client';
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import Header from "./components/Header";
-import { translations, Lang } from "./components/translations";
 
 export default function Home() {
-  const [lang, setLang] = useState<Lang>("fr");
-  const [isDark, setIsDark] = useState(true);
-
-  const t = translations[lang];
-
   return (
-    <main className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-gray-100'}`}>
+    <main className="min-h-screen w-full bg-black text-white flex flex-col items-center justify-center p-6">
       
-      <Header t={t} isDark={isDark} toggleTheme={() => setIsDark(!isDark)} />
-
-      <div className="w-full max-w-5xl px-6 flex flex-col items-center gap-12 pt-20">
+      {/* Conteneur des cartes alignées horizontalement */}
+      <div className="w-full max-w-6xl flex flex-col md:flex-row items-stretch justify-center gap-8">
         
-        {/* SECTION DES CARTES : FLEX-ROW pour mettre côte à côte */}
-        <div className="flex flex-col md:flex-row gap-8 w-full justify-center items-stretch">
-          
-          {/* DUALITY (OR) */}
-          <div className="flex-1 bg-[#050505] rounded-[2.5rem] p-10 border border-white/5 shadow-[0_0_50px_-15px_rgba(234,179,8,0.3)] flex flex-col items-center text-center">
-            <h2 className="text-3xl font-bold mb-4 text-yellow-500 uppercase italic italic tracking-tighter">DUALITY</h2>
-            <p className="text-gray-400 text-sm mb-10 h-12">Prédisez votre futur et dialoguez avec votre conscience profonde.</p>
-            <Link href="/duality" className="w-full">
-              <button className="w-full py-4 bg-yellow-500 text-black rounded-2xl font-black uppercase tracking-widest text-[10px]">Explorer ↗</button>
-            </Link>
+        {/* DUALITY */}
+        <div className="flex-1 bg-[#050505] border border-yellow-500/30 rounded-[2.5rem] p-10 flex flex-col justify-between shadow-[0_0_50px_-15px_rgba(234,179,8,0.3)]">
+          <div>
+            <h2 className="text-4xl font-black text-yellow-500 mb-6 italic tracking-tighter">DUALITY</h2>
+            <p className="text-gray-400 text-lg leading-relaxed">Prédisez votre futur et dialoguez avec votre conscience profonde.</p>
           </div>
-
-          {/* SOULSET (CYAN) */}
-          <div className="flex-1 bg-[#050505] rounded-[2.5rem] p-10 border border-white/5 shadow-[0_0_50px_-15px_rgba(6,182,212,0.3)] flex flex-col items-center text-center">
-            <h2 className="text-3xl font-bold mb-4 text-cyan-400 uppercase italic tracking-tighter">SOULSET</h2>
-            <p className="text-gray-400 text-sm mb-10 h-12">Thérapie immersive par le coucher de soleil et scan émotionnel.</p>
-            <Link href="/soulset" className="w-full">
-              <button className="w-full py-4 bg-cyan-400 text-black rounded-2xl font-black uppercase tracking-widest text-[10px]">Démarrer ↗</button>
-            </Link>
-          </div>
-
+          <Link href="/duality" className="mt-12">
+            <button className="w-full py-4 bg-yellow-500 text-black rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-[1.02] transition-transform">
+              Ouvrir Duality ↗
+            </button>
+          </Link>
         </div>
 
-        {/* BOUTON MOOD */}
-        <button className="mt-4 px-12 py-5 rounded-[2rem] bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 text-black font-black text-xl shadow-2xl hover:scale-105 transition-transform">
-          QUEL EST TON MOOD ?
-        </button>
+        {/* SOULSET */}
+        <div className="flex-1 bg-[#050505] border border-cyan-500/30 rounded-[2.5rem] p-10 flex flex-col justify-between shadow-[0_0_50px_-15px_rgba(6,182,212,0.3)]">
+          <div>
+            <h2 className="text-4xl font-black text-cyan-400 mb-6 italic tracking-tighter">SOULSET</h2>
+            <p className="text-gray-400 text-lg leading-relaxed">Thérapie immersive par le coucher de soleil et scan émotionnel.</p>
+          </div>
+          <Link href="/soulset" className="mt-12">
+            <button className="w-full py-4 bg-cyan-400 text-black rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-[1.02] transition-transform">
+              Commencer ↗
+            </button>
+          </Link>
+        </div>
+
       </div>
+
+      {/* Bouton Mood en bas */}
+      <button className="mt-16 px-12 py-5 rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white font-black text-lg uppercase tracking-tighter shadow-2xl hover:brightness-110 transition-all">
+        Quel est ton mood ?
+      </button>
     </main>
   );
 }

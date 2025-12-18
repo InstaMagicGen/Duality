@@ -1,37 +1,34 @@
 'use client';
 import { Sun, Moon, UserPlus, LogIn } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
-export default function Header({ t, isDark, toggleTheme }: any) {
+export default function Header() {
+  const [isDark, setIsDark] = useState(true);
+
   return (
-    <header className="fixed top-0 left-0 w-full h-24 px-10 flex justify-between items-center z-[100] bg-black/80 backdrop-blur-md border-b border-white/5">
-      {/* GAUCHE : Bouton Thème fonctionnel */}
+    <header className="fixed top-0 left-0 w-full h-20 px-8 flex justify-between items-center z-[999] bg-black/80 backdrop-blur-md border-b border-white/10">
       <div className="flex-1">
-        <button 
-          onClick={(e) => { e.preventDefault(); toggleTheme(); }}
-          className="p-3 rounded-full border border-white/10 text-white hover:bg-white/20 transition-all active:scale-90"
-        >
-          {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        <button onClick={() => setIsDark(!isDark)} className="p-2 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all">
+          {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
       </div>
 
-      {/* CENTRE : Titre */}
-      <div className="flex-1 text-center">
-        <h1 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">
-          {t.header.appName}
+      <div className="flex-[2] text-center">
+        <h1 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none">
+          SOULSET JOURNEYS
         </h1>
-        <p className="text-[9px] uppercase tracking-[0.4em] text-cyan-400 font-bold mt-1">
+        <p className="text-[8px] uppercase tracking-[0.3em] text-cyan-400 font-bold mt-1">
           ELEVATE YOUR INNER VISION
         </p>
       </div>
 
-      {/* DROITE : Liens Auth cliquables */}
       <div className="flex-1 flex justify-end items-center gap-4">
-        <Link href="/auth" className="text-xs font-bold text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-          <LogIn size={14} /> Connexion
+        <Link href="/auth" className="text-[11px] font-bold text-gray-400 hover:text-white transition-colors flex items-center gap-1">
+          <LogIn size={14} /> CONNEXION
         </Link>
-        <Link href="/auth" className="px-5 py-2 rounded-full bg-white text-black text-[10px] font-black hover:bg-gray-200 transition-all flex items-center gap-2">
-          <UserPlus size={14} /> CRÉER UN COMPTE
+        <Link href="/auth" className="px-4 py-2 rounded-full bg-white text-black text-[10px] font-black hover:bg-gray-200 transition-all">
+          S'INSCRIRE
         </Link>
       </div>
     </header>
