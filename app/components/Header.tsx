@@ -1,25 +1,31 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
 import { useLang } from "./useLang";
 import { t } from "./translations";
 
 export default function Header() {
-  const { lang, toggleLang } = useLang();
+  const { lang, setLang } = useLang();
 
   return (
     <header className="header">
-      <div className="header-left">
-        <Image src="/logo.png" alt="Soulset" width={44} height={44} />
-        <div>
-          <h1>Soulset</h1>
-          <p>{t("subtitle", lang)}</p>
-        </div>
-      </div>
+      <h1 className="logo">DUALITY</h1>
 
-      <button onClick={toggleLang} className="lang-btn">
-        {lang.toUpperCase()}
-      </button>
+      <nav className="nav">
+        <Link href="/">{t("nav.home", lang)}</Link>
+        <Link href="/duality">{t("nav.duality", lang)}</Link>
+        <Link href="/soulset">{t("nav.soulset", lang)}</Link>
+      </nav>
+
+      <select
+        value={lang}
+        onChange={(e) => setLang(e.target.value)}
+        className="lang-switch"
+      >
+        <option value="fr">FR</option>
+        <option value="en">EN</option>
+        <option value="ar">AR</option>
+      </select>
     </header>
   );
 }
