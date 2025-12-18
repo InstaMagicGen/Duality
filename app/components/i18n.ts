@@ -1,63 +1,46 @@
-'use client';
+'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Language, t as translationFunction } from './translations';
+import React, { createContext, useContext, ReactNode } from 'react'
 
-interface I18nContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+// Traductions simplifiées
+const translations = {
+  // Français par défaut
+  'welcome': 'Bienvenue',
+  'start': 'Commencer',
+  'explore': 'Explorer',
+  'login': 'Se connecter',
+  'signup': 'Créer un compte',
+  'theme': 'Thème',
+  'home': 'Accueil',
+  'features': 'Caractéristiques',
+  'mood': 'Humeur',
+  'future': 'Futur',
+  'therapy': 'Thérapie',
+  // Ajoute d'autres clés selon tes besoins
 }
 
-const I18nContext = createContext<I18nContextType | undefined>(undefined);
+type Translations = typeof translations
 
-interface I18nProviderProps {
-  children: ReactNode;
-  defaultLanguage?: Language;
-}
+const I18nContext = createContext<{
+  t: (key: keyof Translations) => string
+} | undefined>(undefined)
 
-export function I18nProvider({ children, defaultLanguage = 'fr' }: I18nProviderProps) {
-  const [language, setLanguage] = useState<Language>(defaultLanguage);
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const t = (key: keyof Translations) => {
+    return translations[key] || key
+  }
 
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && ['fr', 'en', 'ar'].includes(savedLanguage)) {
-      setLanguage(savedLanguage);
-      return;
-    }
-
-    const browserLang = navigator.language.split('-')[0] as Language;
-    if (['fr', 'en', 'ar'].includes(browserLang)) {
-      setLanguage(browserLang);
-    }
-  }, []);
-
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
-    localStorage.setItem('language', lang);
-    document.documentElement.lang = lang;
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  };
-
-  const t = (key: string) => translationFunction(key, language);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-  }, [language]);
-
-  // Utilise React.createElement au lieu de JSX
-  return React.createElement(
-    I18nContext.Provider,
-    { value: { language, setLanguage: handleSetLanguage, t } },
-    children
-  );
+  return (
+    <I18nContext.Provider value={{ t }}>
+      {children}
+    </I18nContext.Provider>
+  )
 }
 
 export function useI18n() {
-  const context = useContext(I18nContext);
-  if (context === undefined) {
-    throw new Error('useI18n must be used within an I18nProvider');
+  const context = useContext(I18nContext)
+  if (!context) {
+    throw new Error('useI18n must be used within an I18nProvider')
   }
-  return context;
+  return context
 }

@@ -1,5 +1,8 @@
-import { next } from 'eslint-config-next'; // Updated import path
+# Remplace complètement ton fichier eslint.config.mjs
+cat > eslint.config.mjs << 'EOF'
+import next from "eslint-config-next";
 
-export default next({
-  // Your project-specific rules here, if any
-});
+export default [
+  ...next,
+];
+EOF
